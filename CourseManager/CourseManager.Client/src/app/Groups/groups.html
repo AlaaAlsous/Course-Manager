@@ -1,0 +1,19 @@
+<section class="group">
+  <header class="group__header">
+    <h2>Group Members</h2>
+    <p>Click a member name to open the person view later.</p>
+  </header>
+
+  <ul class="group__member-list">
+    @for (member of groupMembers; track member.id) {
+      <li class="group__member-item">
+        <button
+          type="button"
+          class="group__member-button"
+          (click)="onMemberClick(member)">
+          {{ member.name }}
+        </button>
+      </li>
+    }
+  </ul>
+</section>
