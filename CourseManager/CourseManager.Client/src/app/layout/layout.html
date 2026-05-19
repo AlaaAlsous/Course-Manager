@@ -1,0 +1,21 @@
+<div class="app-root-layout">
+  <header class="top-nav">
+    <div class="top-nav__logo">Course Manager</div>
+    <nav class="top-nav__links">
+      <a routerLink="/courses">Courses</a>
+      <a routerLink="/groups">Groups</a>
+      <a routerLink="/participants">Participant</a>
+    </nav>
+  </header>
+
+  <section class="title-bar">
+    <h1>{{ title }}</h1>
+    <ng-content select="[title-actions]"></ng-content>
+  </section>
+
+  <main class="page-container">
+    <section class="page-sheet">
+      <ng-content></ng-content>
+    </section>
+  </main>
+</div>
