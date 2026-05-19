@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterLink],
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './layout.html',
   styleUrls: ['./layout.scss'],
 })
 export class Layout {
+  // Page components pass their title to render it in the layout header.
   @Input() title = '';
 }

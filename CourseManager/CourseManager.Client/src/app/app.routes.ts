@@ -1,8 +1,13 @@
 import { Routes } from '@angular/router';
-import { Groups } from './Groups/groups';
+import { AllCourses } from './all-courses/all-courses';
+import { Groups } from './groups/groups';
 
 export const routes: Routes = [
-   { path: 'groups', component: Groups, data: { title: 'Groups' } }
-
-
+  // Default landing page redirects to Courses.
+  { path: '', redirectTo: 'courses', pathMatch: 'full' },
+  // Dedicated page for the All Courses view.
+  { path: 'courses', component: AllCourses, data: { title: 'Courses' } },
+  { path: 'groups', component: Groups, data: { title: 'Groups' } },
+  // Fallback for unknown URLs.
+  { path: '**', redirectTo: '' },
 ];
