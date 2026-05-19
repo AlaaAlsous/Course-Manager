@@ -1,0 +1,49 @@
+<div class="page-container">
+
+  <div class="card" *ngFor="let person of persons">
+
+    <img
+      class="profile-image"
+      [src]="person.imageUrl"
+      [alt]="person.name"
+    />
+
+    <h2>{{ person.name }}</h2>
+
+    <div class="info">
+      <p>ID: {{ person.id }}</p>
+      <p>Email: {{ person.email }}</p>
+      <p>Phone: {{ person.phone }}</p>
+    </div>
+
+    <h3 class="section-title">Courses</h3>
+
+    <div class="course-list">
+
+      <div
+        class="course-tag"
+        *ngFor="let course of person.courses"
+      >
+        {{ course }}
+      </div>
+
+    </div>
+
+    <h3 class="section-title">Notes</h3>
+
+    <div
+      class="note"
+      *ngFor="let note of person.notes"
+    >
+
+      <p>{{ note.text }}</p>
+
+      <span class="note-date">
+        {{ note.createdAt }}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
