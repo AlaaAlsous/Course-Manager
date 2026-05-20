@@ -26,7 +26,7 @@
   background: var(--color-primary);
   color: white;
   border-radius: var(--radius-md);
-  border: 1px solid #e5e7eb;
+  border: 1px solid #334155;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -43,13 +43,8 @@
   transform: scale(0.97);
 }
 
-.home-actions svg {
-  width: 20px;
-  height: 20px;
-}
-
 .dashboard-card {
-  background: var(--color-surface);
+  background: var(--color-primary-bg);
   padding: var(--space-lg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-elevated);
@@ -122,10 +117,10 @@
 
 @media (max-width: 500px) {
   .home-actions {
-    flex-direction: column;
+    flex-wrap: wrap;
   }
-
   .home-actions button {
-    width: 100%;
+    font-size: small;
+    min-width: 120px;
   }
 }
