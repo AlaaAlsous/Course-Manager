@@ -6,6 +6,7 @@ import { CourseView } from './course-view/course-view';
 import { Home } from './home/home';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: Home, data: { title: 'Home' } },
   { path: 'participants', component: Persons, data: { title: 'Participants' } },
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
