@@ -1,0 +1,81 @@
+import { Component, input, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-content-module',
+  standalone: true,
+  imports: [],
+  templateUrl: './content-module.html',
+  styleUrl: './content-module.scss',
+})
+/**
+ * Collapsible content panel with Notes, Images, and Voice Recordings sections.
+ *
+ * @example
+ * ```html
+ * <app-content-module
+ *   [(noteText)]="myNote"
+ *   [imageItems]="['Image A', 'Image B']"
+ *   (imageItemClick)="onImageClick($event)"
+ * />
+ * ```
+ */
+export default class ContentModule {
+  /** Items shown as clickable links below the note textarea. */
+  readonly noteItems = input<string[]>(['Note 1', 'Note 2']);
+
+  /** Note textarea content. Supports two-way binding via `[(noteText)]`. */
+  readonly noteText = input<string>('');
+
+  /** Items shown as clickable links in the Images section. */
+  readonly imageItems = input<string[]>(['Image 1', 'Image 2', 'Image 3']);
+
+  /** Items shown as clickable links in the Voice Recordings section. */
+  readonly voiceItems = input<string[]>([
+    'Voice 1',
+    'Transcript 1',
+    'Voice 2',
+    'Transcript 2',
+    'Voice 3',
+  ]);
+
+  /** Emits the clicked item string when a note link is clicked. */
+  @Output() noteItemClick = new EventEmitter<string>();
+
+  /** Emits the textarea value on every keystroke. Pairs with `noteText` for `[(noteText)]`. */
+  @Output() noteTextChange = new EventEmitter<string>();
+
+  /** Emits the clicked item string when an image link is clicked. */
+  @Output() imageItemClick = new EventEmitter<string>();
+
+  /** Emits the clicked item string when a voice link is clicked. */
+  @Output() voiceItemClick = new EventEmitter<string>();
+
+  isNotesCollapsed = true;
+  isNoteFullscreen = false;
+
+  isImagesCollapsed = true;
+  isVRCollapsed = true;
+
+  toggleCollapse(sectionNumber: number) {
+    switch (sectionNumber) {
+      case 1:
+        this.isNotesCollapsed = !this.isNotesCollapsed;
+        break;
+      case 2:
+        this.isImagesCollapsed = !this.isImagesCollapsed;
+        break;
+      case 3:
+        this.isVRCollapsed = !this.isVRCollapsed;
+        break;
+    }
+  }
+
+  toggleNoteFullscreen() {
+    this.isNoteFullscreen = !this.isNoteFullscreen;
+  }
+
+  onNoteInput(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+    this.noteTextChange.emit(textarea.value);
+  }
+}
