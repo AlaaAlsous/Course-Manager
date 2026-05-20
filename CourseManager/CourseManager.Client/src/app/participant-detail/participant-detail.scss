@@ -1,0 +1,136 @@
+.detail-page {
+  padding: 1rem;
+}
+
+.hero-card {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  background: #1e293b;
+
+  border-radius: 16px;
+
+  padding: 1.5rem;
+
+  margin-bottom: 2rem;
+}
+
+.profile-image {
+  width: 160px;
+
+  height: 160px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  border: 4px solid #334155;
+}
+
+.hero-info {
+  text-align: center;
+
+  color: white;
+}
+
+.hero-info h1 {
+  font-size: 2rem;
+
+  margin-bottom: 0.5rem;
+}
+
+.hero-info p {
+  margin-bottom: 0.5rem;
+
+  color: #cbd5e1;
+}
+
+.section {
+  margin-top: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+
+  color: white;
+}
+
+.course-tags {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 0.5rem;
+}
+
+.course-tag {
+  background: #2563eb;
+
+  color: white;
+
+  padding: 0.5rem 1rem;
+
+  border-radius: 999px;
+
+  font-size: 0.9rem;
+}
+
+.note-card {
+  background: #1e293b;
+
+  padding: 1rem;
+
+  border-radius: 12px;
+
+  margin-bottom: 1rem;
+
+  color: white;
+}
+
+.note-card small {
+  color: #94a3b8;
+}
+
+.gallery {
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(140px, 1fr)
+  );
+
+  gap: 1rem;
+
+  margin-top: 1rem;
+}
+
+.gallery-image {
+  width: 100%;
+
+  height: 140px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+
+  border: 1px solid #334155;
+}
+
+@media (min-width: 768px) {
+
+  .hero-card {
+    flex-direction: row;
+
+    align-items: center;
+  }
+
+  .hero-info {
+    text-align: left;
+  }
+
+}

@@ -1,6 +1,10 @@
 <app-layout [title]="title()">
   <div class="page-container">
-    <div class="card" *ngFor="let person of persons">
+    <div
+  class="card"
+  *ngFor="let person of persons"
+  [routerLink]="['/participants', person.id]"
+>
       <img class="profile-image" [src]="person.imageUrl" [alt]="person.name" />
 
       <h2>{{ person.name }}</h2>

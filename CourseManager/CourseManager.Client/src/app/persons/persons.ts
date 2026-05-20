@@ -2,10 +2,11 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Person } from './person.model';
 import { Layout } from '../layout/layout';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-persons',
   standalone: true,
-  imports: [CommonModule, Layout],
+  imports: [CommonModule, Layout, RouterModule],
   templateUrl: './persons.html',
   styleUrls: ['./persons.scss'],
 })
