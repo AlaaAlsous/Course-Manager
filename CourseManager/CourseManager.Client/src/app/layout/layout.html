@@ -1,7 +1,7 @@
 <header class="top-nav">
   <div class="top-nav__logo">Course Manager</div>
 
-  <button class="hamburger" (click)="toggleMenu()">
+  <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
     <span></span>
     <span></span>
     <span></span>
