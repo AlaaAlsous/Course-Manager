@@ -9,6 +9,5 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./layout.scss'],
 })
 export class Layout {
-  // Page components pass their title to render it in the layout header.
   @Input() title = '';
 }

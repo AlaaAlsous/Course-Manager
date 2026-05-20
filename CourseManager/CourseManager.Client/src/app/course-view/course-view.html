@@ -1,9 +1,11 @@
-<h1>{{name}}</h1>
-<h2>Grupper</h2>
-<ol class="group-list">
-    @for(group of groups; track group) {
-        <li>{{group}}</li>
+<app-layout [title]="title()">
+  <h1>{{ name }}</h1>
+  <h2>Grupper</h2>
+  <ol class="group-list">
+    @for (group of groups; track group) {
+      <li>{{ group }}</li>
     } @empty {
-        <span>Det finns inga grupper</span>
+      <span>Det finns inga grupper</span>
     }
-</ol>
+  </ol>
+</app-layout>

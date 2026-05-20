@@ -1,0 +1,72 @@
+<app-layout [title]="title()">
+  <div class="home-dashboard">
+    <section class="dashboard-card">
+      <h2>Latest Groups</h2>
+
+      <ul>
+        <li *ngFor="let g of latestGroups" class="clickable" (click)="goToGroup(g.id)">
+          <div class="item-row">
+            <span>{{ g.name }}</span>
+            <small>{{ getRelativeDate(g.created) }}</small>
+          </div>
+
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </li>
+      </ul>
+
+      <a routerLink="/groups" class="view-all">View all groups</a>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>Latest Courses</h2>
+
+      <ul>
+        <li *ngFor="let c of latestCourses" class="clickable" (click)="goToCourse(c.id)">
+          <div class="item-row">
+            <span>{{ c.name }}</span>
+            <small>{{ getRelativeDate(c.created) }}</small>
+          </div>
+
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </li>
+      </ul>
+
+      <a routerLink="/all-courses" class="view-all">View all courses</a>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>Latest People</h2>
+
+      <ul>
+        <li *ngFor="let p of latestPeople" class="clickable" (click)="goToPerson(p.id)">
+          <div class="item-row">
+            <span>{{ p.name }}</span>
+            <small>{{ getRelativeDate(p.created) }}</small>
+          </div>
+
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </li>
+      </ul>
+
+      <a routerLink="/participants" class="view-all">View all people</a>
+    </section>
+  </div>
+</app-layout>
