@@ -7,11 +7,13 @@ import { GroupView } from './group-view/group-view';
 import { CourseView } from './course-view/course-view';
 import { ParticipantDetail } from './participant-detail/participant-detail';
 import { CreateGroup } from './create-group/create-group';
+import { PersonCreator } from './person-creator/person-creator';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: Home, data: { title: 'Home' } },
   { path: 'participants', component: Persons, data: { title: 'Participants' } },
+  { path: 'participants/create', component: PersonCreator, data: { title: 'Create Participant' } },
   { path: 'participant', component: ParticipantDetail, data: { title: 'Participant Detail' } },
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
   { path: 'groups', component: Groups, data: { title: 'Groups' } },
