@@ -1,14 +1,8 @@
 <app-layout [title]="title()">
-   <section title-actions class="groups-search">
-     
+  <section title-actions class="title-search">
+    <input type="search" placeholder="Search groups..." (input)="onSearchChange($event)" />
+  </section>
 
-      <input
-        id="groupSearch"
-        type="search"
-        placeholder="Search by group name or member name..."
-        (input)="onSearchChange($event)"
-      />
-    </section>
   <section class="groups-page">
     <header class="groups-page__header">
       <div>
@@ -16,30 +10,45 @@
         <p>Search, select and manage course groups.</p>
       </div>
 
-      <span class="groups-page__counter">
-        {{ groups().length }} groups
-      </span>
+      <span class="groups-page__counter"> {{ groups().length }} groups </span>
     </header>
 
     <section class="groups-actions">
-      <button type="button" class="groups-actions__button groups-actions__button--primary" (click)="onCreateClick()">
+      <button
+        type="button"
+        class="groups-actions__button groups-actions__button--primary"
+        (click)="onCreateClick()"
+      >
         Create
       </button>
 
-      <button type="button" class="groups-actions__button" [disabled]="!selectedGroup()" (click)="onShowClick()">
+      <button
+        type="button"
+        class="groups-actions__button"
+        [disabled]="!selectedGroup()"
+        (click)="onShowClick()"
+      >
         Show
       </button>
 
-      <button type="button" class="groups-actions__button" [disabled]="!selectedGroup()" (click)="onEditClick()">
+      <button
+        type="button"
+        class="groups-actions__button"
+        [disabled]="!selectedGroup()"
+        (click)="onEditClick()"
+      >
         Edit
       </button>
 
-      <button type="button" class="groups-actions__button groups-actions__button--danger" [disabled]="!selectedGroup()" (click)="onDeleteClick()">
+      <button
+        type="button"
+        class="groups-actions__button groups-actions__button--danger"
+        [disabled]="!selectedGroup()"
+        (click)="onDeleteClick()"
+      >
         Delete
       </button>
     </section>
-
-    
 
     @if (statusMessage()) {
       <p class="groups-page__status">

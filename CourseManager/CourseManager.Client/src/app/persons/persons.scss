@@ -2,23 +2,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-lg);
-
   padding: var(--space-lg);
 }
 
 .card {
   width: 320px;
-
   background: var(--color-surface);
-
   border: 1px solid var(--color-border);
-
   border-radius: var(--radius-lg);
-
   padding: var(--space-lg);
-
   box-shadow: var(--shadow-elevated);
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -26,26 +19,20 @@
 
 .card:hover {
   transform: translateY(-4px);
-
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 }
 
 .profile-image {
   width: 100px;
   height: 100px;
-
   border-radius: 50%;
-
   object-fit: cover;
-
   margin-bottom: var(--space-md);
-
   border: 3px solid var(--color-border);
 }
 
 .card h2 {
   font-size: var(--font-size-lg);
-
   margin-bottom: var(--space-sm);
 }
 
@@ -55,16 +42,13 @@
 
 .info p {
   color: var(--color-text-light);
-
   margin-bottom: var(--space-xs);
-
   font-size: var(--font-size-sm);
 }
 
 .section-title {
   margin-top: var(--space-md);
   margin-bottom: var(--space-sm);
-
   font-size: var(--font-size-md);
 }
 
@@ -72,78 +56,80 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-
   margin-bottom: var(--space-md);
 }
 
 .course-tag {
   background: var(--color-primary);
-
   color: white;
-
-  padding:
-    var(--space-xs)
-    var(--space-sm);
-
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
-
   font-size: var(--font-size-sm);
-}
-
-.person-search {
-  display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-
-  position: absolute;
-  left: 43%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
-}
-
-.person-search label {
-  font-weight: 700;
-}
-
-.person-search input {
-  width: 150%;
-
-  border: 1px solid #334155;
-  border-radius: 0.65rem;
-
-  background: #0f172a;
-  color: #f8fafc;
-
-  padding: 0.85rem 1rem;
-
-  outline: none;
-}
-
-.person-search input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 .note {
   background: var(--color-bg);
-
   border: 1px solid var(--color-border);
-
   border-radius: var(--radius-md);
-
   padding: var(--space-sm);
-
   margin-bottom: var(--space-sm);
 }
 
 .note-date {
   display: block;
-
   margin-top: var(--space-xs);
-
   color: var(--color-text-light);
-
   font-size: 0.75rem;
 }
 
+.title-search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.title-search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.title-search input {
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  width: min(100%, 260px);
+  transition: 0.2s;
+}
+
+.title-search input::placeholder {
+  color: var(--color-text-light);
+}
+
+.title-search input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .title-search input {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .title-search input::placeholder {
+    color: var(--color-text-light);
+  }
+}
+
+@media (max-width: 600px) {
+  .title-search input {
+    padding: 0.3rem 0.5rem;
+    width: min(100%, 150% - 2.5rem);
+  }
+}

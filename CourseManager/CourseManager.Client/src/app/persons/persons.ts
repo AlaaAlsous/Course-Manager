@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Person } from './person.model';
 import { Layout } from '../layout/layout';
@@ -11,7 +11,6 @@ import { RouterModule } from '@angular/router';
   templateUrl: './persons.html',
   styleUrls: ['./persons.scss'],
 })
-
 export class Persons {
   title = signal('Participants');
   searchTerm = signal('');
@@ -20,6 +19,16 @@ export class Persons {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
   }
+
+  filteredPersons = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+
+    if (!term) return this.persons;
+
+    return this.persons.filter(
+      (p) => p.name.toLowerCase().includes(term) || p.email.toLowerCase().includes(term),
+    );
+  });
 
   persons: Person[] = [
     {

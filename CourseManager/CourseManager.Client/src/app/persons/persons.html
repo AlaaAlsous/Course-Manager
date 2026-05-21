@@ -1,21 +1,15 @@
 <app-layout [title]="title()">
-   <section title-actions class="person-search">
-      
+  <section title-actions class="title-search">
+    <input type="search" placeholder="Search participants..." (input)="onSearchChange($event)" />
+  </section>
 
-      <input
-        id="personSearch"
-        type="search"
-        placeholder="Search by person name or email..."
-        (input)="onSearchChange($event)"
-      />
-    </section>
   <div class="page-container">
     <div
-  class="card"
-  *ngFor="let person of persons"
-  [routerLink]="['/participant']"
-  [queryParams]="{ id: person.id }"
->
+      class="card"
+      *ngFor="let person of filteredPersons()"
+      [routerLink]="['/participant']"
+      [queryParams]="{ id: person.id }"
+    >
       <img class="profile-image" [src]="person.imageUrl" [alt]="person.name" />
 
       <h2>{{ person.name }}</h2>

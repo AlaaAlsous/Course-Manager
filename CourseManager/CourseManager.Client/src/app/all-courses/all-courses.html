@@ -1,21 +1,15 @@
 <app-layout [title]="title()">
-  <section title-actions class="all-courses-search">
-      
+  <section title-actions class="title-search">
+    <input type="search" placeholder="Search courses..." (input)="onSearchChange($event)" />
+  </section>
 
-      <input
-        id="allCoursesSearch"
-        type="search"
-        placeholder="Search by group name or member name..."
-        (input)="onSearchChange($event)"
-      />
-    </section>
   <section class="courses-overview" aria-label="All courses overview">
     <h2 class="courses-overview__heading">Tillgängliga kurser</h2>
 
     <div class="course-list">
-      <article class="course-card">Teknisk bananvetenskap</article>
-      <article class="course-card">Banankonflikter</article>
-      <article class="course-card">Historiska bananer</article>
+      <article class="course-card" *ngFor="let c of filteredCourses">
+        {{ c.name }}
+      </article>
     </div>
   </section>
 </app-layout>
