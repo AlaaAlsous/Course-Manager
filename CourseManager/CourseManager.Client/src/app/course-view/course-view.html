@@ -1,11 +1,33 @@
 <app-layout [title]="title()">
-  <h1>{{ name }}</h1>
-  <h2>Grupper</h2>
-  <ol class="group-list">
-    @for (group of groups; track group) {
-      <li>{{ group }}</li>
+  <div class="view-selector">
+    <button (click)="switchView('groups')" [class.selected]="currentview() === 'groups'">Groups</button>
+    <button (click)="switchView('participants')" [class.selected]="currentview() === 'participants'">Participants</button>
+  </div>
+
+<div *ngIf="currentview() === 'participants'">
+  <h2>Participants</h2>
+  <div class="group-list">
+    @for (person of people; track person) {
+      <button class="list-button">  
+        <h3>{{ person }}</h3>
+      </button>
     } @empty {
-      <span>Det finns inga grupper</span>
+      <span>No participants available</span>
     }
-  </ol>
+  </div>
+</div>
+
+<div *ngIf="currentview() === 'groups'">
+  <h2>Groups</h2>
+  <div class="group-list">
+    @for (group of groups; track group) {
+      <button class="list-button">  
+        <h3>{{ group }}</h3>
+        <p>2 members</p>
+      </button>
+    } @empty {
+      <span>No groups available</span>
+    }
+  </div>
+</div>
 </app-layout>
