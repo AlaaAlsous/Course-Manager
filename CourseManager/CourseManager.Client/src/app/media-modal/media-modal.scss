@@ -1,0 +1,141 @@
+.media-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overscroll-behavior: contain;
+  padding: var(--space-sm);
+}
+
+.media-modal__close-button-container
+{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+}
+
+.media-modal__close-button {
+  margin-left:auto;
+  z-index: 1;
+}
+
+.media-modal__content {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 8px;
+  max-width: 95vw;
+  max-height: 90vh;
+  width: 100%;
+  overflow: auto;
+  padding: var(--space-lg);
+  position: relative;
+}
+
+
+.media-modal__note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-height: 50vh;
+}
+
+.media-modal__note-textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 250px;
+  padding: var(--space-md);
+  resize: vertical;
+  font-size: inherit;
+  line-height: 1.5;
+}
+
+
+.media-modal__image {
+  max-width: 85vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+
+.media-modal__voice {
+  text-align: center;
+  padding: var(--space-lg) 0;
+
+  audio {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  p {
+    margin-bottom: var(--space-sm);
+  }
+}
+
+
+.media-modal__actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+
+  button {
+    min-width: 80px;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* larger on desktop */
+
+@media (min-width: 768px) {
+  .media-modal__content {
+    max-width: 85vw;
+  }
+
+  .media-modal__note {
+    min-width: 500px;
+  }
+
+  .media-modal__note-textarea {
+    min-height: 350px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .media-modal__content {
+    max-width: 75vw;
+  }
+
+  .media-modal__note {
+    min-width: 650px;
+  }
+
+  .media-modal__note-textarea {
+    min-height: 450px;
+  }
+}
+
+/* tighter on small screens */
+
+@media (max-width: 480px) {
+  .media-modal {
+    padding: 0;
+  }
+
+  .media-modal__content {
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    padding: var(--space-md);
+  }
+}

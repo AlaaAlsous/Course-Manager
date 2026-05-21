@@ -8,30 +8,13 @@
 
     @if (!isNotesCollapsed) {
       <div class="content-module__collapsible-content">
-        <div class="container">
-          <div class="container">
-            <button
-              class="content-module__fullscreen-button"
-              [class.fullscreen]="isNoteFullscreen"
-              id="fullscreen-button"
-              (click)="toggleNoteFullscreen()"
-            >
-              <span> {{ isNoteFullscreen ? '🗕' : '⛶' }}</span>
-            </button>
-          </div>
-          <textarea
-            [class.fullscreen]="isNoteFullscreen"
-            [value]="noteText()"
-            (input)="onNoteInput($event)"
-          ></textarea>
-          <ul>
-            @for (item of noteItems(); track item) {
-              <li>
-                <a (click)="noteItemClick.emit(item)">{{ item }}</a>
-              </li>
-            }
-          </ul>
-        </div>
+        <ul>
+          @for (item of noteItems(); track item) {
+            <li>
+              <a (click)="onNoteItemClick(item)">{{ item }}</a>
+            </li>
+          }
+        </ul>
       </div>
     }
   </div>
@@ -47,7 +30,7 @@
         <ul>
           @for (item of imageItems(); track item) {
             <li>
-              <a (click)="imageItemClick.emit(item)">{{ item }}</a>
+              <a (click)="onImageItemClick(item)">{{ item }}</a>
             </li>
           }
         </ul>
@@ -66,11 +49,19 @@
         <ul>
           @for (item of voiceItems(); track item) {
             <li>
-              <a (click)="voiceItemClick.emit(item)">{{ item }}</a>
+              <a (click)="onVoiceItemClick(item)">{{ item }}</a>
             </li>
           }
         </ul>
       </div>
     }
   </div>
+
+  <app-media-modal
+    [isOpen]="isModalOpen"
+    [mediaType]="modalMediaType"
+    [content]="modalContent"
+    (close)="onModalClose()"
+    (save)="onModalSave($event)"
+  />
 </div>

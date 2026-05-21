@@ -1,0 +1,28 @@
+@if (isOpen) {
+  <div class="media-modal" (click.self)="onClose()">
+    <div class="media-modal__content">
+      <div class="media-modal__close-button-container">
+        <button class="media-modal__close-button" (click)="onClose()">X</button>
+      </div>
+      @switch (mediaType) {
+        @case (MediaType.Note) {
+          <div class="media-modal__note">
+            <textarea #noteTextarea class="media-modal__note-textarea" [value]="content"></textarea>
+            <div class="media-modal__actions">
+              <button (click)="onSave(noteTextarea.value)">Save</button>
+            </div>
+          </div>
+        }
+        @case (MediaType.Image) {
+          <img [src]="content" alt="Media image" class="media-modal__image" />
+        }
+        @case (MediaType.Voice) {
+          <div class="media-modal__voice">
+            <p>Voice recording: {{ content }}</p>
+            <audio controls [src]="content"></audio>
+          </div>
+        }
+      }
+    </div>
+  </div>
+}

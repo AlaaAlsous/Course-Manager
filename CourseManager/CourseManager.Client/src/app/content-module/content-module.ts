@@ -1,14 +1,18 @@
 import { Component, input, Output, EventEmitter } from '@angular/core';
+import MediaModal from '../media-modal/media-modal';
+import { MediaType } from '../media-modal/media-type';
 
 @Component({
   selector: 'app-content-module',
   standalone: true,
-  imports: [],
+  imports: [MediaModal],
   templateUrl: './content-module.html',
   styleUrl: './content-module.scss',
 })
 /**
  * Collapsible content panel with Notes, Images, and Voice Recordings sections.
+ *
+ * Clicking a note/image/voice item opens the MediaModal with that item's content.
  *
  * @example
  * ```html
@@ -30,13 +34,7 @@ export default class ContentModule {
   readonly imageItems = input<string[]>(['Image 1', 'Image 2', 'Image 3']);
 
   /** Items shown as clickable links in the Voice Recordings section. */
-  readonly voiceItems = input<string[]>([
-    'Voice 1',
-    'Transcript 1',
-    'Voice 2',
-    'Transcript 2',
-    'Voice 3',
-  ]);
+  readonly voiceItems = input<string[]>(['Voice 1', 'Voice 2', 'Voice 3']);
 
   /** Emits the clicked item string when a note link is clicked. */
   @Output() noteItemClick = new EventEmitter<string>();
@@ -55,6 +53,13 @@ export default class ContentModule {
 
   isImagesCollapsed = true;
   isVRCollapsed = true;
+
+  // Internal modal state
+  readonly MediaType = MediaType;
+
+  isModalOpen = false;
+  modalMediaType: MediaType = MediaType.Note;
+  modalContent = '';
 
   toggleCollapse(sectionNumber: number) {
     switch (sectionNumber) {
@@ -77,5 +82,38 @@ export default class ContentModule {
   onNoteInput(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     this.noteTextChange.emit(textarea.value);
+  }
+
+  // Modal openers
+
+  onNoteItemClick(item: string) {
+    this.noteItemClick.emit(item);
+    this.modalMediaType = MediaType.Note;
+    this.modalContent = item;
+    this.isModalOpen = true;
+  }
+
+  onImageItemClick(item: string) {
+    this.imageItemClick.emit(item);
+    this.modalMediaType = MediaType.Image;
+    this.modalContent = item;
+    this.isModalOpen = true;
+  }
+
+  onVoiceItemClick(item: string) {
+    this.voiceItemClick.emit(item);
+    this.modalMediaType = MediaType.Voice;
+    this.modalContent = item;
+    this.isModalOpen = true;
+  }
+
+  onModalClose() {
+    this.isModalOpen = false;
+  }
+
+  onModalSave(text: string) {
+    // For now, just close. The parent can also listen to noteTextChange.
+    this.modalContent = text;
+    this.isModalOpen = false;
   }
 }
