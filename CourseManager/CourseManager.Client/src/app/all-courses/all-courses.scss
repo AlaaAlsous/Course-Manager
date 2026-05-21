@@ -1,39 +1,40 @@
 .courses-overview {
-	width: min(100%, 52rem);
-	margin-inline: auto;
+  width: min(100%, 52rem);
+  margin-inline: auto;
 }
 
 .courses-overview__heading {
-	margin: 0 0 1rem;
-	font-size: clamp(1.25rem, 1.8vw + 0.9rem, 1.8rem);
+  margin: 0 0 1rem;
+  font-size: clamp(1.25rem, 1.8vw + 0.9rem, 1.8rem);
 }
 
 .course-list {
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .course-card {
-	border: 1px solid #d7dce2;
-	border-radius: 0.5rem;
-	background-color: #ffffff;
-	padding: 1rem;
-	min-height: 4.25rem;
-	display: flex;
-	align-items: center;
-	font-weight: 600;
-	line-height: 1.35;
-	box-shadow: 0 2px 6px rgba(17, 24, 39, 0.06);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  padding: 1rem;
+  min-height: 4.25rem;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  line-height: 1.35;
+  box-shadow: var(--shadow-elevated);
 }
 
 @media (max-width: 600px) {
-	.courses-overview__heading {
-		margin-bottom: 0.75rem;
-	}
+  .courses-overview__heading {
+    margin-bottom: 0.75rem;
+  }
 
-	.course-card {
-		padding: 0.875rem;
-		min-height: 3.75rem;
-	}
+  .course-card {
+    padding: 0.875rem;
+    min-height: 3.75rem;
+  }
 }
