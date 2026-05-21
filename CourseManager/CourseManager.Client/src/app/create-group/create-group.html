@@ -26,11 +26,37 @@
     </section>
 
     <section class="card">
+      <h3>Add Existing Course</h3>
+
+      <label>
+        Select Course
+        <select [(ngModel)]="selectedCourseId">
+          <option [ngValue]="null">Choose...</option>
+          <option *ngFor="let c of allCourses" [ngValue]="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+      </label>
+
+      <button (click)="addExistingCourse()">Add Course</button>
+    </section>
+
+    <section class="card">
       <h3>People in this Group</h3>
 
       <ul>
         <li *ngFor="let p of groupPeople">
           {{ p.name }}
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Courses in this Group</h3>
+
+      <ul>
+        <li *ngFor="let c of groupCourses">
+          {{ c.name }}
         </li>
       </ul>
     </section>

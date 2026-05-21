@@ -9,6 +9,11 @@ interface Person {
   name: string;
 }
 
+interface Course {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-create-group',
   imports: [FormsModule, Layout, NgFor],
@@ -28,7 +33,16 @@ export class CreateGroup {
     { id: 3, name: 'Charlie' },
   ];
 
+  groupCourses: Course[] = [];
+
+  allCourses: Course[] = [
+    { id: 1, name: 'Course A' },
+    { id: 2, name: 'Course B' },
+    { id: 3, name: 'Course C' },
+  ];
+
   selectedPersonId: number | null = null;
+  selectedCourseId: number | null = null;
 
   constructor(private router: Router) {}
 
@@ -43,6 +57,19 @@ export class CreateGroup {
     this.allPeople = this.allPeople.filter((p) => p.id !== this.selectedPersonId);
 
     this.selectedPersonId = null;
+  }
+
+  addExistingCourse() {
+    if (!this.selectedCourseId) return;
+
+    const course = this.allCourses.find((c) => c.id === this.selectedCourseId);
+    if (!course) return;
+
+    this.groupCourses.push(course);
+
+    this.allCourses = this.allCourses.filter((c) => c.id !== this.selectedCourseId);
+
+    this.selectedCourseId = null;
   }
 
   goToCreatePerson() {
