@@ -1,0 +1,34 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div
+    class="modal-card"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-course-title"
+  >
+    <h2 id="create-course-title">Create course</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <label for="course-name">Name</label>
+      <input id="course-name" name="name" type="text" [(ngModel)]="name" required />
+
+      <label for="course-description">Description</label>
+      <textarea
+        id="course-description"
+        name="description"
+        rows="4"
+        [(ngModel)]="description"
+        required
+      ></textarea>
+
+      @if (submitted && !isFormValid) {
+        <p class="validation">Both fields are required.</p>
+      }
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="onClose()">Cancel</button>
+        <button type="submit" class="primary">Create</button>
+      </div>
+    </form>
+  </div>
+</div>

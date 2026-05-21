@@ -1,12 +1,22 @@
 import { Component, signal } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
+import {
+  CreateCourseModal,
+  CreateCoursePayload,
+} from './components/create-course-modal/create-course-modal';
+
+interface LatestCourse {
+  id: number;
+  name: string;
+  created: string;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, RouterLink, Layout],
+  imports: [NgFor, NgIf, RouterLink, Layout, CreateCourseModal],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
@@ -18,10 +28,13 @@ export class Home {
     { id: 3, name: 'Group C', created: '2026-05-08' },
   ];
 
-  latestCourses = [
+  latestCourses: LatestCourse[] = [
     { id: 1, name: 'Course 1', created: '2026-05-11' },
     { id: 2, name: 'Course 2', created: '2026-05-07' },
   ];
+
+  // Controls visibility of the create-course modal from the Home page button.
+  showCreateCourseModal = false;
 
   latestPeople = [
     { id: 1, name: 'Alice', created: '2026-05-12' },
@@ -54,13 +67,27 @@ export class Home {
   goToPerson(id: number) {
     this.router.navigate(['/participants', id]);
   }
-  
+
   createGroup() {
     this.router.navigate(['/groups/create']);
   }
 
   createCourse() {
-    this.router.navigate(['/courses/create']);
+    // Opens the modal instead of navigating to a separate page.
+    this.showCreateCourseModal = true;
+  }
+
+  onCreateCourseModalClose() {
+    this.showCreateCourseModal = false;
+  }
+
+  onCreateCourse(course: CreateCoursePayload) {
+    // Local UI update: prepend the newly created course to Latest Courses.
+    const nextId = Math.max(0, ...this.latestCourses.map((c) => c.id)) + 1;
+    const created = new Date().toISOString().split('T')[0] ?? '';
+
+    this.latestCourses = [{ id: nextId, name: course.name, created }, ...this.latestCourses];
+    this.showCreateCourseModal = false;
   }
 
   createPerson() {

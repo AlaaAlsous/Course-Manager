@@ -77,4 +77,10 @@
       <a routerLink="/participants" class="view-all">View all people</a>
     </section>
   </div>
+
+  <app-create-course-modal
+    *ngIf="showCreateCourseModal"
+    (close)="onCreateCourseModalClose()"
+    (createCourse)="onCreateCourse($event)"
+  ></app-create-course-modal>
 </app-layout>
