@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { Group, GroupsService } from './group-panel/groups.service';
 
@@ -12,6 +13,7 @@ export class Groups {
   title = signal('Groups');
 
   private readonly groupsService = inject(GroupsService);
+  private readonly router = inject(Router);
 
   groups = this.groupsService.groups;
 
@@ -59,8 +61,8 @@ export class Groups {
   }
 
   onCreateClick(): void {
-    this.statusMessage.set('Create group will be connected to a create page later.');
-  }
+  this.router.navigate(['/create-group']);
+}
 
   onShowClick(): void {
     const group = this.selectedGroup();

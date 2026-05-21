@@ -72,9 +72,9 @@ export class CreateGroup {
     this.selectedCourseId = null;
   }
 
-  goToCreatePerson() {
-    this.router.navigate(['/create-person']);
-  }
+goToCreatePerson() {
+  this.router.navigate(['/participants/create']);
+}
 
   createGroup() {
     if (!this.name.trim()) return;
