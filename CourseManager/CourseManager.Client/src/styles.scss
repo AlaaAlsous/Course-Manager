@@ -29,6 +29,23 @@
   --font-size-md: clamp(1rem, 1.5vw, 1.1rem);
   --font-size-lg: clamp(1.2rem, 2vw, 1.6rem);
   --font-size-xl: clamp(1.6rem, 3vw, 2.2rem);
+
+  --scrollbar-size: 11px;
+  --gh-scrollbar-track: var(--color-surface);
+  --gh-scrollbar-thumb: var(--color-border);
+  --gh-scrollbar-thumb-hover: color-mix(in srgb, var(--color-border) 70%, var(--color-primary) 30%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gh-scrollbar-track: var(--color-surface);
+    --gh-scrollbar-thumb: var(--color-border);
+    --gh-scrollbar-thumb-hover: color-mix(
+      in srgb,
+      var(--color-border) 60%,
+      var(--color-primary) 40%
+    );
+  }
 }
 
 * {
@@ -48,6 +65,36 @@ body {
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
+  scrollbar-gutter: stable;
+}
+
+@mixin custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gh-scrollbar-thumb) var(--gh-scrollbar-track);
+
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--gh-scrollbar-track);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--gh-scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid var(--gh-scrollbar-track);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--gh-scrollbar-thumb-hover);
+  }
+}
+
+html,
+body {
+  @include custom-scrollbar;
 }
 
 a {
