@@ -75,7 +75,7 @@ export class Home {
   }
 
   createGroup() {
-    this.router.navigate(['/groups/create']);
+    this.router.navigate(['/create-group']);
   }
 
   createCourse() {
