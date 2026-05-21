@@ -1,4 +1,12 @@
 <app-layout [title]="title()">
+  <div class="home-actions">
+    <button (click)="createGroup()">Create Group</button>
+
+    <button (click)="createCourse()">Create Course</button>
+
+    <button (click)="createPerson()">Create Participant</button>
+  </div>
+
   <div class="home-dashboard">
     <section class="dashboard-card">
       <h2>Latest Groups</h2>

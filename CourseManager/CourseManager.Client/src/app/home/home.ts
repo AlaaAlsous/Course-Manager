@@ -54,4 +54,16 @@ export class Home {
   goToPerson(id: number) {
     this.router.navigate(['/participants', id]);
   }
+  
+  createGroup() {
+    this.router.navigate(['/groups/create']);
+  }
+
+  createCourse() {
+    this.router.navigate(['/courses/create']);
+  }
+
+  createPerson() {
+    this.router.navigate(['/participants/create']);
+  }
 }

@@ -7,6 +7,7 @@ import { Home } from './home/home';
 import { ParticipantDetail } from './participant-detail/participant-detail';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: Home, data: { title: 'Home' } },
   { path: 'participants', component: Persons, data: { title: 'Participants' } },
   { path: 'participants/:id', component: ParticipantDetail, data: { title: 'Participant Detail' } },
