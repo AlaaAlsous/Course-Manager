@@ -3,7 +3,8 @@
     <div
   class="card"
   *ngFor="let person of persons"
-  [routerLink]="['/participants', person.id]"
+  [routerLink]="['/participant']"
+  [queryParams]="{ id: person.id }"
 >
       <img class="profile-image" [src]="person.imageUrl" [alt]="person.name" />
 

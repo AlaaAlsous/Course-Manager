@@ -82,7 +82,7 @@ gallery: [
   ngOnInit(): void {
 
     const id = Number(
-      this.route.snapshot.paramMap.get('id')
+      this.route.snapshot.queryParamMap.get('id')
     );
 
     this.selectedPerson = this.persons.find(

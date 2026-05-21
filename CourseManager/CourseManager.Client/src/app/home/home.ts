@@ -57,15 +57,21 @@ export class Home {
   }
 
   goToGroup(id: number) {
-    this.router.navigate(['/groups', id]);
+    this.router.navigate(['/group'], {
+      queryParams: {id: id},
+    });
   }
 
   goToCourse(id: number) {
-    this.router.navigate(['/all-courses', id]);
+    this.router.navigate(['/course'], {
+      queryParams: {id: id},
+    });
   }
 
   goToPerson(id: number) {
-    this.router.navigate(['/participants', id]);
+    this.router.navigate(['/participant'], {
+      queryParams: {id: id},
+    });
   }
 
   createGroup() {
