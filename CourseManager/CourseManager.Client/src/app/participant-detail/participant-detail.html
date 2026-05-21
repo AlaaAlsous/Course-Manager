@@ -1,79 +1,31 @@
 <app-layout [title]="title()">
-<div class="detail-page">
+  <div class="detail-page">
+    <div class="hero-card">
+      <img class="profile-image" [src]="selectedPerson?.imageUrl" [alt]="selectedPerson?.name" />
 
-  <div class="hero-card">
+      <div class="hero-info">
+        <h1>{{ selectedPerson?.name }}</h1>
 
-    <img
-      class="profile-image"
-      [src]="selectedPerson?.imageUrl"
-      [alt]="selectedPerson?.name"
-    />
+        <p>{{ selectedPerson?.email }}</p>
 
-    <div class="hero-info">
+        <p>{{ selectedPerson?.phone }}</p>
 
-      <h1>{{ selectedPerson?.name }}</h1>
+        <p>{{ selectedPerson?.address }}</p>
 
-      <p>{{ selectedPerson?.email }}</p>
-
-      <p>{{ selectedPerson?.phone }}</p>
-
-      <p>{{ selectedPerson?.address }}</p>
-
-      <p>ID: {{ selectedPerson?.id }}</p>
-
+        <p>ID: {{ selectedPerson?.id }}</p>
+      </div>
     </div>
 
-  </div>
+    <div class="section">
+      <h2>Courses</h2>
 
-  <div class="section">
-
-  <h2>Courses</h2>
-
-  <div
-    class="note-card"
-    *ngFor="let course of selectedPerson?.courses"
-  >
-
-    <p>{{ course }}</p>
-
-  </div>
-
-
-
-  </div>
-
-  <div class="section">
-
-    <h2>Notes</h2>
-
-    <div
-      class="note-card"
-      *ngFor="let note of selectedPerson?.notes"
-    >
-
-      <p>{{ note.text }}</p>
-
-      <small>{{ note.createdAt }}</small>
-
+      <div class="note-card" *ngFor="let course of selectedPerson?.courses">
+        <p>{{ course }}</p>
+      </div>
     </div>
 
+    <div class="section">
+      <app-content-module></app-content-module>
+    </div>
   </div>
-
-</div>
-<div class="section">
-
-  <h2>Gallery</h2>
-
-  <div class="gallery">
-
-    <img
-      class="gallery-image"
-      *ngFor="let image of selectedPerson?.gallery"
-      [src]="image"
-      alt="Participant image"
-    />
-
-  </div>
-
-</div>
 </app-layout>
