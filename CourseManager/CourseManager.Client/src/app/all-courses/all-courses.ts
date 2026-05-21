@@ -11,4 +11,12 @@ import { Layout } from '../layout/layout';
 export class AllCourses {
   // Used by the shared layout header for the current page title.
   title = signal('All Courses');
+
+  searchTerm = signal('');
+
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    this.searchTerm.set(input.value);
+  }
 }

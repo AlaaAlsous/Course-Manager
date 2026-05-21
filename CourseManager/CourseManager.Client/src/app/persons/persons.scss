@@ -90,6 +90,41 @@
   font-size: var(--font-size-sm);
 }
 
+.person-search {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  position: absolute;
+  left: 43%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+}
+
+.person-search label {
+  font-weight: 700;
+}
+
+.person-search input {
+  width: 150%;
+
+  border: 1px solid #334155;
+  border-radius: 0.65rem;
+
+  background: #0f172a;
+  color: #f8fafc;
+
+  padding: 0.85rem 1rem;
+
+  outline: none;
+}
+
+.person-search input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
 .note {
   background: var(--color-bg);
 

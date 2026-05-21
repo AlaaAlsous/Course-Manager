@@ -27,6 +27,37 @@
   line-height: 1.35;
   box-shadow: var(--shadow-elevated);
 }
+.all-courses-search {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  position: absolute;
+  left: 43%;
+  top: 50%;
+}
+
+.all-courses-search label {
+  font-weight: 700;
+}
+
+.all-courses-search input {
+  width: 150%;
+  border: 1px solid #334155;
+  border-radius: 0.65rem;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.85rem 1rem;
+  outline: none;
+}
+
+.all-courses-search input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
 
 @media (max-width: 600px) {
   .courses-overview__heading {

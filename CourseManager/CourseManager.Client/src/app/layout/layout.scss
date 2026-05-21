@@ -73,10 +73,41 @@
 .title-bar {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  padding: 0.5rem;
+  padding: 0.5rem 1.5rem;
+
   display: flex;
-  justify-content: center;
   align-items: center;
+
+  position: relative;
+}
+
+::ng-deep .groups-search {
+  position: absolute;
+  left: 45%;
+  top: 23%;
+
+  transform: translate(-50%, -50%);
+
+  width: 300px;
+}
+
+::ng-deep .person-search {
+  position: absolute;
+  left: 45%;
+  top: 23%;
+
+  transform: translate(-50%, -50%);
+
+  width: 300px;
+}
+::ng-deep .all-courses-search {
+  position: absolute;
+  left: 45%;
+  top: 23%;
+
+  transform: translate(-50%, -50%);
+
+  width: 300px;
 }
 
 .title-bar h1 {
@@ -127,12 +158,32 @@
 @media (max-width: 600px) {
   .page-container {
     padding: var(--space-md);
+
+      ::ng-deep .groups-search,
+  ::ng-deep .person-search {
+    left: 50%;
+    top: 50%;
+
+    width: 90%;
+
+    transform: translate(-50%, -50%);
+  }
+
+  ::ng-deep .groups-search input,
+  ::ng-deep .person-search input {
+    width: 100%;
+  }
+
+  .title-bar {
+    min-height: 120px;
+  }
   }
 
   .page-sheet {
     width: 100%;
     padding: var(--space-md);
   }
+
   .title-bar h1 {
     font-size: var(--font-size-lg);
   }

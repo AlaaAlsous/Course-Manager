@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Person } from './person.model';
 import { Layout } from '../layout/layout';
 import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-persons',
   standalone: true,
@@ -10,8 +11,16 @@ import { RouterModule } from '@angular/router';
   templateUrl: './persons.html',
   styleUrls: ['./persons.scss'],
 })
+
 export class Persons {
   title = signal('Participants');
+  searchTerm = signal('');
+
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchTerm.set(input.value);
+  }
+
   persons: Person[] = [
     {
       id: 1,

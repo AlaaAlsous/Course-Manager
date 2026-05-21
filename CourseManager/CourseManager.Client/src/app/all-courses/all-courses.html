@@ -1,4 +1,14 @@
 <app-layout [title]="title()">
+  <section title-actions class="all-courses-search">
+      
+
+      <input
+        id="allCoursesSearch"
+        type="search"
+        placeholder="Search by group name or member name..."
+        (input)="onSearchChange($event)"
+      />
+    </section>
   <section class="courses-overview" aria-label="All courses overview">
     <h2 class="courses-overview__heading">Tillgängliga kurser</h2>
 

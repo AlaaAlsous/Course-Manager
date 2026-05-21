@@ -1,4 +1,14 @@
 <app-layout [title]="title()">
+   <section title-actions class="person-search">
+      
+
+      <input
+        id="personSearch"
+        type="search"
+        placeholder="Search by person name or email..."
+        (input)="onSearchChange($event)"
+      />
+    </section>
   <div class="page-container">
     <div
   class="card"

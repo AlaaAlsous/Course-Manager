@@ -1,4 +1,14 @@
 <app-layout [title]="title()">
+   <section title-actions class="groups-search">
+     
+
+      <input
+        id="groupSearch"
+        type="search"
+        placeholder="Search by group name or member name..."
+        (input)="onSearchChange($event)"
+      />
+    </section>
   <section class="groups-page">
     <header class="groups-page__header">
       <div>
@@ -29,16 +39,7 @@
       </button>
     </section>
 
-    <section class="groups-search">
-      <label for="groupSearch">Search groups</label>
-
-      <input
-        id="groupSearch"
-        type="search"
-        placeholder="Search by group name or member name..."
-        (input)="onSearchChange($event)"
-      />
-    </section>
+    
 
     @if (statusMessage()) {
       <p class="groups-page__status">
