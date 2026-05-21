@@ -75,3 +75,46 @@ textarea {
   background: var(--color-primary);
   color: white;
 }
+
+@media (prefers-color-scheme: dark) {
+  .modal-overlay {
+    background: #00000099;
+  }
+
+  .modal-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  h2 {
+    color: var(--color-text);
+  }
+
+  label {
+    color: var(--color-text);
+  }
+
+  input,
+  textarea {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  input:focus,
+  textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-bg);
+  }
+
+  .actions .secondary {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .actions .primary {
+    background: var(--color-primary);
+    color: white;
+  }
+}

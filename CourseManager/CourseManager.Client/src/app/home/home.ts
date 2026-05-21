@@ -2,10 +2,7 @@ import { Component, signal } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
-import {
-  CreateCourseModal,
-  CreateCoursePayload,
-} from './components/create-course-modal/create-course-modal';
+import { CreateCourseModal, CreateCoursePayload } from '../create-course-modal/create-course-modal';
 
 interface LatestCourse {
   id: number;
@@ -58,19 +55,19 @@ export class Home {
 
   goToGroup(id: number) {
     this.router.navigate(['/group'], {
-      queryParams: {id: id},
+      queryParams: { id: id },
     });
   }
 
   goToCourse(id: number) {
     this.router.navigate(['/course'], {
-      queryParams: {id: id},
+      queryParams: { id: id },
     });
   }
 
   goToPerson(id: number) {
     this.router.navigate(['/participant'], {
-      queryParams: {id: id},
+      queryParams: { id: id },
     });
   }
 
