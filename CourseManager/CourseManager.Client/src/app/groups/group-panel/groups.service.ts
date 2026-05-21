@@ -45,6 +45,9 @@ export class GroupsService {
   ]);
 
   readonly groups = this._groups.asReadonly();
+  getGroupById(id: number): Group | undefined {
+  return this._groups().find(group => group.id === id);
+}
 
   deleteGroup(id: number): void {
     this._groups.update(groups => groups.filter(group => group.id !== id));
