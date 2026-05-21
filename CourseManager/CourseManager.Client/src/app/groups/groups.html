@@ -1,18 +1,86 @@
 <app-layout [title]="title()">
-  <section class="group">
-    <header class="group__header">
-      <h2>Group Members</h2>
-      <p>Click a member name to open the person view later.</p>
+  <section class="groups-page">
+    <header class="groups-page__header">
+      <div>
+        <h2>Groups</h2>
+        <p>Search, select and manage course groups.</p>
+      </div>
+
+      <span class="groups-page__counter">
+        {{ groups().length }} groups
+      </span>
     </header>
 
-    <ul class="group__member-list">
-      @for (member of groupMembers; track member.id) {
-        <li class="group__member-item">
-          <button type="button" class="group__member-button" (click)="onMemberClick(member)">
-            {{ member.name }}
+    <section class="groups-actions">
+      <button type="button" class="groups-actions__button groups-actions__button--primary" (click)="onCreateClick()">
+        Create
+      </button>
+
+      <button type="button" class="groups-actions__button" [disabled]="!selectedGroup()" (click)="onShowClick()">
+        Show
+      </button>
+
+      <button type="button" class="groups-actions__button" [disabled]="!selectedGroup()" (click)="onEditClick()">
+        Edit
+      </button>
+
+      <button type="button" class="groups-actions__button groups-actions__button--danger" [disabled]="!selectedGroup()" (click)="onDeleteClick()">
+        Delete
+      </button>
+    </section>
+
+    <section class="groups-search">
+      <label for="groupSearch">Search groups</label>
+
+      <input
+        id="groupSearch"
+        type="search"
+        placeholder="Search by group name or member name..."
+        (input)="onSearchChange($event)"
+      />
+    </section>
+
+    @if (statusMessage()) {
+      <p class="groups-page__status">
+        {{ statusMessage() }}
+      </p>
+    }
+
+    @if (filteredGroups().length === 0) {
+      <section class="groups-empty">
+        <h3>No groups found</h3>
+
+        @if (searchTerm()) {
+          <p>No group or member matched "{{ searchTerm() }}".</p>
+        } @else {
+          <p>There are no groups yet.</p>
+        }
+      </section>
+    } @else {
+      <section class="groups-list">
+        @for (group of filteredGroups(); track group.id) {
+          <button
+            type="button"
+            class="group-row"
+            [class.group-row--selected]="isSelected(group.id)"
+            (click)="onSelectGroup(group)"
+          >
+            <div class="group-row__main">
+              <h3>{{ group.name }}</h3>
+              <p>
+                {{ group.members.length }}
+                {{ group.members.length === 1 ? 'member' : 'members' }}
+              </p>
+            </div>
+
+            <div class="group-row__members">
+              @for (member of group.members; track member.id) {
+                <span>{{ member.name }}</span>
+              }
+            </div>
           </button>
-        </li>
-      }
-    </ul>
+        }
+      </section>
+    }
   </section>
 </app-layout>
