@@ -1,5 +1,5 @@
 <header class="top-nav">
-  <div class="top-nav__logo">Course Manager</div>
+  <div class="top-nav__logo" (click)="redirectHome()">Course Manager</div>
 
   <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
     <span></span>

@@ -1,5 +1,5 @@
 import { Component, Input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -9,9 +9,15 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./layout.scss'],
 })
 export class Layout {
+  constructor(private router: Router) {}
+
   @Input() title = '';
 
   menuOpen = signal(false);
+
+  redirectHome() {
+    this.router.navigate(['/home'])
+  }
 
   toggleMenu() {
     this.menuOpen.update((v) => !v);
