@@ -17,7 +17,8 @@ export const routes: Routes = [
   { path: 'participant', component: ParticipantDetail, data: { title: 'Participant Detail' } },
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
   { path: 'groups', component: Groups, data: { title: 'Groups' } },
-  { path: 'group', component: GroupView, data: { title: 'Groups' } },
+  { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
+  { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'course', component: CourseView, data: { title: 'Course' } },
 ];
