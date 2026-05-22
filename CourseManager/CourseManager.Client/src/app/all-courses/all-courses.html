@@ -4,10 +4,14 @@
   </section>
 
   <section class="courses-overview" aria-label="All courses overview">
-    <h2 class="courses-overview__heading">Tillgängliga kurser</h2>
+    <h2 class="courses-overview__heading">Available courses</h2>
 
     <div class="course-list">
-      <article class="course-card" *ngFor="let c of filteredCourses">
+      <article
+        class="course-card"
+        *ngFor="let c of filteredCourses()"
+        [routerLink]="['/course', c.id]"
+      >
         {{ c.name }}
       </article>
     </div>

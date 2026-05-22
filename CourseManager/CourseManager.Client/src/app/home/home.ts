@@ -1,14 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { CreateCourseModal, CreateCoursePayload } from '../create-course-modal/create-course-modal';
-
-interface LatestCourse {
-  id: number;
-  name: string;
-  created: string;
-}
+import { CourseService } from '../all-courses/course.service';
 
 @Component({
   selector: 'app-home',
@@ -19,18 +14,24 @@ interface LatestCourse {
 })
 export class Home {
   title = signal('Home');
+
+  private readonly router = inject(Router);
+  private readonly courseService = inject(CourseService);
+
   latestGroups = [
     { id: 1, name: 'Group A', created: '2026-05-10' },
     { id: 2, name: 'Group B', created: '2026-05-09' },
     { id: 3, name: 'Group C', created: '2026-05-08' },
   ];
 
-  latestCourses: LatestCourse[] = [
-    { id: 1, name: 'Course 1', created: '2026-05-11' },
-    { id: 2, name: 'Course 2', created: '2026-05-07' },
-  ];
+  latestCourses = computed(() =>
+    this.courseService
+      .courses()
+      .slice()
+      .sort((a, b) => b.created.localeCompare(a.created))
+      .slice(0, 5),
+  );
 
-  // Controls visibility of the create-course modal from the Home page button.
   showCreateCourseModal = false;
 
   latestPeople = [
@@ -39,12 +40,9 @@ export class Home {
     { id: 3, name: 'Charlie', created: '2026-05-09' },
   ];
 
-  constructor(private router: Router) {}
-
   getRelativeDate(dateString: string): string {
     const created = new Date(dateString);
     const now = new Date();
-
     const diffMs = now.getTime() - created.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
@@ -55,17 +53,15 @@ export class Home {
 
   goToGroup(id: number): void {
     this.router.navigate(['/groups', id]);
-}
+  }
 
   goToCourse(id: number) {
-    this.router.navigate(['/course'], {
-      queryParams: { id: id },
-    });
+    this.router.navigate(['/course', id]);
   }
 
   goToPerson(id: number) {
     this.router.navigate(['/participant'], {
-      queryParams: { id: id },
+      queryParams: { id },
     });
   }
 
@@ -74,7 +70,6 @@ export class Home {
   }
 
   createCourse() {
-    // Opens the modal instead of navigating to a separate page.
     this.showCreateCourseModal = true;
   }
 
@@ -83,11 +78,7 @@ export class Home {
   }
 
   onCreateCourse(course: CreateCoursePayload) {
-    // Local UI update: prepend the newly created course to Latest Courses.
-    const nextId = Math.max(0, ...this.latestCourses.map((c) => c.id)) + 1;
-    const created = new Date().toISOString().split('T')[0] ?? '';
-
-    this.latestCourses = [{ id: nextId, name: course.name, created }, ...this.latestCourses];
+    this.courseService.addCourse(course.name);
     this.showCreateCourseModal = false;
   }
 

@@ -22,5 +22,5 @@ export const routes: Routes = [
   { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
-  { path: 'course', component: CourseView, data: { title: 'Course' } },
+  { path: 'course/:id', component: CourseView, data: { title: 'Course' } },
 ];
