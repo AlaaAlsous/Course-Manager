@@ -1,4 +1,37 @@
 <app-layout [title]="title()">
-  <p>group-view works!</p>
-  <app-content-module></app-content-module>
+  @if (group(); as selectedGroup) {
+    <section class="group-view">
+      <header class="group-view__header">
+        <div>
+          <h2>{{ selectedGroup.name }}</h2>
+          <p>{{ selectedGroup.members.length }} {{ selectedGroup.members.length === 1 ? 'member' : 'members' }}</p>
+        </div>
+
+        <button type="button" class="group-view__back-button" (click)="goBack()">
+          Back to Groups
+        </button>
+      </header>
+
+      <section class="group-view__members">
+        <h3>Members</h3>
+
+        <ul>
+          @for (member of selectedGroup.members; track member.id) {
+            <li>{{ member.name }}</li>
+          }
+        </ul>
+      </section>
+
+      <app-content-module></app-content-module>
+    </section>
+  } @else {
+    <section class="group-view group-view--empty">
+      <h2>Group not found</h2>
+      <p>The selected group does not exist.</p>
+
+      <button type="button" class="group-view__back-button" (click)="goBack()">
+        Back to Groups
+      </button>
+    </section>
+  }
 </app-layout>

@@ -64,16 +64,16 @@ export class Groups {
   this.router.navigate(['/create-group']);
 }
 
-  onShowClick(): void {
-    const group = this.selectedGroup();
+onShowClick(): void {
+  const group = this.selectedGroup();
 
-    if (!group) {
-      this.statusMessage.set('Select a group first.');
-      return;
-    }
-
-    this.statusMessage.set(`Showing group: ${group.name}`);
+  if (!group) {
+    this.statusMessage.set('Select a group first.');
+    return;
   }
+
+  this.router.navigate(['/groups', group.id]);
+}
 
   onEditClick(): void {
     const group = this.selectedGroup();

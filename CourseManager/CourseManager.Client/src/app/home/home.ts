@@ -53,11 +53,9 @@ export class Home {
     return `${diffDays} days ago`;
   }
 
-  goToGroup(id: number) {
-    this.router.navigate(['/group'], {
-      queryParams: { id: id },
-    });
-  }
+  goToGroup(id: number): void {
+    this.router.navigate(['/groups', id]);
+}
 
   goToCourse(id: number) {
     this.router.navigate(['/course'], {
