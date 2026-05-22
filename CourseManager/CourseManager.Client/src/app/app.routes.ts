@@ -8,6 +8,7 @@ import { CourseView } from './course-view/course-view';
 import { ParticipantDetail } from './participant-detail/participant-detail';
 import { CreateGroup } from './create-group/create-group';
 import { PersonCreator } from './person-creator/person-creator';
+import { EditGroup } from './edit-group/edit-group';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'participant', component: ParticipantDetail, data: { title: 'Participant Detail' } },
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
   { path: 'groups', component: Groups, data: { title: 'Groups' } },
+  { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
   { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },

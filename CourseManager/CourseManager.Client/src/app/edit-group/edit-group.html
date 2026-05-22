@@ -1,0 +1,31 @@
+<app-layout [title]="title()">
+  <section class="edit-group">
+    @if (group) {
+      <header class="edit-group__header">
+        <h2>Edit Group</h2>
+        <p>Update the selected group name.</p>
+      </header>
+
+      <label class="edit-group__field">
+        Group Name
+        <input type="text" [(ngModel)]="name" placeholder="Enter group name" />
+      </label>
+
+      @if (statusMessage()) {
+        <p class="edit-group__status">{{ statusMessage() }}</p>
+      }
+
+      <div class="edit-group__actions">
+        <button type="button" (click)="saveGroup()">Save</button>
+        <button type="button" (click)="cancel()">Cancel</button>
+      </div>
+    } @else {
+      <h2>Group not found</h2>
+      <p>The selected group does not exist.</p>
+
+      <button type="button" (click)="cancel()">
+        Back to Groups
+      </button>
+    }
+  </section>
+</app-layout>

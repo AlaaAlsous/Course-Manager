@@ -45,12 +45,23 @@ export class GroupsService {
   ]);
 
   readonly groups = this._groups.asReadonly();
+
   getGroupById(id: number): Group | undefined {
-  return this._groups().find(group => group.id === id);
-}
+    return this._groups().find(group => group.id === id);
+  }
+
+  updateGroup(updatedGroup: Group): void {
+    this._groups.update(groups =>
+      groups.map(group =>
+        group.id === updatedGroup.id ? updatedGroup : group
+      )
+    );
+  }
 
   deleteGroup(id: number): void {
-    this._groups.update(groups => groups.filter(group => group.id !== id));
+    this._groups.update(groups =>
+      groups.filter(group => group.id !== id)
+    );
   }
 }
 

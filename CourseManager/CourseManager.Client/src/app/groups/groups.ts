@@ -75,17 +75,16 @@ onShowClick(): void {
   this.router.navigate(['/groups', group.id]);
 }
 
-  onEditClick(): void {
-    const group = this.selectedGroup();
+ onEditClick(): void {
+  const group = this.selectedGroup();
 
-    if (!group) {
-      this.statusMessage.set('Select a group first.');
-      return;
-    }
-
-    this.statusMessage.set(`Edit group will be connected later: ${group.name}`);
+  if (!group) {
+    this.statusMessage.set('Select a group first.');
+    return;
   }
 
+  this.router.navigate(['/groups', group.id, 'edit']);
+}
   onDeleteClick(): void {
     const group = this.selectedGroup();
 
