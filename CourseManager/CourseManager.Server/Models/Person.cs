@@ -13,7 +13,7 @@ namespace CourseManager.Server.Models
         public string FullName { get; set; } = null!;
 
         public ICollection<CoursePerson> CoursePeople { get; set; } = new List<CoursePerson>();
-        public ICollection<CourseEventPerson> CourseEventPeople { get; set; } = new List<CourseEventPerson>();
+        public ICollection<CourseSectionPerson> CourseSectionPeople { get; set; } = new List<CourseSectionPerson>();
         public ICollection<GroupPerson> GroupPeople { get; set; } = new List<GroupPerson>();
         public ICollection<PersonFile> PersonFiles { get; set; } = new List<PersonFile>();
     }

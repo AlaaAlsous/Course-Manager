@@ -30,7 +30,7 @@ namespace CourseManager.Server.Models
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<CourseFile> CourseFiles { get; set; } = new List<CourseFile>();
-        public ICollection<CourseEventFile> CourseEventFiles { get; set; } = new List<CourseEventFile>();
+        public ICollection<CourseSectionFile> CourseSectionFiles { get; set; } = new List<CourseSectionFile>();
         public ICollection<GroupFile> GroupFiles { get; set; } = new List<GroupFile>();
         public ICollection<PersonFile> PersonFiles { get; set; } = new List<PersonFile>();
     }

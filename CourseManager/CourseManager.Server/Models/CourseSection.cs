@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CourseManager.Server.Models
 {
-    public class CourseEvent
+    public class CourseSection
     {
-        public int CourseEventId { get; set; }
+        public int CourseSectionId { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -21,7 +21,7 @@ namespace CourseManager.Server.Models
         public Course Course { get; set; } = null!;
 
         public ICollection<Group> Groups { get; set; } = new List<Group>();
-        public ICollection<CourseEventPerson> CourseEventPeople { get; set; } = new List<CourseEventPerson>();
-        public ICollection<CourseEventFile> CourseEventFiles { get; set; } = new List<CourseEventFile>();
+        public ICollection<CourseSectionPerson> CourseSectionPeople { get; set; } = new List<CourseSectionPerson>();
+        public ICollection<CourseSectionFile> CourseSectionFiles { get; set; } = new List<CourseSectionFile>();
     }
 }

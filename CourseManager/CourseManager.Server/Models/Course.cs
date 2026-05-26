@@ -17,7 +17,7 @@ namespace CourseManager.Server.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<CourseEvent> CourseEvents { get; set; } = new List<CourseEvent>();
+        public ICollection<CourseSection> CourseSections { get; set; } = new List<CourseSection>();
         public ICollection<CoursePerson> CoursePeople { get; set; } = new List<CoursePerson>();
         public ICollection<CourseFile> CourseFiles { get; set; } = new List<CourseFile>();
     }
