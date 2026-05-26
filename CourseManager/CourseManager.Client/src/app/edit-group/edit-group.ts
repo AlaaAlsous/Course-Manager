@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { GroupsService } from '../groups/group-panel/groups.service';
+import { GroupsService } from '../groups.service';
 
 @Component({
   selector: 'app-edit-group',

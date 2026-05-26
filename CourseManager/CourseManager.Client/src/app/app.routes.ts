@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { Home } from './home/home';
 import { Persons } from './persons/persons';
 import { AllCourses } from './all-courses/all-courses';
-import { Groups } from './groups/groups';
 import { GroupView } from './group-view/group-view';
 import { CourseView } from './course-view/course-view';
 import { ParticipantDetail } from './participant-detail/participant-detail';
@@ -17,9 +16,8 @@ export const routes: Routes = [
   { path: 'participants/create', component: PersonCreator, data: { title: 'Create Participant' } },
   { path: 'participant', component: ParticipantDetail, data: { title: 'Participant Detail' } },
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
-  { path: 'groups', component: Groups, data: { title: 'Groups' } },
-  { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
   { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
+  { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'course/:id', component: CourseView, data: { title: 'Course' } },

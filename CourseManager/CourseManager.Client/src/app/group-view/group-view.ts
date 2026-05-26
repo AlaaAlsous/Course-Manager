@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import ContentModule from '../content-module/content-module';
-import { GroupsService } from '../groups/group-panel/groups.service';
+import { GroupsService } from '../groups.service';
 
 @Component({
   selector: 'app-group-view',
