@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-
+import { SnackbarType } from '../shared/snackbar/snackbar.service';
+import { SnackbarService } from '../shared/snackbar/snackbar.service';
 interface Person {
   id: number;
   name: string;
@@ -44,7 +45,7 @@ export class CreateGroup {
   selectedPersonId: number | null = null;
   selectedCourseId: number | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private snackbarService: SnackbarService) {}
 
   addExistingPerson() {
     if (!this.selectedPersonId) return;
@@ -83,7 +84,10 @@ goToCreatePerson() {
       name: this.name,
       people: this.groupPeople,
     });
-
+this.snackbarService.show(
+  SnackbarType.Success,
+  'Group created successfully!'
+);
     this.router.navigate(['/groups']);
   }
 }

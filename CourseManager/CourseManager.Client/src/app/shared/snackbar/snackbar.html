@@ -1,0 +1,9 @@
+<div
+  class="snackbar"
+  [class.show]="snackbar.visible()"
+  [class.success]="snackbar.type() === SnackbarType.Success"
+  [class.failure]="snackbar.type() === SnackbarType.Failure"
+>
+  {{ snackbar.message() }}
+   {{ snackbar.type() }}
+</div>

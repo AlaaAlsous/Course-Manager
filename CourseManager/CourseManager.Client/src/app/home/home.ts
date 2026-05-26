@@ -4,11 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { CreateCourseModal, CreateCoursePayload } from '../create-course-modal/create-course-modal';
 import { CourseService } from '../all-courses/course.service';
-
+import { Snackbar } from '../shared/snackbar/snackbar';
+import { SnackbarService } from '../shared/snackbar/snackbar.service';
+import { SnackbarType } from '../shared/snackbar/snackbar.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf, RouterLink, Layout, CreateCourseModal],
+  imports: [NgFor, NgIf, RouterLink, Layout, CreateCourseModal, Snackbar],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
@@ -17,6 +19,7 @@ export class Home {
 
   private readonly router = inject(Router);
   private readonly courseService = inject(CourseService);
+  private readonly snackbarService = inject(SnackbarService);
 
   latestGroups = [
     { id: 1, name: 'Group A', created: '2026-05-10' },
@@ -78,11 +81,21 @@ export class Home {
   }
 
   onCreateCourse(course: CreateCoursePayload) {
-    this.courseService.addCourse(course.name);
-    this.showCreateCourseModal = false;
-  }
+
+  this.courseService.addCourse(course.name);
+
+  this.snackbarService.show(
+  SnackbarType.Success,
+  'Course created successfully!'
+);
+
+  this.showCreateCourseModal = false;
+
+}
 
   createPerson() {
     this.router.navigate(['/participants/create']);
   }
+
+  
 }
