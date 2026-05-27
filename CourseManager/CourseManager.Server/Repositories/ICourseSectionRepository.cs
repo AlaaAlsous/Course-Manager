@@ -5,9 +5,9 @@ namespace CourseManager.Server.Repositories;
 public interface ICourseSectionRepository
 {
     Task<List<CourseSection>> GetAllAsync();
-    Task<CourseSection?> GetByIdAsync(int id);
-    Task<CourseSection> CreateAsync(CourseSection section);
-    Task<CourseSection?> UpdateAsync(int id, CourseSection updated);
-    Task<bool> DeleteAsync(int id);
+    Task<CourseSection?> GetByIdAsync(int courseSectionId);
     Task<List<CourseSection>> GetByCourseIdAsync(int courseId);
+    Task<CourseSection> CreateAsync(CourseSection section);
+    Task<CourseSection?> UpdateAsync(int courseSectionId, CourseSection updated);
+    Task<bool> DeleteAsync(int courseSectionId);
 }

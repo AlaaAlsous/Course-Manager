@@ -18,9 +18,9 @@ public class CourseSectionRepository : ICourseSectionRepository
         return await _db.CourseSections.ToListAsync();
     }
 
-    public async Task<CourseSection?> GetByIdAsync(int id)
+    public async Task<CourseSection?> GetByIdAsync(int courseSectionId)
     {
-        return await _db.CourseSections.FindAsync(id);
+        return await _db.CourseSections.FindAsync(courseSectionId);
     }
 
     public async Task<List<CourseSection>> GetByCourseIdAsync(int courseId)
@@ -37,21 +37,24 @@ public class CourseSectionRepository : ICourseSectionRepository
         return section;
     }
 
-    public async Task<CourseSection?> UpdateAsync(int id, CourseSection updated)
+    public async Task<CourseSection?> UpdateAsync(int courseSectionId, CourseSection updated)
     {
-        var existing = await _db.CourseSections.FindAsync(id);
+        var existing = await _db.CourseSections.FindAsync(courseSectionId);
         if (existing is null)
             return null;
 
         existing.Name = updated.Name;
+        existing.Description = updated.Description;
+        existing.StartDate = updated.StartDate;
+        existing.EndDate = updated.EndDate;
 
         await _db.SaveChangesAsync();
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int courseSectionId)
     {
-        var section = await _db.CourseSections.FindAsync(id);
+        var section = await _db.CourseSections.FindAsync(courseSectionId);
         if (section is null)
             return false;
 
