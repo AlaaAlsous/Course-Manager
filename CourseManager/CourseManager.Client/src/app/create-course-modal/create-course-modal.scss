@@ -6,12 +6,12 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-lg);
-  z-index: 1000;
+  z-index: var(--z-modal);
 }
 
 .modal-card {
   width: min(100%, 520px);
-  background: white;
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-elevated);
   padding: var(--space-lg);
@@ -38,6 +38,8 @@ textarea {
   border-radius: var(--radius-sm);
   padding: 0.6rem 0.75rem;
   font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 textarea {
@@ -45,7 +47,7 @@ textarea {
 }
 
 .validation {
-  color: #b91c1c;
+  color: var(--color-danger);
   font-size: var(--font-size-sm);
   margin-top: var(--space-xs);
 }
@@ -66,55 +68,15 @@ textarea {
 }
 
 .actions .secondary {
-  background: white;
+  background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-.actions .primary {
-  background: var(--color-primary);
-  color: white;
-}
+.actions .primary {}
 
 @media (prefers-color-scheme: dark) {
   .modal-overlay {
     background: #00000099;
-  }
-
-  .modal-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-  }
-
-  h2 {
-    color: var(--color-text);
-  }
-
-  label {
-    color: var(--color-text);
-  }
-
-  input,
-  textarea {
-    background: var(--color-surface);
-    border-color: var(--color-border);
-    color: var(--color-text);
-  }
-
-  input:focus,
-  textarea:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-bg);
-  }
-
-  .actions .secondary {
-    background: var(--color-surface);
-    border-color: var(--color-border);
-    color: var(--color-text);
-  }
-
-  .actions .primary {
-    background: var(--color-primary);
-    color: white;
   }
 }

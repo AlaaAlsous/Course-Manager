@@ -24,7 +24,6 @@
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-sm);
   background: var(--color-primary);
-  color: white;
   border-radius: var(--radius-md);
   border: 1px solid #334155;
   font-weight: 600;
@@ -119,6 +118,7 @@
   .home-actions {
     flex-wrap: wrap;
   }
+
   .home-actions button {
     font-size: small;
     min-width: 120px;

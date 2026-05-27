@@ -1,3 +1,5 @@
+@use 'utilities-mixin'as *;
+
 .create-group-container {
   display: flex;
   flex-direction: column;
@@ -20,7 +22,7 @@ select {
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   font-size: var(--font-size-md);
-  color: white;
+  color: var(--color-text);
 }
 
 input:focus,
@@ -49,16 +51,6 @@ select:focus {
 
 .card button {
   align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.card button:hover {
-  background: var(--color-primary-hover);
 }
 
 .create-person-btn {
@@ -78,27 +70,10 @@ select:focus {
 }
 
 .create-btn {
+  @include button;
+
   padding: var(--space-md);
-  background: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-md);
   font-size: var(--font-size-md);
   font-weight: 600;
   margin-top: var(--space-lg);
-  transition: background 0.2s;
-}
-
-.create-btn:hover {
-  background: var(--color-primary-hover);
-}
-
-@media (prefers-color-scheme: light) {
-  input,
-  select {
-    color: black;
-  }
-  input:focus,
-  select:focus {
-    color: black;
-  }
 }

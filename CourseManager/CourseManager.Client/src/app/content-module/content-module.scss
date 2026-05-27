@@ -1,3 +1,5 @@
+@use 'utilities-mixin'as *;
+
 .content-module {
   margin-top: var(--space-lg);
 }
@@ -8,7 +10,7 @@
   margin-top: 0;
   margin-bottom: var(--space-md);
   padding: var(--space-lg);
-  background-color: var(--color-surface);
+  background: transparent;
   width: 100%;
 }
 
@@ -32,25 +34,26 @@
 }
 
 .content-module__collapsible-content ul {
-  list-style-type: none;
+  @include list;
 }
 
 .content-module__button-container {
   width: 100%;
-  background-color: var(--color-border);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text);
 
   button {
     background-color: transparent;
+    color: var(--color-text);
   }
 
   padding: 4px;
 }
 
-.content-module__fullscreen-button
-{
+.content-module__fullscreen-button {
   --fullscreen-icon-size: 32px;
 
-  padding:0;
+  padding: 0;
   margin: 0;
   height: var(--fullscreen-icon-size);
   width: var(--fullscreen-icon-size);

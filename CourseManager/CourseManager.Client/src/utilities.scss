@@ -1,0 +1,455 @@
+/* Utility Classes */
+
+$spaceAmounts: (1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  auto);
+
+@each $space in $spaceAmounts {
+  @if $space==auto {
+    .m-#{$space} {
+      margin: #{$space};
+    }
+
+    .mx-#{$space} {
+      margin-left: #{$space};
+      margin-right: #{$space};
+    }
+
+    .my-#{$space} {
+      margin-top: #{$space};
+      margin-bottom: #{$space};
+
+    }
+
+    .ml-#{$space} {
+      margin-left: #{$space};
+    }
+
+    .mr-#{$space} {
+      margin-right: #{$space};
+    }
+
+    .mb-#{$space} {
+      margin-bottom: #{$space};
+    }
+
+    .mt-#{$space} {
+      margin-top: #{$space};
+    }
+
+    .gap-#{$space} {
+      gap: #{$space};
+    }
+  }
+
+  @else {
+    .m-#{$space} {
+      margin: #{$space}rem;
+    }
+
+    .mx-#{$space} {
+      margin-left: #{$space}rem;
+      margin-right: #{$space}rem;
+    }
+
+    .my-#{$space} {
+      margin-top: #{$space}rem;
+      margin-bottom: #{$space}rem;
+
+    }
+
+    .ml-#{$space} {
+      margin-left: #{$space}rem;
+    }
+
+    .mr-#{$space} {
+      margin-right: #{$space}rem;
+    }
+
+    .mb-#{$space} {
+      margin-bottom: #{$space}rem;
+    }
+
+    .mt-#{$space} {
+      margin-top: #{$space}rem;
+    }
+
+    .p-#{$space} {
+      padding: #{$space}rem;
+    }
+
+    .px-#{$space} {
+      padding-left: #{$space}rem;
+      padding-right: #{$space}rem;
+    }
+
+    .py-#{$space} {
+      padding-top: #{$space}rem;
+      padding-bottom: #{$space}rem;
+
+    }
+
+    .pl-#{$space} {
+      padding-left: #{$space}rem;
+    }
+
+    .pr-#{$space} {
+      padding-right: #{$space}rem;
+    }
+
+    .pb-#{$space} {
+      padding-bottom: #{$space}rem;
+    }
+
+    .pt-#{$space} {
+      padding-top: #{$space}rem;
+    }
+
+    .gap-#{$space} {
+      gap: #{$space}rem;
+    }
+  }
+}
+
+$alignments: ("center",
+  "space-between",
+  "space-around",
+  "space-evenly",
+  "flex-start",
+  "flex-end"
+);
+
+@each $align in $alignments {
+  .justify-#{$align} {
+    justify-content: #{$align};
+  }
+
+  .items-#{$align} {
+    align-items: #{$align};
+  }
+
+  .justify-items-#{$align} {
+    justify-items: #{$align};
+  }
+
+  .content-#{$align} {
+    align-content: #{$align};
+  }
+}
+
+$displayProps: ("block",
+  "inline-block",
+  "inline",
+  "flex",
+  "grid",
+  "inline-flex",
+  "inline-grid",
+  "table",
+  "inline-table",
+  "list-item",
+  "none",
+  "contents"
+);
+
+@each $disp in $displayProps {
+  .d-#{$disp} {
+    display: #{$disp};
+  }
+}
+
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+$textAlignments: ("left",
+  "right",
+  "center",
+  "revert"
+);
+
+@each $textAlign in $textAlignments {
+  .text-#{$textAlign} {
+    text-align: #{$textAlign};
+  }
+}
+
+
+$flexWrapTypes: ("nowrap",
+  "wrap",
+  "wrap-reverse",
+  "initial",
+  "inherit");
+
+@each $type in $flexWrapTypes {
+  .flex-wrap-#{$type} {
+    flex-wrap: #{$type};
+  }
+}
+
+$fontWeights: (100, 200, 300, 400, 500, 600, 700);
+
+@each $weight in $fontWeights {
+  .fw-#{$weight} {
+    font-weight: #{$weight};
+  }
+}
+
+
+$fontSizes: ("sm", "md", "lg", "xl");
+
+@each $size in $fontSizes {
+  .fs-#{$size} {
+    font-size: var(--font-size-#{$size});
+  }
+}
+
+$borderRadii:("none", "sm", "md", "lg", "xl", "2xl", "full");
+
+@each $radius in $borderRadii {
+  .radius-#{$radius} {
+    border-radius: var(--radius-#{$radius});
+  }
+}
+
+
+/* Width utilities */
+.w-full {
+  width: 100%;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-auto {
+  height: auto;
+}
+
+/* Min-content & max-content */
+.w-min {
+  width: min-content;
+}
+
+.w-max {
+  width: max-content;
+}
+
+.h-min {
+  height: min-content;
+}
+
+.h-max {
+  height: max-content;
+}
+
+/* Common max-width helpers */
+.mw-500 {
+  max-width: 500px;
+}
+
+.mw-600 {
+  max-width: 600px;
+}
+
+.mw-700 {
+  max-width: 700px;
+}
+
+.mw-900 {
+  max-width: 900px;
+}
+
+.mw-1200 {
+  max-width: 1200px;
+}
+
+/* Make any element fill available space (used for inputs, cards, etc.) */
+.w-available {
+  width: -webkit-fill-available;
+  width: -moz-available;
+  /* standard property (future proofing)*/
+  width: stretch
+}
+
+/* Background color utilities */
+.bg-canvas {
+  background: var(--color-bg);
+}
+
+.bg-surface {
+  background: var(--color-surface);
+}
+
+.bg-surface-hover {
+  background: var(--color-surface-hover);
+}
+
+.bg-primary {
+  background: var(--color-primary);
+}
+
+.bg-primary-hover {
+  background: var(--color-primary-hover);
+}
+
+.bg-primary-soft {
+  background: var(--color-primary-soft);
+}
+
+.bg-secondary {
+  background: var(--color-bg-secondary);
+}
+
+.bg-tertiary {
+  background: var(--color-bg-tertiary);
+}
+
+.bg-nav {
+  background: var(--color-nav-bg);
+}
+
+.bg-transparent {
+  background: transparent;
+}
+
+.bg-success {
+  background: var(--color-success);
+}
+
+.bg-warning {
+  background: var(--color-warning);
+}
+
+.bg-danger {
+  background: var(--color-danger);
+}
+
+/* Text color utilities */
+.text-body {
+  color: var(--color-text);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-light {
+  color: var(--color-text-light);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-primary-hover {
+  color: var(--color-primary-hover);
+}
+
+.text-nav {
+  color: var(--color-nav-text);
+}
+
+.text-white {
+  color: white;
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+/* Cursor utilities */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.cursor-wait {
+  cursor: wait;
+}
+
+.cursor-text {
+  cursor: text;
+}
+
+/* Object-fit utilities */
+.object-cover {
+  object-fit: cover;
+}
+
+.object-contain {
+  object-fit: contain;
+}
+
+.object-fill {
+  object-fit: fill;
+}
+
+.object-scale-down {
+  object-fit: scale-down;
+}
+
+.object-none {
+  object-fit: none;
+}
+
+/* Object-position */
+.object-center {
+  object-position: center;
+}
+
+.object-top {
+  object-position: top;
+}
+
+/* White-space utilities */
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.text-wrap {
+  white-space: normal;
+}
+
+.text-prewrap {
+  white-space: pre-wrap;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,26 +1,17 @@
 .snackbar {
   position: fixed;
-
   bottom: 24px;
   right: 24px;
-
-  background: #323232;
-
-  color: white;
-
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
   padding: 1rem 1.5rem;
-
-  border-radius: 8px;
-
+  border-radius: var(--radius-md);
   opacity: 0;
-
   transition:
     opacity 0.25s ease,
     transform 0.25s ease;
-
   transform: translateY(20px);
-
-  z-index: 9999;
+  z-index: var(--z-tooltip);
 }
 
 .snackbar.show {
@@ -30,9 +21,9 @@
 }
 
 .snackbar.success {
-  background: #2e7d32!important;
+  background: var(--color-success) !important;
 }
 
 .snackbar.failure {
-  background: #c62828!important;
+  background: var(--color-danger) !important;
 }

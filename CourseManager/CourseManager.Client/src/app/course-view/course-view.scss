@@ -1,37 +1,21 @@
+@use 'utilities-mixin'as *;
+
 .group-list {
-    display: flex;
-    flex-direction: column;
+  @include list;
 }
 
 .view-selector {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    justify-content: center;
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  justify-content: center;
 }
 
 .selected {
-    border: 2px solid white;
-}
-
-.group-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.list-button {
-    font-size: var(--font-size-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-nav-bg);
-    padding: var(--space-md);
-}
-
-.list-button:hover {
-    background: var(--color-surface);
+  border: 2px solid var(--color-primary-border);
 }
 
 h2 {
-    justify-self: center;
-    padding: var(--space-md);
+  justify-self: center;
+  padding: var(--space-md);
 }

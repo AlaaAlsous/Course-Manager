@@ -13,29 +13,29 @@
 
   <div *ngIf="currentview() === 'participants'">
     <h2>Participants</h2>
-    <div class="group-list">
+    <ul class="group-list">
       @for (person of people; track person) {
-        <button class="list-button">
+        <li>
           <h3>{{ person }}</h3>
-        </button>
+        </li>
       } @empty {
         <span>No participants available</span>
       }
-    </div>
+    </ul>
   </div>
 
   <div *ngIf="currentview() === 'groups'">
     <h2>Groups</h2>
-    <div class="group-list">
+    <ul class="group-list">
       @for (group of groups; track group) {
-        <button class="list-button">
+        <li>
           <h3>{{ group }}</h3>
           <p>2 members</p>
-        </button>
+        </li>
       } @empty {
         <span>No groups available</span>
       }
-    </div>
+    </ul>
   </div>
 
   <app-content-module></app-content-module>
