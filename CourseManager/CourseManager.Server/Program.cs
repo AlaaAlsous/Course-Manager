@@ -1,5 +1,6 @@
 using CourseManager.Server.Data;
 using CourseManager.Server.FileService;
+using CourseManager.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +48,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -58,6 +61,7 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("Default");
 
 app.MapEndpoints();
+app.MapPersonEndpoints();
 app.MapGet("/", () => "CourseManager API is running");
 
 app.Run();
