@@ -81,21 +81,14 @@ export class Home {
   }
 
   onCreateCourse(course: CreateCoursePayload) {
+    this.courseService.addCourse(course.name);
 
-  this.courseService.addCourse(course.name);
+    this.snackbarService.show(SnackbarType.Success, 'Course created successfully!');
 
-  this.snackbarService.show(
-  SnackbarType.Success,
-  'Course created successfully!'
-);
-
-  this.showCreateCourseModal = false;
-
-}
+    this.showCreateCourseModal = false;
+  }
 
   createPerson() {
     this.router.navigate(['/participants/create']);
   }
-
-  
 }
