@@ -1,10 +1,36 @@
 using CourseManager.Server.Data;
+using CourseManager.Server.FileService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=data/course-manager.db"));
+{
+    var azureConn = builder.Configuration.GetConnectionString("AzureSqlConnection");
+    var localConn = "Data Source=data/course-manager.db";
+
+    if (!string.IsNullOrWhiteSpace(azureConn))
+    {
+        Console.WriteLine("Using Azure SQL Database");
+        options.UseSqlServer(azureConn);
+    }
+    else
+    {
+        Console.WriteLine("Using local SQLite Database");
+        options.UseSqlite(localConn);
+    }
+});
+
+builder.Services.AddScoped<IFileService>(sp =>
+{
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+
+    var basePath = Path.Combine(env.ContentRootPath, "Data", "Storage");
+    Directory.CreateDirectory(basePath);
+
+    var directory = new DirectoryInfo(basePath);
+    return new LocalFileService(directory);
+});
 
 builder.Services.AddCors(options =>
 {
@@ -19,18 +45,6 @@ builder.Services.AddCors(options =>
                 "https://localhost:4200"
             );
     });
-using CourseManager.Server.FileService;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddScoped<IFileService>(sp =>
-{
-    var env = sp.GetRequiredService<IWebHostEnvironment>();
-    var basePath = Path.Combine(env.ContentRootPath, "Data", "Storage");
-    var directory = Directory.CreateDirectory(basePath);
-
-    return new LocalFileService(directory);
 });
 
 var app = builder.Build();
@@ -43,13 +57,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("Default");
 
+app.MapEndpoints();
 app.MapGet("/", () => "CourseManager API is running");
-
-// Minimal API endpoints kommer här
-// app.MapCourseEndpoints();
-// app.MapCourseEventEndpoints();
-// app.MapGroupEndpoints();
-// app.MapPersonEndpoints();
-// app.MapFileEndpoints();
 
 app.Run();
