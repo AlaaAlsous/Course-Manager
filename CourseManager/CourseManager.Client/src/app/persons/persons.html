@@ -3,40 +3,18 @@
     <input type="search" placeholder="Search participants..." (input)="onSearchChange($event)" />
   </section>
 
-  <div class="page-container">
-    <div
-      class="card"
-      *ngFor="let person of filteredPersons()"
-      [routerLink]="['/participant']"
-      [queryParams]="{ id: person.id }"
-    >
-      <img class="profile-image" [src]="person.imageUrl" [alt]="person.name" />
+  <section class="participants-overview" aria-label="Participants overview">
+    <h2 class="participants-overview__heading">Participants</h2>
 
-      <h2>{{ person.name }}</h2>
-
-      <div class="info">
-        <p>ID: {{ person.id }}</p>
-        <p>Email: {{ person.email }}</p>
-        <p>Phone: {{ person.phone }}</p>
-      </div>
-
-      <h3 class="section-title">Courses</h3>
-
-      <div class="course-list">
-        <div class="course-tag" *ngFor="let course of person.courses">
-          {{ course }}
-        </div>
-      </div>
-
-      <h3 class="section-title">Notes</h3>
-
-      <div class="note" *ngFor="let note of person.notes">
-        <p>{{ note.text }}</p>
-
-        <span class="note-date">
-          {{ note.createdAt }}
-        </span>
-      </div>
+    <div class="participant-list">
+      <article
+        class="participant-item"
+        *ngFor="let person of filteredPersons()"
+        [routerLink]="['/participant']"
+        [queryParams]="{ id: person.id }"
+      >
+        {{ person.name }}
+      </article>
     </div>
-  </div>
+  </section>
 </app-layout>
