@@ -12,17 +12,15 @@ namespace CourseManager.Server.Data
         public DbSet<CourseSection> CourseSections { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Person> People { get; set; }
-        public DbSet<FileAsset> Files { get; set; }
-
-        public DbSet<CoursePerson> CoursePeople { get; set; }
-        public DbSet<CourseSectionPerson> CourseSectionPeople { get; set; }
-        public DbSet<GroupPerson> GroupPeople { get; set; }
-
+        public DbSet<FileAsset> FileAssets { get; set; }
         public DbSet<CourseFile> CourseFiles { get; set; }
         public DbSet<CourseSectionFile> CourseSectionFiles { get; set; }
         public DbSet<GroupFile> GroupFiles { get; set; }
         public DbSet<PersonFile> PersonFiles { get; set; }
 
+        public DbSet<CoursePerson> CoursePeople { get; set; }
+        public DbSet<CourseSectionPerson> CourseSectionPeople { get; set; }
+        public DbSet<GroupPerson> GroupPeople { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,18 +42,18 @@ namespace CourseManager.Server.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CourseSectionPerson>()
-                .HasKey(cep => new { cep.CourseSectionId, cep.PersonId });
+                .HasKey(csp => new { csp.CourseSectionId, csp.PersonId });
 
             modelBuilder.Entity<CourseSectionPerson>()
-                .HasOne(cep => cep.CourseSection)
-                .WithMany(ce => ce.CourseSectionPeople)
-                .HasForeignKey(cep => cep.CourseSectionId)
+                .HasOne(csp => csp.CourseSection)
+                .WithMany(cs => cs.CourseSectionPeople)
+                .HasForeignKey(csp => csp.CourseSectionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CourseSectionPerson>()
-                .HasOne(cep => cep.Person)
+                .HasOne(csp => csp.Person)
                 .WithMany(p => p.CourseSectionPeople)
-                .HasForeignKey(cep => cep.PersonId)
+                .HasForeignKey(csp => csp.PersonId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<GroupPerson>()
@@ -89,18 +87,18 @@ namespace CourseManager.Server.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CourseSectionFile>()
-                .HasKey(cef => new { cef.CourseSectionId, cef.FileAssetId });
+                .HasKey(csf => new { csf.CourseSectionId, csf.FileAssetId });
 
             modelBuilder.Entity<CourseSectionFile>()
-                .HasOne(cef => cef.CourseSection)
-                .WithMany(ce => ce.CourseSectionFiles)
-                .HasForeignKey(cef => cef.CourseSectionId)
+                .HasOne(csf => csf.CourseSection)
+                .WithMany(cs => cs.CourseSectionFiles)
+                .HasForeignKey(csf => csf.CourseSectionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CourseSectionFile>()
-                .HasOne(cef => cef.FileAsset)
+                .HasOne(csf => csf.FileAsset)
                 .WithMany(f => f.CourseSectionFiles)
-                .HasForeignKey(cef => cef.FileAssetId)
+                .HasForeignKey(csf => csf.FileAssetId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<GroupFile>()
@@ -134,14 +132,14 @@ namespace CourseManager.Server.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CourseSection>()
-                .HasOne(ce => ce.Course)
+                .HasOne(cs => cs.Course)
                 .WithMany(c => c.CourseSections)
-                .HasForeignKey(ce => ce.CourseId)
+                .HasForeignKey(cs => cs.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Group>()
                 .HasOne(g => g.CourseSection)
-                .WithMany(ce => ce.Groups)
+                .WithMany(cs => cs.Groups)
                 .HasForeignKey(g => g.CourseSectionId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
