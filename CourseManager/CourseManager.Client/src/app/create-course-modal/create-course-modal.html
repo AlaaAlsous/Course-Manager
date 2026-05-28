@@ -6,13 +6,13 @@
     aria-modal="true"
     aria-labelledby="create-course-title"
   >
-    <h2 id="create-course-title">Create course</h2>
+    <h2 id="create-course-title">Skapa kurs</h2>
 
     <form (ngSubmit)="onSubmit()">
-      <label for="course-name">Name</label>
+      <label for="course-name">Namn</label>
       <input id="course-name" name="name" type="text" [(ngModel)]="name" required />
 
-      <label for="course-description">Description</label>
+      <label for="course-description">Beskrivning</label>
       <textarea
         id="course-description"
         name="description"
@@ -22,12 +22,12 @@
       ></textarea>
 
       @if (submitted && !isFormValid) {
-        <p class="validation">Both fields are required.</p>
+        <p class="validation">Båda fälten är obligatoriska.</p>
       }
 
       <div class="actions">
-        <button type="button" class="secondary" (click)="onClose()">Cancel</button>
-        <button type="submit" class="primary">Create</button>
+        <button type="button" class="secondary" (click)="onClose()">Avbryt</button>
+        <button type="submit" class="primary">Skapa kurs</button>
       </div>
     </form>
   </div>

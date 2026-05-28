@@ -6,7 +6,7 @@ export class CourseService {
   private readonly _courses = signal<Course[]>([
     {
       id: 1,
-      name: 'Technical Banana Science',
+      name: 'Teknisk bananologi',
       sections: [
         { id: 2023, name: '2023' },
         { id: 2024, name: '2024' },
@@ -17,7 +17,7 @@ export class CourseService {
     },
     {
       id: 2,
-      name: 'Banana Conflict Studies',
+      name: 'Banan konflikthantering',
       sections: [{ id: 2025, name: '2025' }],
       people: [],
       groups: [],
@@ -25,7 +25,7 @@ export class CourseService {
     },
     {
       id: 3,
-      name: 'Historical Bananas',
+      name: 'Historia om bananer',
       sections: [{ id: 2026, name: '2026' }],
       people: [],
       groups: [],

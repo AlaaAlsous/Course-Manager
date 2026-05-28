@@ -6,7 +6,7 @@
           <h2>{{ selectedGroup.name }}</h2>
           <p>
             {{ selectedGroup.members.length }}
-            {{ selectedGroup.members.length === 1 ? 'member' : 'members' }}
+            {{ selectedGroup.members.length === 1 ? 'member' : 'medlemmar' }}
           </p>
         </div>
 
@@ -16,7 +16,7 @@
       </header>
 
       <section class="group-view__members">
-        <h3>Members</h3>
+        <h3>Medlemmar</h3>
 
         <ul>
           @for (member of selectedGroup.members; track member.id) {

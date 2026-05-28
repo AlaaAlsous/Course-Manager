@@ -25,16 +25,16 @@ import { MediaType } from '../media-modal/media-type';
  */
 export default class ContentModule {
   /** Items shown as clickable links below the note textarea. */
-  readonly noteItems = input<string[]>(['Note 1', 'Note 2']);
+  readonly noteItems = input<string[]>(['Notering 1', 'Notering 2']);
 
   /** Note textarea content. Supports two-way binding via `[(noteText)]`. */
   readonly noteText = input<string>('');
 
   /** Items shown as clickable links in the Images section. */
-  readonly imageItems = input<string[]>(['Image 1', 'Image 2', 'Image 3']);
+  readonly imageItems = input<string[]>(['Bild 1', 'Bild 2', 'Bild 3']);
 
   /** Items shown as clickable links in the Voice Recordings section. */
-  readonly voiceItems = input<string[]>(['Voice 1', 'Voice 2', 'Voice 3']);
+  readonly voiceItems = input<string[]>(['Röstinspelning 1', 'Röstinspelning 2', 'Röstinspelning 3']);
 
   /** Emits the clicked item string when a note link is clicked. */
   @Output() noteItemClick = new EventEmitter<string>();

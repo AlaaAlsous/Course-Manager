@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./persons.scss'],
 })
 export class Persons {
-  title = signal('Participants');
+  title = signal('Deltagare');
   searchTerm = signal('');
 
   onSearchChange(event: Event): void {

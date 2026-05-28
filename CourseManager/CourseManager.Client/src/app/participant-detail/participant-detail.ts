@@ -16,7 +16,7 @@ export class ParticipantDetail implements OnInit {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
 
-  title = signal('Participant Detail');
+  title = signal('Detailjer för deltagare');
 
   selectedPerson: any;
 
@@ -32,7 +32,7 @@ export class ParticipantDetail implements OnInit {
       phone: '123-456-7890',
       imageUrl: 'https://i.pravatar.cc/300?img=1',
       address: '123 Main St, Anytown, USA',
-      courses: ['Course 1', 'Course 2'],
+      courses: ['Kurs 1', 'Kurs 2'],
       notes: [
         { id: 1, text: 'Note 1', createdAt: '2023-01-01' },
         { id: 2, text: 'Note 2', createdAt: '2023-01-02' },
@@ -50,7 +50,7 @@ export class ParticipantDetail implements OnInit {
       phone: '987-654-3210',
       imageUrl: 'https://i.pravatar.cc/300?img=2',
       address: '456 Elm St, Othertown, USA',
-      courses: ['Course 3', 'Course 4'],
+      courses: ['Kurs 3', 'Kurs 4'],
       notes: [
         { id: 3, text: 'Note 3', createdAt: '2023-01-03' },
         { id: 4, text: 'Note 4', createdAt: '2023-01-04' },
@@ -68,7 +68,7 @@ export class ParticipantDetail implements OnInit {
       phone: '555-555-5555',
       imageUrl: 'https://i.pravatar.cc/300?img=3',
       address: '789 Oak St, Sometown, USA',
-      courses: ['Course 5', 'Course 6'],
+      courses: ['Kurs 5', 'Kurs 6'],
       notes: [
         { id: 5, text: 'Note 5', createdAt: '2023-01-05' },
         { id: 6, text: 'Note 6', createdAt: '2023-01-06' },
