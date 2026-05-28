@@ -1,0 +1,27 @@
+@if (visible) {
+  <!-- Backdrop: clicking outside the modal cancels the action. -->
+  <div class="confirm-overlay" (click)="cancel()">
+    <div
+      class="confirm-modal"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="options.title || 'Confirm action'"
+    >
+      <!-- Optional title for stronger context on critical actions. -->
+      @if (options.title) {
+        <h2 class="confirm-modal__title">{{ options.title }}</h2>
+      }
+      <p class="confirm-modal__message">{{ options.message }}</p>
+      <!-- Button labels are customizable through ConfirmDialogOptions. -->
+      <div class="confirm-modal__actions">
+        <button class="confirm-modal__btn confirm-modal__btn--cancel" (click)="cancel()">
+          {{ options.cancelText || 'Cancel' }}
+        </button>
+        <button class="confirm-modal__btn confirm-modal__btn--confirm" (click)="confirm()">
+          {{ options.confirmText || 'Confirm' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
