@@ -1,6 +1,6 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { CreateCourseModal, CreateCoursePayload } from '../create-course-modal/create-course-modal';
 import { CourseService } from '../all-courses/course.service';
@@ -10,38 +10,25 @@ import { SnackbarType } from '../shared/snackbar/snackbar.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf, RouterLink, Layout, CreateCourseModal, Snackbar],
+  imports: [NgFor, NgIf, Layout, CreateCourseModal, Snackbar],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
 export class Home {
-  title = signal('Home');
+  title = signal('Hem');
 
   private readonly router = inject(Router);
   private readonly courseService = inject(CourseService);
   private readonly snackbarService = inject(SnackbarService);
 
-  latestGroups = [
-    { id: 1, name: 'Group A', created: '2026-05-10' },
-    { id: 2, name: 'Group B', created: '2026-05-09' },
-    { id: 3, name: 'Group C', created: '2026-05-08' },
-  ];
-
-  latestCourses = computed(() =>
+  courses = computed(() =>
     this.courseService
       .courses()
       .slice()
-      .sort((a, b) => b.created.localeCompare(a.created))
-      .slice(0, 5),
+      .sort((a, b) => b.created.localeCompare(a.created)),
   );
 
   showCreateCourseModal = false;
-
-  latestPeople = [
-    { id: 1, name: 'Alice', created: '2026-05-12' },
-    { id: 2, name: 'Bob', created: '2026-05-10' },
-    { id: 3, name: 'Charlie', created: '2026-05-09' },
-  ];
 
   getRelativeDate(dateString: string): string {
     const created = new Date(dateString);
@@ -49,27 +36,13 @@ export class Home {
     const diffMs = now.getTime() - created.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return '1 day ago';
-    return `${diffDays} days ago`;
-  }
-
-  goToGroup(id: number): void {
-    this.router.navigate(['/groups', id]);
+    if (diffDays === 0) return 'I dag';
+    if (diffDays === 1) return 'För 1 dag sedan';
+    return `För ${diffDays} dagar sedan`;
   }
 
   goToCourse(id: number) {
     this.router.navigate(['/course', id]);
-  }
-
-  goToPerson(id: number) {
-    this.router.navigate(['/participant'], {
-      queryParams: { id },
-    });
-  }
-
-  createGroup() {
-    this.router.navigate(['/create-group']);
   }
 
   createCourse() {
