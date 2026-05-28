@@ -1,25 +1,31 @@
-<header class="top-nav">
-  <div class="top-nav__logo" (click)="redirectHome()">Course Manager</div>
+<div class="app-root-layout">
+  <header class="top-nav">
+    <div class="top-nav__logo" (click)="redirectHome()">Course Manager</div>
 
-  <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+    <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-  <nav class="top-nav__links" [class.open]="menuOpen()">
-    <a routerLink="/all-courses" (click)="closeMenu()">Courses</a>
-    <a routerLink="/participants" (click)="closeMenu()">Participants</a>
-  </nav>
-</header>
+    <nav class="top-nav__links" [class.open]="menuOpen()">
+      <a routerLink="/all-courses" (click)="closeMenu()">Courses</a>
+      <a routerLink="/participants" (click)="closeMenu()">Participants</a>
+    </nav>
+  </header>
 
-<section class="title-bar">
-  <h1>{{ title }}</h1>
-  <ng-content select="[title-actions]"></ng-content>
-</section>
-
-<main class="page-container">
-  <section class="page-sheet">
-    <ng-content></ng-content>
+  <section class="title-bar">
+    <h1>{{ title }}</h1>
+    <ng-content select="[title-actions]"></ng-content>
   </section>
-</main>
+
+  <main class="page-container">
+    <section class="page-sheet">
+      <ng-content></ng-content>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Course Manager- Din styrbara utbildningsplattform</p>
+  </footer>
+</div>
