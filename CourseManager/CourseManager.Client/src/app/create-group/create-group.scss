@@ -1,4 +1,4 @@
-@use 'utilities-mixin'as *;
+@use 'utilities-mixin' as *;
 
 .create-group-container {
   display: flex;
@@ -7,6 +7,10 @@
   width: min(100%, 600px);
   margin: 0 auto;
   padding: var(--space-lg);
+}
+
+.create-group-header {
+  align-items: center;
 }
 
 label {

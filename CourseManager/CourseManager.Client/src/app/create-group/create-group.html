@@ -1,6 +1,12 @@
 <app-layout [title]="title()">
   <div class="create-group-container">
-    <h2>Create Group</h2>
+    <header class="app-page-header create-group-header">
+      <div class="app-page-header__content">
+        <h2>Create Group</h2>
+      </div>
+
+      <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+    </header>
 
     <label>
       Group Name

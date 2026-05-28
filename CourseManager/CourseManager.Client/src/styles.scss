@@ -1,5 +1,5 @@
 @use 'utilities';
-@use 'utilities-mixin'as *;
+@use 'utilities-mixin' as *;
 
 :root {
   /* light theme */
@@ -9,7 +9,6 @@
   --color-bg-tertiary: #3e71a1;
   /* keeping for compatability*/
   --color-primary-bg: var(--color-bg-primary);
-
 
   --color-surface: #f1f1f1;
   --color-surface-hover: #d7d9db;
@@ -43,12 +42,9 @@
   /* Elevation shadows - use these directly */
   --shadow-xs: 0 1px 2px var(--shadow-color);
   --shadow-sm: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
-  --shadow-md:
-    0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color);
-  --shadow-lg:
-    0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
-  --shadow-xl:
-    0 20px 25px -5px var(--shadow-color), 0 10px 10px -5px var(--shadow-color);
+  --shadow-md: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color);
+  --shadow-lg: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -2px var(--shadow-color);
+  --shadow-xl: 0 20px 25px -5px var(--shadow-color), 0 10px 10px -5px var(--shadow-color);
   --shadow-2xl: 0 25px 50px -12px var(--shadow-color-intense);
 
   --shadow-elevated: var(--shadow-xl);
@@ -102,9 +98,11 @@
   :root {
     --gh-scrollbar-track: var(--color-surface);
     --gh-scrollbar-thumb: var(--color-border);
-    --gh-scrollbar-thumb-hover: color-mix(in srgb,
-        var(--color-border) 60%,
-        var(--color-primary) 40%);
+    --gh-scrollbar-thumb-hover: color-mix(
+      in srgb,
+      var(--color-border) 60%,
+      var(--color-primary) 40%
+    );
   }
 }
 
@@ -128,8 +126,6 @@ body {
   scrollbar-gutter: stable;
 }
 
-
-
 html,
 body {
   @include custom-scrollbar;
@@ -146,6 +142,29 @@ a:hover {
 
 button {
   @include button;
+}
+
+.app-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.app-page-header__content {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.app-page-header__content h2,
+.app-page-header__content p {
+  margin: 0;
+}
+
+.app-back-button {
+  display: inline-flex;
+  align-items: center;
 }
 
 h1,

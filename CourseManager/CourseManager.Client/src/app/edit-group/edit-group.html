@@ -2,8 +2,14 @@
   <section class="edit-group">
     @if (group) {
       <header class="edit-group__header">
-        <h2>Edit Group</h2>
-        <p>Update the selected group name.</p>
+        <div class="app-page-header__content">
+          <h2>Edit Group</h2>
+          <p>Update the selected group name.</p>
+        </div>
+
+        <button type="button" class="app-back-button" (click)="cancel()">
+          Tillbaka till grupp
+        </button>
       </header>
 
       <label class="edit-group__field">
@@ -23,8 +29,8 @@
       <h2>Group not found</h2>
       <p>The selected group does not exist.</p>
 
-      <button type="button" (click)="cancel()">
-        Back to Groups
+      <button type="button" class="app-back-button" (click)="cancel()">
+        Tillbaka till grupper
       </button>
     }
   </section>

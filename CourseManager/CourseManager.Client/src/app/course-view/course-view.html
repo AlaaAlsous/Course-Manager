@@ -1,42 +1,26 @@
 <app-layout [title]="title()">
-  <div class="view-selector">
-    <button (click)="switchView('groups')" [class.selected]="currentview() === 'groups'">
-      Groups
-    </button>
-    <button
-      (click)="switchView('participants')"
-      [class.selected]="currentview() === 'participants'"
-    >
-      Participants
-    </button>
-  </div>
+  <section class="kurstillfalle-overview">
+    <header class="app-page-header kurstillfalle-overview__header">
+      <div class="app-page-header__content">
+        <h2>Kurstillfällen</h2>
+      </div>
 
-  <div *ngIf="currentview() === 'participants'">
-    <h2>Participants</h2>
-    <ul class="group-list">
-      @for (person of people; track person) {
+      <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+    </header>
+
+    <ul class="kurstillfalle-list">
+      @for (section of sections(); track section.id) {
         <li>
-          <h3>{{ person }}</h3>
+          <a class="kurstillfalle-card" [routerLink]="sectionRoute(section.id)">
+            <h3>{{ section.name }}</h3>
+            <p>{{ section.groups.length }} grupper</p>
+          </a>
         </li>
       } @empty {
-        <span>No participants available</span>
+        <span>Inga kurstillfällen tillgängliga</span>
       }
     </ul>
-  </div>
-
-  <div *ngIf="currentview() === 'groups'">
-    <h2>Groups</h2>
-    <ul class="group-list">
-      @for (group of groups; track group) {
-        <li>
-          <h3>{{ group }}</h3>
-          <p>2 members</p>
-        </li>
-      } @empty {
-        <span>No groups available</span>
-      }
-    </ul>
-  </div>
+  </section>
 
   <app-content-module></app-content-module>
 </app-layout>

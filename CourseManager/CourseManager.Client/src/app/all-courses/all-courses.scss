@@ -1,4 +1,4 @@
-@use 'utilities-mixin'as *;
+@use 'utilities-mixin' as *;
 
 .courses-overview {
   width: min(100%, 900px);
@@ -46,6 +46,7 @@
 
 .course-card:hover {
   background: var(--color-primary-hover);
+  color: var(--color-text-inverted);
   transform: translateY(-2px);
 }
 

@@ -1,0 +1,24 @@
+<app-layout [title]="title()">
+  <header class="app-page-header course-section-view__header">
+    <div class="app-page-header__content">
+      <h2>Grupper</h2>
+    </div>
+
+    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+  </header>
+
+  <ul class="group-list">
+    @for (group of groups; track group.id) {
+      <li>
+        <a [routerLink]="groupRoute(group.id)" [queryParams]="groupQueryParams()">
+          <h3>{{ group.name }}</h3>
+          <p>{{ group.memberCount }} medlemmar</p>
+        </a>
+      </li>
+    } @empty {
+      <span>Inga grupper tillgängliga</span>
+    }
+  </ul>
+
+  <app-content-module></app-content-module>
+</app-layout>

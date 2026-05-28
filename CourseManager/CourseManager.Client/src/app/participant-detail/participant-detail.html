@@ -1,5 +1,7 @@
 <app-layout [title]="title()">
   <div class="detail-page">
+    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+
     <div class="hero-card">
       <img class="profile-image" [src]="selectedPerson?.imageUrl" [alt]="selectedPerson?.name" />
 

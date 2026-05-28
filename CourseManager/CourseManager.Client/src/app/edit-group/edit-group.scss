@@ -5,8 +5,11 @@
 }
 
 .edit-group__header {
-  display: grid;
-  gap: 0.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .edit-group__header h2,

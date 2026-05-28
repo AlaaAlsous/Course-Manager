@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { Router } from '@angular/router';
@@ -22,6 +23,8 @@ interface Course {
   styleUrl: './create-group.scss',
 })
 export class CreateGroup {
+  private readonly location = inject(Location);
+
   title = signal('Create Group');
 
   name = '';
@@ -45,7 +48,19 @@ export class CreateGroup {
   selectedPersonId: number | null = null;
   selectedCourseId: number | null = null;
 
-  constructor(private router: Router, private snackbarService: SnackbarService) {}
+  constructor(
+    private router: Router,
+    private snackbarService: SnackbarService,
+  ) {}
+
+  goBack() {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
+    this.router.navigate(['/all-courses']);
+  }
 
   addExistingPerson() {
     if (!this.selectedPersonId) return;
@@ -73,9 +88,9 @@ export class CreateGroup {
     this.selectedCourseId = null;
   }
 
-goToCreatePerson() {
-  this.router.navigate(['/participants/create']);
-}
+  goToCreatePerson() {
+    this.router.navigate(['/participants/create']);
+  }
 
   createGroup() {
     if (!this.name.trim()) return;
@@ -84,10 +99,7 @@ goToCreatePerson() {
       name: this.name,
       people: this.groupPeople,
     });
-this.snackbarService.show(
-  SnackbarType.Success,
-  'Group created successfully!'
-);
+    this.snackbarService.show(SnackbarType.Success, 'Group created successfully!');
     this.router.navigate(['/groups']);
   }
 }

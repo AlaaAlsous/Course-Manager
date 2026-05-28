@@ -1,6 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import ContentModule from '../content-module/content-module';
@@ -13,6 +13,9 @@ import ContentModule from '../content-module/content-module';
   styleUrls: ['./participant-detail.scss'],
 })
 export class ParticipantDetail implements OnInit {
+  private readonly location = inject(Location);
+  private readonly router = inject(Router);
+
   title = signal('Participant Detail');
 
   selectedPerson: any;
@@ -84,5 +87,14 @@ export class ParticipantDetail implements OnInit {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
 
     this.selectedPerson = this.persons.find((person) => person.id === id);
+  }
+
+  goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
+    this.router.navigate(['/participants']);
   }
 }
