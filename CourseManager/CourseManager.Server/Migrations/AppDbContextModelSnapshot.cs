@@ -175,7 +175,7 @@ namespace CourseManager.Server.Migrations
 
                     b.HasIndex("FileName");
 
-                    b.ToTable("Files");
+                    b.ToTable("FileAssets");
                 });
 
             modelBuilder.Entity("CourseManager.Server.Models.Group", b =>
