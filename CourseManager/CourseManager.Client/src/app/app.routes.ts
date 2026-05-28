@@ -8,6 +8,7 @@ import { ParticipantDetail } from './participant-detail/participant-detail';
 import { CreateGroup } from './create-group/create-group';
 import { PersonCreator } from './person-creator/person-creator';
 import { EditGroup } from './edit-group/edit-group';
+import { NotFound } from './not-found/not-found';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -21,4 +22,5 @@ export const routes: Routes = [
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'course/:id', component: CourseView, data: { title: 'Course' } },
+  { path: '**', component: NotFound, data: { title: 'Sidan hittades inte' } },
 ];
