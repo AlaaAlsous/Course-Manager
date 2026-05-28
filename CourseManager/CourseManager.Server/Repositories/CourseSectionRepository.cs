@@ -1,0 +1,65 @@
+using CourseManager.Server.Data;
+using CourseManager.Server.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CourseManager.Server.Repositories;
+
+public class CourseSectionRepository : ICourseSectionRepository
+{
+    private readonly AppDbContext _db;
+
+    public CourseSectionRepository(AppDbContext db)
+    {
+        _db = db;
+    }
+
+    public async Task<List<CourseSection>> GetAllAsync()
+    {
+        return await _db.CourseSections.ToListAsync();
+    }
+
+    public async Task<CourseSection?> GetByIdAsync(int courseSectionId)
+    {
+        return await _db.CourseSections.FindAsync(courseSectionId);
+    }
+
+    public async Task<List<CourseSection>> GetByCourseIdAsync(int courseId)
+    {
+        return await _db.CourseSections
+            .Where(s => s.CourseId == courseId)
+            .ToListAsync();
+    }
+
+    public async Task<CourseSection> CreateAsync(CourseSection section)
+    {
+        _db.CourseSections.Add(section);
+        await _db.SaveChangesAsync();
+        return section;
+    }
+
+    public async Task<CourseSection?> UpdateAsync(int courseSectionId, CourseSection updated)
+    {
+        var existing = await _db.CourseSections.FindAsync(courseSectionId);
+        if (existing is null)
+            return null;
+
+        existing.Name = updated.Name;
+        existing.Description = updated.Description;
+        existing.StartDate = updated.StartDate;
+        existing.EndDate = updated.EndDate;
+
+        await _db.SaveChangesAsync();
+        return existing;
+    }
+
+    public async Task<bool> DeleteAsync(int courseSectionId)
+    {
+        var section = await _db.CourseSections.FindAsync(courseSectionId);
+        if (section is null)
+            return false;
+
+        _db.CourseSections.Remove(section);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+}

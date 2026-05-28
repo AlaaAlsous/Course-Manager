@@ -48,6 +48,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddScoped<ICourseSectionRepository, CourseSectionRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 
 var app = builder.Build();
@@ -61,6 +62,7 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("Default");
 
 app.MapEndpoints();
+app.MapCourseSectionEndpoints();
 app.MapPersonEndpoints();
 app.MapGet("/", () => "CourseManager API is running");
 
