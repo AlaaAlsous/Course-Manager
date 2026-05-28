@@ -52,6 +52,7 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseSectionRepository, CourseSectionRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 var app = builder.Build();
 
@@ -67,6 +68,7 @@ app.MapCourseEndpoints();
 app.MapCourseSectionEndpoints();
 app.MapPersonEndpoints();
 app.MapGroupEndpoints();
+app.MapFileEndpoints();
 
 app.MapGet("/", () => "CourseManager API is running");
 
