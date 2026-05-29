@@ -2,7 +2,6 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { CreateCourseModal, CreateCoursePayload } from '../create-course-modal/create-course-modal';
 import { CourseService } from '../all-courses/course.service';
 import { Snackbar } from '../shared/snackbar/snackbar';
 import { SnackbarService } from '../shared/snackbar/snackbar.service';
@@ -10,7 +9,7 @@ import { SnackbarType } from '../shared/snackbar/snackbar.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf, Layout, CreateCourseModal, Snackbar],
+  imports: [NgFor, NgIf, Layout, Snackbar],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
@@ -28,8 +27,6 @@ export class Home {
       .sort((a, b) => b.created.localeCompare(a.created)),
   );
 
-  showCreateCourseModal = false;
-
   getRelativeDate(dateString: string): string {
     const created = new Date(dateString);
     const now = new Date();
@@ -46,19 +43,7 @@ export class Home {
   }
 
   createCourse() {
-    this.showCreateCourseModal = true;
-  }
-
-  onCreateCourseModalClose() {
-    this.showCreateCourseModal = false;
-  }
-
-  onCreateCourse(course: CreateCoursePayload) {
-    this.courseService.addCourse(course.name);
-
-    this.snackbarService.show(SnackbarType.Success, 'Course created successfully!');
-
-    this.showCreateCourseModal = false;
+    this.router.navigate(['/create-course']);
   }
 
   createPerson() {

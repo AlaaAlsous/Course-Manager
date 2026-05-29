@@ -6,6 +6,7 @@ import { GroupView } from './group-view/group-view';
 import { CourseView } from './course-view/course-view';
 import { CourseSectionView } from './course-section-view/course-section-view';
 import { ParticipantDetail } from './participant-detail/participant-detail';
+import { CreateCourse } from './create-course/create-course';
 import { CreateGroup } from './create-group/create-group';
 import { PersonCreator } from './person-creator/person-creator';
 import { EditGroup } from './edit-group/edit-group';
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
+  { path: 'create-course', component: CreateCourse, data: { title: 'Create Course' } },
   {
     path: 'course/:courseId/kurstillfalle/:sectionId',
     component: CourseSectionView,

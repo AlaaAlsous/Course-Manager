@@ -1,0 +1,30 @@
+<app-layout [title]="title()">
+  <header class="app-page-header create-course-header">
+    <div class="app-page-header__content">
+      <h2>Skapa kurs</h2>
+    </div>
+
+    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+  </header>
+
+  <form (ngSubmit)="onSubmit()">
+    <label for="course-name">Namn</label>
+    <input id="course-name" name="name" type="text" [(ngModel)]="name" required />
+
+    <label for="course-description">Beskrivning (valfritt)</label>
+    <textarea
+      id="course-description"
+      name="description"
+      rows="4"
+      [(ngModel)]="description"
+    ></textarea>
+
+    @if (submitted && !isFormValid) {
+      <p class="validation">Namn är obligatoriskt.</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="primary">Skapa kurs</button>
+    </div>
+  </form>
+</app-layout>
