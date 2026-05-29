@@ -1,67 +1,80 @@
 <div class="content-module">
-  <div class="content-module__collapsible-container">
-    <div class="content-module__button-container">
-      <button (click)="toggleCollapse(1)" class="content-module__toggle-btn">
-        {{ (isNotesCollapsed ? '▼' : '▲') + ' ' + 'Noteringar' }}
-      </button>
-    </div>
+  <div class="content-module__container">
+    <div>
+      <div>
+        <h3 class="mt-1">Innehåll</h3>
+      </div>
 
-    @if (!isNotesCollapsed) {
-      <div class="content-module__collapsible-content">
-        <ul>
-          @for (item of noteItems(); track item) {
-            <li>
-              <a (click)="onNoteItemClick(item)">{{ item }}</a>
+      <!-- File actions toolbar -->
+      <div class="d-flex gap-1 mb-1">
+        <!-- Hidden file input for disk upload -->
+        <input
+          #fileInput
+          type="file"
+          multiple
+          (change)="onFilesSelected($event)"
+          class="content-module__file-input"
+          accept="*"
+        />
+        <button class="content-module__action-btn" (click)="triggerFileUpload()">
+          Ladda upp fil
+        </button>
+        <button class="content-module__action-btn" (click)="showTextForm = !showTextForm">
+          {{ showTextForm ? 'Stäng' : 'Ny textfil' }}
+        </button>
+      </div>
+
+      <!-- Create text file form -->
+      @if (showTextForm) {
+        <div class="content-module__text-form mb-1">
+          <input
+            class="content-module__text-form-input"
+            [(ngModel)]="newTextFileName"
+            placeholder="Filnamn (utan .txt)"
+          />
+          <textarea
+            class="content-module__text-form-textarea"
+            [(ngModel)]="newTextFileContent"
+            placeholder="Skriv innehåll här..."
+          ></textarea>
+          <button class="content-module__action-btn" (click)="onCreateTextFile()">Skapa</button>
+        </div>
+      }
+
+      <ul class="content-module__content-list">
+        @for (group of groupedFileItems; track group.dateKey) {
+          <li class="mt-2 content-module__date-header">
+            <span class="fw-600 text-muted">{{ group.dateKey }}</span>
+          </li>
+          @for (item of group.items; track item) {
+            <li class="mb-2">
+              <div class="d-flex align-items-center justify-space-between">
+                <span>{{ item.name }}.{{ item.extension }}</span>
+                <div class="d-flex gap-1">
+                  <a
+                    class="text-primary"
+                    [href]="item.sourceUrl"
+                    [download]="item.name + '.' + item.extension"
+                    title="Ladda ner"
+                    >⤓</a
+                  >
+
+                  <button
+                    class="content-module__icon-btn text-danger"
+                    (click)="onDeleteFile(item)"
+                    title="Ta bort"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <div class="">
+                <app-file-preview [file]="item" />
+              </div>
             </li>
           }
-        </ul>
-      </div>
-    }
-  </div>
-  <div class="content-module__collapsible-container">
-    <div class="content-module__button-container">
-      <button (click)="toggleCollapse(2)" class="content-module__toggle-btn">
-        {{ (isImagesCollapsed ? '▼' : '▲') + ' ' + 'Bilder' }}
-      </button>
+        }
+      </ul>
     </div>
-
-    @if (!isImagesCollapsed) {
-      <div class="content-module__collapsible-content">
-        <ul>
-          @for (item of imageItems(); track item) {
-            <li>
-              <a (click)="onImageItemClick(item)">{{ item }}</a>
-            </li>
-          }
-        </ul>
-      </div>
-    }
   </div>
-  <div class="content-module__collapsible-container">
-    <div class="content-module__button-container">
-      <button (click)="toggleCollapse(3)" class="content-module__toggle-btn">
-        {{ (isVRCollapsed ? '▼' : '▲') + ' ' + 'Röstinspelningar' }}
-      </button>
-    </div>
-
-    @if (!isVRCollapsed) {
-      <div class="content-module__collapsible-content">
-        <ul>
-          @for (item of voiceItems(); track item) {
-            <li>
-              <a (click)="onVoiceItemClick(item)">{{ item }}</a>
-            </li>
-          }
-        </ul>
-      </div>
-    }
-  </div>
-
-  <app-media-modal
-    [isOpen]="isModalOpen"
-    [mediaType]="modalMediaType"
-    [content]="modalContent"
-    (close)="onModalClose()"
-    (save)="onModalSave($event)"
-  />
 </div>

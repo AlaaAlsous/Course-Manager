@@ -1,0 +1,45 @@
+@switch (previewType) {
+  @case (PreviewType.Text) {
+    @if (textLoadFailed) {
+      <div class="file-preview file-preview--unknown">
+        <span class="fs-sm text-muted">Denna fil kan inte förhandsvisas</span>
+      </div>
+    } @else {
+      <div class="file-preview file-preview--text">
+        <textarea
+          class="file-preview__textarea"
+          [readonly]="!isEditing"
+          [value]="textContent"
+          (input)="textContent = $any($event.target).value"
+        ></textarea>
+        <button class="file-preview__edit-btn" (click)="toggleEdit()">
+          {{ isEditing ? 'Spara' : 'Redigera' }}
+        </button>
+      </div>
+    }
+  }
+  @case (PreviewType.Image) {
+    <div class="file-preview file-preview--image">
+      <img [src]="file().sourceUrl" [alt]="file().name" class="file-preview__image" />
+    </div>
+  }
+  @case (PreviewType.Voice) {
+    <div class="file-preview file-preview--voice">
+      <audio controls [src]="file().sourceUrl" class="file-preview__audio">
+        Din webbläsare stödjer inte ljuduppspelning.
+      </audio>
+    </div>
+  }
+  @case (PreviewType.OpenInBrowser) {
+    <div class="file-preview file-preview--link">
+      <a class="fs-sm text-primary fw-600" [href]="file().sourceUrl" target="_blank"
+        >Öppna i webbläsaren</a
+      >
+    </div>
+  }
+  @default {
+    <div class="file-preview file-preview--unknown">
+      <span class="fs-sm text-muted">Denna fil kan inte förhandsvisas</span>
+    </div>
+  }
+}
