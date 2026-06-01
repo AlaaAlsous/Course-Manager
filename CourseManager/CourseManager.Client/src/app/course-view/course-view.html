@@ -5,16 +5,30 @@
         <h2>Kurstillfällen</h2>
       </div>
 
-      <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+      <div class="kurstillfalle-overview__actions">
+        <button type="button" class="app-back-button" [routerLink]="createKurstillfalleRoute()">
+          Skapa kurstillfälle
+        </button>
+        <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+      </div>
     </header>
 
     <ul class="kurstillfalle-list">
       @for (section of sections(); track section.id) {
-        <li>
-          <a class="kurstillfalle-card" [routerLink]="sectionRoute(section.id)">
-            <h3>{{ section.name }}</h3>
-            <p>{{ section.groups.length }} grupper</p>
-          </a>
+        <li class="kurstillfalle-list__item" [routerLink]="sectionRoute(section.id)">
+          <div class="kurstillfalle-card-row">
+            <div class="kurstillfalle-card">
+              <h3>{{ section.name }}</h3>
+              <p>{{ section.groups.length }} grupper</p>
+            </div>
+            <button
+              type="button"
+              class="app-back-button"
+              (click)="$event.stopPropagation(); deleteSection(section.id)"
+            >
+              Ta bort
+            </button>
+          </div>
         </li>
       } @empty {
         <span>Inga kurstillfällen tillgängliga</span>

@@ -5,16 +5,32 @@
   margin-bottom: var(--space-md);
 }
 
+.course-section-view__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 .group-list {
   @include list;
 }
 
-.group-list a {
-  color: inherit;
-  text-decoration: none;
+.group-list__item {
+  cursor: pointer;
 }
 
-.group-list a:hover h3 {
+.group-list__card {
+  flex: 1;
+}
+
+.group-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.group-list__item:hover h3 {
   text-decoration: underline;
 }
 

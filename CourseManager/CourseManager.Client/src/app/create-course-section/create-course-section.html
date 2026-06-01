@@ -1,0 +1,32 @@
+<app-layout [title]="title()">
+  <header class="app-page-header create-kurstillfalle__header">
+    <div class="app-page-header__content">
+      <h2>Skapa nytt kurstillfälle</h2>
+    </div>
+
+    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+  </header>
+
+  <form (ngSubmit)="createKurstillfalle()" class="create-kurstillfalle__form">
+    <label for="name">Namn</label>
+    <input id="name" name="name" type="text" [(ngModel)]="name" required />
+
+    <label for="description">Beskrivning (valfritt)</label>
+    <textarea id="description" name="description" rows="4" [(ngModel)]="description"></textarea>
+
+    <label for="startDate">Startdatum (valfritt)</label>
+    <input id="startDate" name="startDate" type="date" [(ngModel)]="startDate" />
+
+    <label for="endDate">Slutdatum (valfritt)</label>
+    <input id="endDate" name="endDate" type="date" [(ngModel)]="endDate" />
+
+    @if (submitted && !isFormValid) {
+      <p class="validation">Fyll i namn och kontrollera att slutdatum inte är före startdatum.</p>
+    }
+
+    <div class="create-kurstillfalle__actions">
+      <button type="button" class="secondary" (click)="goBack()">Avbryt</button>
+      <button type="submit" class="primary">Skapa kurstillfälle</button>
+    </div>
+  </form>
+</app-layout>

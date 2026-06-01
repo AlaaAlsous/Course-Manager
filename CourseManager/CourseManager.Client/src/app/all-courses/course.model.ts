@@ -13,6 +13,9 @@ export interface CourseSection {
   id: number;
   courseId: number;
   name: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
   people: string[];
   groups: CourseSectionGroup[];
 }

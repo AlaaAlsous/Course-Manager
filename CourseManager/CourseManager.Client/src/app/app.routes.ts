@@ -11,6 +11,7 @@ import { CreateGroup } from './create-group/create-group';
 import { PersonCreator } from './person-creator/person-creator';
 import { EditGroup } from './edit-group/edit-group';
 import { NotFound } from './not-found/not-found';
+import { CreateCourseSection } from './create-course-section/create-course-section';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -24,6 +25,11 @@ export const routes: Routes = [
   { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'create-course', component: CreateCourse, data: { title: 'Create Course' } },
+  {
+    path: 'course/:courseId/kurstillfalle/new',
+    component: CreateCourseSection,
+    data: { title: 'Skapa kurstillfälle' },
+  },
   {
     path: 'course/:courseId/kurstillfalle/:sectionId',
     component: CourseSectionView,

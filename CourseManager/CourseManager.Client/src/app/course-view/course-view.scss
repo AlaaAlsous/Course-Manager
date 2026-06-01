@@ -5,17 +5,33 @@
   margin-bottom: var(--space-md);
 }
 
+.kurstillfalle-overview__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 .kurstillfalle-list {
   @include list;
 }
 
-.kurstillfalle-card {
-  display: block;
-  color: inherit;
-  text-decoration: none;
+.kurstillfalle-list__item {
+  cursor: pointer;
 }
 
-.kurstillfalle-card:hover h3 {
+.kurstillfalle-card {
+  display: block;
+  flex: 1;
+}
+
+.kurstillfalle-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.kurstillfalle-list__item:hover h3 {
   text-decoration: underline;
 }
 

@@ -1,6 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import { Course, CourseSection } from './course.model';
 
+export interface CreateCourseSectionPayload {
+  name: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CourseService {
   private readonly _courses = signal<Course[]>([
@@ -91,5 +98,69 @@ export class CourseService {
       { id: nextId, name, sections: [], people: [], groups: [], created },
       ...list,
     ]);
+  }
+
+  addSection(courseId: number, payload: CreateCourseSectionPayload): void {
+    const nextSectionId = Math.max(0, ...this._courseSections().map((section) => section.id)) + 1;
+
+    const newSection: CourseSection = {
+      id: nextSectionId,
+      courseId,
+      name: payload.name,
+      description: payload.description,
+      startDate: payload.startDate,
+      endDate: payload.endDate,
+      people: [],
+      groups: [],
+    };
+
+    this._courseSections.update((sections) => [...sections, newSection]);
+
+    this._courses.update((courses) =>
+      courses.map((course) => {
+        if (course.id !== courseId) {
+          return course;
+        }
+
+        return {
+          ...course,
+          sections: [...course.sections, { id: newSection.id, name: newSection.name }],
+        };
+      }),
+    );
+  }
+
+  deleteSection(courseId: number, sectionId: number): void {
+    this._courseSections.update((sections) =>
+      sections.filter((section) => !(section.courseId === courseId && section.id === sectionId)),
+    );
+
+    this._courses.update((courses) =>
+      courses.map((course) => {
+        if (course.id !== courseId) {
+          return course;
+        }
+
+        return {
+          ...course,
+          sections: course.sections.filter((section) => section.id !== sectionId),
+        };
+      }),
+    );
+  }
+
+  removeGroupFromSection(courseId: number, sectionId: number, groupId: number): void {
+    this._courseSections.update((sections) =>
+      sections.map((section) => {
+        if (section.courseId !== courseId || section.id !== sectionId) {
+          return section;
+        }
+
+        return {
+          ...section,
+          groups: section.groups.filter((group) => group.id !== groupId),
+        };
+      }),
+    );
   }
 }

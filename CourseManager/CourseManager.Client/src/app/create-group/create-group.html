@@ -52,7 +52,10 @@
 
       <ul>
         <li *ngFor="let p of groupPeople">
-          {{ p.name }}
+          <span>{{ p.name }}</span>
+          <button type="button" class="remove-btn" (click)="removePersonFromGroup(p.id)">
+            Ta bort
+          </button>
         </li>
       </ul>
     </section>
@@ -62,11 +65,16 @@
 
       <ul>
         <li *ngFor="let c of groupCourses">
-          {{ c.name }}
+          <span>{{ c.name }}</span>
+          <button type="button" class="remove-btn" (click)="removeCourseFromGroup(c.id)">
+            Ta bort
+          </button>
         </li>
       </ul>
     </section>
 
-    <button class="create-btn" (click)="createGroup()">Create Group</button>
+    <div class="create-group-actions">
+      <button type="button" class="create-btn" (click)="createGroup()">Create Group</button>
+    </div>
   </div>
 </app-layout>

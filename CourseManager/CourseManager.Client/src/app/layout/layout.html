@@ -1,10 +1,6 @@
-
 <div class="app-root-layout">
-
   <header class="top-nav">
-  <div class="top-nav__logo" (click)="redirectHome()">KursHanterare</div>
-  
-    
+    <div class="top-nav__logo" (click)="redirectHome()">KursHanterare</div>
 
     <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
       <span></span>
@@ -12,12 +8,11 @@
       <span></span>
     </button>
 
-  <nav class="top-nav__links" [class.open]="menuOpen()">
-    <a routerLink="/all-courses" (click)="closeMenu()">Kurser</a>
-    <a routerLink="/participants" (click)="closeMenu()">Deltagare</a>
-  </nav>
-</header>
-    
+    <nav class="top-nav__links" [class.open]="menuOpen()">
+      <a routerLink="/all-courses" (click)="closeMenu()">Kurser</a>
+      <a routerLink="/participants" (click)="closeMenu()">Deltagare</a>
+    </nav>
+  </header>
 
   <section class="title-bar">
     <h1>{{ title }}</h1>

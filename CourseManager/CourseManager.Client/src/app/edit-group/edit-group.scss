@@ -27,6 +27,22 @@
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.edit-group__field input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.edit-group__field input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-soft);
 }
 
 .edit-group__actions {
@@ -44,4 +60,20 @@
 
 .edit-group__status {
   margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .edit-group__field input {
+    border-color: color-mix(in srgb, var(--color-text) 36%, var(--color-surface) 64%);
+    background: color-mix(in srgb, var(--color-surface) 88%, white 12%);
+  }
+
+  .edit-group__field input:hover {
+    border-color: color-mix(in srgb, var(--color-text) 50%, var(--color-surface) 50%);
+  }
+
+  .edit-group__field input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 30%, transparent 70%);
+  }
 }
