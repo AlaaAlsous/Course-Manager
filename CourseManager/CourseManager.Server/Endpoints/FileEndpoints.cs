@@ -24,84 +24,74 @@ public static class FileEndpoints
                     file.UploadedAt
                 ));
         });
-
-        group.MapPost("/create-or-upload", async (HttpRequest request, IFileRepository repo) =>
+        group.MapPost("/upload/{entityType}/{entityId:int}", async (
+            string entityType,
+            int entityId,
+            HttpRequest request,
+            IFileRepository repo) =>
         {
-            var uploadsPath = Path.Combine("uploads");
-            Directory.CreateDirectory(uploadsPath);
-
             var form = await request.ReadFormAsync();
             var uploadedFile = form.Files.FirstOrDefault();
 
-            if (uploadedFile is not null)
+            if (uploadedFile is null)
+                return Results.BadRequest("No file uploaded");
+
+            var uploadsPath = Path.Combine("uploads");
+            Directory.CreateDirectory(uploadsPath);
+
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+            var originalName = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
+            var extension = Path.GetExtension(uploadedFile.FileName);
+            var finalFileName = $"{originalName}_{timestamp}{extension}";
+            var filePath = Path.Combine(uploadsPath, finalFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+                await uploadedFile.CopyToAsync(stream);
+
+            var fileAsset = new FileAsset
             {
-                var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
-
-                var originalName = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
-                var extension = Path.GetExtension(uploadedFile.FileName);
-
-                var finalFileName = $"{originalName}_{timestamp}{extension}";
-                var filePath = Path.Combine(uploadsPath, finalFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(stream);
-                }
-
-                var fileAsset = new FileAsset
-                {
-                    FileName = finalFileName,
-                    LocalPath = filePath,
-                    CloudPath = null,
-                    StorageProvider = "local",
-                    FileType = uploadedFile.ContentType,
-                    FileSize = uploadedFile.Length
-                };
-
-                var created = await repo.CreateAsync(fileAsset);
-
-                return Results.Ok(new FileAssetDto(
-                    created.FileAssetId,
-                    created.FileName,
-                    created.LocalPath,
-                    created.CloudPath,
-                    created.StorageProvider,
-                    created.FileType,
-                    created.FileSize,
-                    created.UploadedAt
-                ));
-            }
-
-            var body = await request.ReadFromJsonAsync<CreateOrUploadFileRequest>();
-
-            if (body is null || string.IsNullOrWhiteSpace(body.FileName))
-                return Results.BadRequest("Missing file name");
-
-            var textFilePath = Path.Combine(uploadsPath, body.FileName);
-
-            await System.IO.File.WriteAllTextAsync(textFilePath, body.Content ?? "");
-
-            var textFileAsset = new FileAsset
-            {
-                FileName = body.FileName,
-                LocalPath = textFilePath,
+                FileName = finalFileName,
+                LocalPath = filePath,
                 CloudPath = null,
                 StorageProvider = "local",
-                FileType = "text/plain",
-                FileSize = new FileInfo(textFilePath).Length
+                FileType = uploadedFile.ContentType,
+                FileSize = uploadedFile.Length
             };
 
-            var createdText = await repo.CreateAsync(textFileAsset);
+            var created = await repo.CreateAsync(fileAsset);
+
+            switch (entityType.ToLower())
+            {
+                case "course":
+                    await repo.AddToCourseAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "section":
+                case "coursesection":
+                    await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "group":
+                    await repo.AddToGroupAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "person":
+                    await repo.AddToPersonAsync(entityId, created.FileAssetId);
+                    break;
+
+                default:
+                    return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
+            }
 
             return Results.Ok(new FileAssetDto(
-                createdText.FileAssetId,
-                createdText.FileName,
-                createdText.LocalPath,
-                createdText.CloudPath,
-                createdText.StorageProvider,
-                createdText.FileType,
-                createdText.FileSize,
-                createdText.UploadedAt
+                created.FileAssetId,
+                created.FileName,
+                created.LocalPath,
+                created.CloudPath,
+                created.StorageProvider,
+                created.FileType,
+                created.FileSize,
+                created.UploadedAt
             ));
         });
 
