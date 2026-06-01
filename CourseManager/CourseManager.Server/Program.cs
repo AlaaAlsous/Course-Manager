@@ -1,5 +1,4 @@
 using CourseManager.Server.Data;
-using CourseManager.Server.FileService;
 using CourseManager.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,17 +19,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         Console.WriteLine("Using local SQLite Database");
         options.UseSqlite(localConn);
     }
-});
-
-builder.Services.AddScoped<IFileService>(sp =>
-{
-    var env = sp.GetRequiredService<IWebHostEnvironment>();
-
-    var basePath = Path.Combine(env.ContentRootPath, "Data", "Storage");
-    Directory.CreateDirectory(basePath);
-
-    var directory = new DirectoryInfo(basePath);
-    return new LocalFileService(directory);
 });
 
 builder.Services.AddCors(options =>
