@@ -56,10 +56,10 @@ All design tokens are defined in `styles.scss` under `:root`. Dark mode override
 
 ```css
 /* Backgrounds */
---color-bg              /* Page background      (#f8fafc light / #141b27 dark) */
---color-bg-primary      /* Primary background   (#ffffff / #12314f) */
---color-bg-secondary    /* Secondary background (#759ec9 / #223650) */
---color-bg-tertiary     /* Tertiary background  (#3e71a1 / #365785) */
+--color-bg              /* Page background      (#f8fafc light / #0e1621 dark) */
+--color-bg-primary      /* Primary background   (#ffffff / #162032) */
+--color-bg-secondary    /* Secondary background (#1a3a5c / #1c3454) */
+--color-bg-tertiary     /* Tertiary background  (#1e4a72 / #26456e) */
 --color-primary-bg      /* Alias for --color-bg-primary (compatability) */
 
 /* Surfaces (cards, sheets, inputs) */
@@ -90,7 +90,17 @@ All design tokens are defined in `styles.scss` under `:root`. Dark mode override
 
 /* Navigation (aliases — use the original variables instead) */
 --color-nav-bg          /* Alias for --color-bg-secondary */
---color-nav-text        /* Alias for --color-text */
+--color-nav-text        /* Color for nav text   (rgba(255,255,255,0.9)) */
+
+/* Shadow helpers */
+--shadow-color              /* Shadow tint (rgba(0,0,0,0.07)) */
+--shadow-color-intense      /* Intense shadow tint (rgba(0,0,0,0.14)) */
+
+/* Scrollbar */
+--scrollbar-size            /* Scrollbar width (11px) */
+--gh-scrollbar-track        /* Scrollbar track */
+--gh-scrollbar-thumb        /* Scrollbar thumb */
+--gh-scrollbar-thumb-hover  /* Scrollbar thumb hover */
 ```
 
 ### Shadows
@@ -165,11 +175,15 @@ These styles apply automatically — no classes needed:
 | Element | Style |
 | --- | --- |
 | `*` | `margin: 0; padding: 0; box-sizing: border-box` |
-| `html, body` | Full height, system font, `--color-bg` background, `--color-text` text, custom scrollbar |
+| `html, body` | Full height, system font (`system-ui, -apple-system, ...`), `--color-bg` background, `--color-text` text, `scrollbar-gutter: stable`, `line-height: 1.6`, `-webkit-font-smoothing: antialiased`, custom scrollbar |
 | `a` | `cursor: pointer`, no underline (underline on hover) |
 | `button` | Uses `@include button` (see mixins section) |
-| `h1, h2, h3` | `font-weight: 600`, `--color-text` |
-| `.container` | Centered wrapper, max-width `1200px`, `--space-md` padding |
+| `h1, h2, h3` | `font-weight: 600`, `--color-text`, `letter-spacing: -0.015em`, `line-height: 1.25` |
+| `.container` | Centered wrapper, `width: min(100%, 1200px)`, `--space-md` padding |
+| `.app-page-header` | Flex row, `align-items: flex-start`, `justify-content: space-between`, `gap: var(--space-md)`, `flex-wrap: wrap` |
+| `.app-page-header__content` | CSS grid, `gap: var(--space-xs)` |
+| `.app-back-button` | `display: inline-flex`, `align-items: center`, `gap: var(--space-xs)` |
+| `.inline-edit-input` | Styled editable input with `--color-primary` border, `--color-primary-soft` box-shadow, `min-width: 200px`, inherits font |
 
 ---
 
@@ -465,27 +479,37 @@ Output:
 ```css
 cursor: pointer;
 border: none;
-border-radius: var(--radius-sm);
+border-radius: var(--radius-md);
 padding: var(--space-sm) var(--space-md);
 background: var(--color-primary);
-color: var(--color-text-inverted);
+color: #fff;
 font-size: var(--font-size-sm);
+font-weight: 500;
+white-space: nowrap;
 box-shadow: var(--shadow-sm);
-transition: all 200ms;
+transition: background 180ms ease, transform 120ms ease, box-shadow 180ms ease;
 
 &:hover {
   background: var(--color-primary-hover);
-  color: var(--color-text-inverted);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  color: var(--color-text);
+&:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+}
+
+&:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
 }
 ```
 
 ### list
 
-A vertical list with clickable items. Each `li` uses the `button` mixin with overrides for the list appearance:
+A vertical list with clickable items:
 
 ```scss
 .my-list {
@@ -502,20 +526,21 @@ list-style-type: none;
 gap: var(--space-sm);
 
 li {
-  /* inherits @include button then overrides: */
-  background: var(--color-surface);
+  background: var(--color-bg-primary);
   color: var(--color-text);
-  padding: var(--space-sm);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
-  transition: all 0ms;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 li:hover {
   cursor: pointer;
-  border: 1px solid var(--color-primary-hover);
-  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+  color: var(--color-text);
 }
 ```
 
@@ -526,6 +551,32 @@ Custom scrollbar styling (already applied to `html, body` globally, but can be u
 ```scss
 .scrollable-panel {
   @include custom-scrollbar;
+}
+```
+
+Output:
+
+```css
+scrollbar-width: thin;
+scrollbar-color: var(--gh-scrollbar-thumb) var(--gh-scrollbar-track);
+
+&::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+&::-webkit-scrollbar-track {
+  background: var(--gh-scrollbar-track);
+}
+
+&::-webkit-scrollbar-thumb {
+  background: var(--gh-scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--gh-scrollbar-track);
+}
+
+&::-webkit-scrollbar-thumb:hover {
+  background: var(--gh-scrollbar-thumb-hover);
 }
 ```
 

@@ -5,8 +5,8 @@
   /* light theme */
   --color-bg: #f8fafc;
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: #759ec9;
-  --color-bg-tertiary: #3e71a1;
+  --color-bg-secondary: #1a3a5c;
+  --color-bg-tertiary: #1e4a72;
   /* keeping for compatability*/
   --color-primary-bg: var(--color-bg-primary);
 
@@ -33,11 +33,11 @@
   --color-border-light: #d9dce0;
 
   --color-nav-bg: var(--color-bg-secondary);
-  --color-nav-text: var(--color-text);
+  --color-nav-text: rgba(255, 255, 255, 0.9);
 
   /* Shadow Definitions */
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --shadow-color-intense: rgba(0, 0, 0, 0.5);
+  --shadow-color: rgba(0, 0, 0, 0.07);
+  --shadow-color-intense: rgba(0, 0, 0, 0.14);
 
   /* Elevation shadows - use these directly */
   --shadow-xs: 0 1px 2px var(--shadow-color);
@@ -124,6 +124,9 @@ body {
     'Segoe UI',
     sans-serif;
   scrollbar-gutter: stable;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -165,6 +168,26 @@ button {
 .app-back-button {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-xs);
+}
+
+.inline-edit-input {
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  color: var(--color-text);
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  min-width: 200px;
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  transition: box-shadow 150ms ease;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
+  }
 }
 
 h1,
@@ -172,6 +195,8 @@ h2,
 h3 {
   font-weight: 600;
   color: var(--color-text);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
 }
 
 .container {
@@ -182,18 +207,18 @@ h3 {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #141b27;
-    --color-bg-primary: #12314f;
-    --color-bg-secondary: #223650;
-    --color-bg-tertiary: #365785;
+    --color-bg: #0e1621;
+    --color-bg-primary: #162032;
+    --color-bg-secondary: #1c3454;
+    --color-bg-tertiary: #26456e;
     /* keeping for compatability*/
     --color-primary-bg: var(--color-bg-primary);
 
     --color-surface: #232d3a;
     --color-surface-hover: #394554;
 
-    --color-border: #232a33;
-    --color-border-light: #1a212a;
+        --color-border: #3e4a5a;
+    --color-border-light: #2e3a4b;
 
     --color-text: #e8edf2;
     --color-text-secondary: #9aaebf;
