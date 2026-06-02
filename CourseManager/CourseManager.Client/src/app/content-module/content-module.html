@@ -6,6 +6,9 @@
         <button class="content-module__action-btn" (click)="triggerFileUpload()">
           Ladda upp fil
         </button>
+        <button class="content-module__action-btn" (click)="triggerImageUpload()">
+          {{ hasCamera ? 'Ta bild' : 'Ladda upp bild' }}
+        </button>
       </div>
 
       <!-- File actions toolbar -->
@@ -18,6 +21,15 @@
           (change)="onFilesSelected($event)"
           class="content-module__file-input"
           accept="*"
+        />
+        <!-- Hidden image input. Opens the rear camera if on mobile -->
+        <input
+          #imageInput
+          type="file"
+          accept="image/*"
+          capture="environment"
+          (change)="onFilesSelected($event)"
+          class="content-module__file-input"
         />
       </div>
 

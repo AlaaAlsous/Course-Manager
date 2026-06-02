@@ -11,6 +11,7 @@ import { File, FilePreview } from './file-preview/file-preview';
 })
 export class ContentModule {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('imageInput') imageInputRef!: ElementRef<HTMLInputElement>;
 
   // TODO: need a required parameter which sets what and where to get files from
   //       i.e. if in a group set to group id?, or base api url?
@@ -22,8 +23,21 @@ export class ContentModule {
   /** Bound to the note / comment textarea. */
   noteContent = '';
 
+  /** Whether this device is a mobile device where capture="environment" opens the rear camera. */
+  hasCamera = false;
+
   constructor() {
     this.loadFiles();
+    this.checkCameraAvailability();
+  }
+
+  /**
+   * Detects if we're on a mobile device where `capture="environment"` will actually
+   * open the rear camera. On desktop, `capture` is ignored and the file picker opens,
+   * even if a webcam is connected.
+   */
+  private checkCameraAvailability(): void {
+    this.hasCamera = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
   }
 
   // TODO: Replace with actual API call via shared ApiService.
@@ -121,6 +135,11 @@ export class ContentModule {
   /** Opens the hidden file picker. */
   triggerFileUpload(): void {
     this.fileInputRef.nativeElement.click();
+  }
+
+  /** Opens the hidden image picker or camera. */
+  triggerImageUpload(): void {
+    this.imageInputRef.nativeElement.click();
   }
 
   /** Called when the user selects files via the file picker. */
