@@ -1,17 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ConfirmDialogOptions, ConfirmDialogService } from './confirm-dialog.service';
+import { ModalWindow } from '../modal-window/modal-window';
 
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [],
+  imports: [ModalWindow],
   templateUrl: './confirm-dialog.component.html',
   styleUrl: './confirm-dialog.component.scss',
 })
 export class ConfirmDialogComponent implements OnInit, OnDestroy {
-  // Controls whether the dialog is rendered.
-  protected visible = false;
+  @ViewChild(ModalWindow) modal!: ModalWindow;
+
   // Holds the currently requested dialog content and labels.
   protected options: ConfirmDialogOptions = { message: '' };
 
@@ -27,9 +28,9 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
       if (req) {
         this.options = req.options;
         this.resolve = req.resolve;
-        this.visible = true;
+        this.modal.open();
       } else {
-        this.visible = false;
+        this.modal.close();
       }
     });
   }
@@ -40,13 +41,13 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
 
   protected confirm(): void {
     // Resolve the pending request as confirmed.
-    this.visible = false;
+    this.modal.close();
     this.resolve?.(true);
   }
 
   protected cancel(): void {
     // Resolve the pending request as cancelled.
-    this.visible = false;
+    this.modal.close();
     this.resolve?.(false);
   }
 }
