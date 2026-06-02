@@ -27,11 +27,33 @@ public class FileRepository : IFileRepository
 
     public async Task<bool> DeleteAsync(int fileAssetId)
     {
-        var file = await _db.FileAssets.FindAsync(fileAssetId);
-        if (file is null)
+        var file = await _db.FileAssets
+            .Include(f => f.CourseFiles)
+            .Include(f => f.CourseSectionFiles)
+            .Include(f => f.GroupFiles)
+            .Include(f => f.PersonFiles)
+            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId);
+
+        if (file == null)
             return false;
 
+        if (file.CourseFiles != null)
+            _db.CourseFiles.RemoveRange(file.CourseFiles);
+
+        if (file.CourseSectionFiles != null)
+            _db.CourseSectionFiles.RemoveRange(file.CourseSectionFiles);
+
+        if (file.GroupFiles != null)
+            _db.GroupFiles.RemoveRange(file.GroupFiles);
+
+        if (file.PersonFiles != null)
+            _db.PersonFiles.RemoveRange(file.PersonFiles);
+
+        if (System.IO.File.Exists(file.LocalPath))
+            System.IO.File.Delete(file.LocalPath);
+
         _db.FileAssets.Remove(file);
+
         await _db.SaveChangesAsync();
         return true;
     }
@@ -115,4 +137,57 @@ public class FileRepository : IFileRepository
         _db.PersonFiles.Add(new PersonFile { PersonId = personId, FileAssetId = fileAssetId });
         await _db.SaveChangesAsync();
     }
+
+    public async Task<bool> RemoveFileFromCourseAsync(int courseId, int fileAssetId)
+    {
+        var relation = await _db.CourseFiles
+            .FirstOrDefaultAsync(cf => cf.CourseId == courseId && cf.FileAssetId == fileAssetId);
+
+        if (relation == null)
+            return false;
+
+        _db.CourseFiles.Remove(relation);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> RemoveFileFromCourseSectionAsync(int sectionId, int fileAssetId)
+    {
+        var relation = await _db.CourseSectionFiles
+            .FirstOrDefaultAsync(sf => sf.CourseSectionId == sectionId && sf.FileAssetId == fileAssetId);
+
+        if (relation == null)
+            return false;
+
+        _db.CourseSectionFiles.Remove(relation);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> RemoveFileFromGroupAsync(int groupId, int fileAssetId)
+    {
+        var relation = await _db.GroupFiles
+            .FirstOrDefaultAsync(gf => gf.GroupId == groupId && gf.FileAssetId == fileAssetId);
+
+        if (relation == null)
+            return false;
+
+        _db.GroupFiles.Remove(relation);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> RemoveFileFromPersonAsync(int personId, int fileAssetId)
+    {
+        var relation = await _db.PersonFiles
+            .FirstOrDefaultAsync(pf => pf.PersonId == personId && pf.FileAssetId == fileAssetId);
+
+        if (relation == null)
+            return false;
+
+        _db.PersonFiles.Remove(relation);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
 }

@@ -20,4 +20,9 @@ public interface IFileRepository
     Task AddToCourseSectionAsync(int courseSectionId, int fileAssetId);
     Task AddToGroupAsync(int groupId, int fileAssetId);
     Task AddToPersonAsync(int personId, int fileAssetId);
+
+    Task<bool> RemoveFileFromCourseAsync(int courseId, int fileAssetId);
+    Task<bool> RemoveFileFromCourseSectionAsync(int courseSectionId, int fileAssetId);
+    Task<bool> RemoveFileFromGroupAsync(int groupId, int fileAssetId);
+    Task<bool> RemoveFileFromPersonAsync(int personId, int fileAssetId);
 }

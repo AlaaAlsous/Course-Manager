@@ -159,6 +159,42 @@ public static class FileEndpoints
             return Results.File(stream, file.FileType, file.FileName);
         });
 
+        group.MapDelete("/course/{courseId:int}/{fileAssetId:int}", async (
+            int courseId,
+            int fileAssetId,
+            IFileRepository repo) =>
+        {
+            var ok = await repo.RemoveFileFromCourseAsync(courseId, fileAssetId);
+            return ok ? Results.NoContent() : Results.NotFound();
+        });
+
+        group.MapDelete("/course-section/{sectionId:int}/{fileAssetId:int}", async (
+            int sectionId,
+            int fileAssetId,
+            IFileRepository repo) =>
+        {
+            var ok = await repo.RemoveFileFromCourseSectionAsync(sectionId, fileAssetId);
+            return ok ? Results.NoContent() : Results.NotFound();
+        });
+
+        group.MapDelete("/group/{groupId:int}/{fileAssetId:int}", async (
+        int groupId,
+        int fileAssetId,
+        IFileRepository repo) =>
+        {
+            var ok = await repo.RemoveFileFromGroupAsync(groupId, fileAssetId);
+            return ok ? Results.NoContent() : Results.NotFound();
+        });
+
+        group.MapDelete("/person/{personId:int}/{fileAssetId:int}", async (
+            int personId,
+            int fileAssetId,
+            IFileRepository repo) =>
+        {
+            var ok = await repo.RemoveFileFromPersonAsync(personId, fileAssetId);
+            return ok ? Results.NoContent() : Results.NotFound();
+        });
+
         return routes;
     }
 }
