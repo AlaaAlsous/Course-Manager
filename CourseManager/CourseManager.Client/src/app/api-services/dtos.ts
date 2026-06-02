@@ -22,3 +22,13 @@ export interface Group {
     name: string;
     courseSectionId: number;
 }
+export interface FileAsset {
+    fileAssetId: number;
+    fileName: string;
+    localPath: string;
+    cloudPath: string | null;
+    storageProvider: string;
+    fileType: string;
+    fileSize: number;
+    uploadedAt: string;
+}
