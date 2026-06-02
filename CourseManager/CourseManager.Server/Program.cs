@@ -3,7 +3,6 @@ using CourseManager.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<BlobService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -13,7 +12,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     if (!string.IsNullOrWhiteSpace(azureConn))
     {
         Console.WriteLine("Using Azure SQL Database");
-        options.UseSqlServer(azureConn);
+
+        options.UseSqlServer(azureConn, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null
+            );
+        });
     }
     else
     {
@@ -27,14 +34,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Default", policy =>
     {
         policy
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
             .WithOrigins(
                 "https://coursemanager-app-gvdhhqf5fve7awff.germanywestcentral-01.azurewebsites.net",
                 "http://localhost:4200",
                 "https://localhost:4200"
-            );
+            )
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithExposedHeaders("Content-Disposition");
     });
 });
 
@@ -43,6 +51,7 @@ builder.Services.AddScoped<ICourseSectionRepository, CourseSectionRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<BlobService>();
 
 var app = builder.Build();
 
