@@ -3,11 +3,17 @@
     <section class="group-view">
       <header class="group-view__header">
         <div>
-          <h2>{{ selectedGroup.name }}</h2>
+          @if (isEditing()) {
+            <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+            <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+            <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+          } @else {
+            <h2>{{ nameOverride() ?? selectedGroup.name }}</h2>
+            <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+          }
           <p>
             {{ selectedGroup.members.length }}
             {{ selectedGroup.members.length === 1 ? 'medlem' : 'medlemmar' }}
-            {{ selectedGroup.members.length === 1 ? 'member' : 'medlemmar' }}
           </p>
         </div>
 

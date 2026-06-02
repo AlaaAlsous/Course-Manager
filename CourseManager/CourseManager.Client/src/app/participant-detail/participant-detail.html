@@ -8,7 +8,14 @@
       }
 
       <div class="hero-info">
-        <h1>{{ selectedPerson?.fullName }}</h1>
+        @if (isEditing()) {
+          <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+          <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+          <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+        } @else {
+          <h1>{{ selectedPerson?.fullName }}</h1>
+          <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+        }
 
         <p>{{ selectedPerson?.email }}</p>
 

@@ -19,6 +19,8 @@ export class ParticipantDetail implements OnInit {
   private readonly personApiService = inject(PersonApiService);
 
   title = signal('Detaljer för deltagare');
+  isEditing = signal(false);
+  editName = '';
 
   selectedPerson: any;
 
@@ -32,6 +34,26 @@ export class ParticipantDetail implements OnInit {
         this.title.set(person.fullName);
       }
     });
+  }
+
+  startEdit(): void {
+    this.editName = this.selectedPerson?.fullName ?? '';
+    this.isEditing.set(true);
+  }
+
+  async saveEdit(): Promise<void> {
+    const id = Number(this.route.snapshot.queryParamMap.get('id'));
+    await this.personApiService.updatePerson(id, this.editName);
+    const updated = await this.personApiService.getPersonById(id);
+    if (updated) {
+      this.selectedPerson = updated;
+      this.title.set(updated.fullName);
+    }
+    this.isEditing.set(false);
+  }
+
+  cancelEdit(): void {
+    this.isEditing.set(false);
   }
 
   goBack(): void {

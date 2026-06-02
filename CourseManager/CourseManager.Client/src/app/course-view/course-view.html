@@ -2,7 +2,14 @@
   <section class="kurstillfalle-overview">
     <header class="app-page-header kurstillfalle-overview__header">
       <div class="app-page-header__content">
-        <h2>Kurstillfällen</h2>
+        @if (isEditing()) {
+          <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+          <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+          <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+        } @else {
+          <h2>{{ title() }}</h2>
+          <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+        }
       </div>
 
       <div class="kurstillfalle-overview__actions">

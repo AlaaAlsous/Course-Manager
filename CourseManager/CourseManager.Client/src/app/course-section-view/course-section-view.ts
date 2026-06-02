@@ -1,16 +1,18 @@
 import { Location } from '@angular/common';
 import { Component, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CourseService } from '../all-courses/course.service';
 import { CourseSectionGroup } from '../all-courses/course.model';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
 
 @Component({
   selector: 'app-course-section-view',
   standalone: true,
-  imports: [Layout, ContentModule, RouterModule],
+  imports: [Layout, ContentModule, RouterModule, FormsModule],
   templateUrl: './course-section-view.html',
   styleUrl: './course-section-view.scss',
 })
@@ -26,7 +28,12 @@ export class CourseSectionView {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly courseService = inject(CourseService);
+  private readonly courseSectionApiService = inject(CourseSectionApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+
+  sectionName = signal('');
+  isEditing = signal(false);
+  editName = '';
 
   constructor() {
     const courseId = Number(this.route.snapshot.paramMap.get('courseId'));
@@ -39,6 +46,7 @@ export class CourseSectionView {
     const section = this.courseService.getSectionById(courseId, sectionId);
 
     if (section) {
+      this.sectionName.set(section.name);
       this.title.set(`${course?.name ?? 'Kurs'} - ${section.name}`);
       this.groups = section.groups;
     }
@@ -95,6 +103,30 @@ export class CourseSectionView {
 
     this.courseService.removeGroupFromSection(courseId, sectionId, groupId);
     this.groups = this.groups.filter((group) => group.id !== groupId);
+  }
+
+  startEdit(): void {
+    this.editName = this.sectionName();
+    this.isEditing.set(true);
+  }
+
+  async saveEdit(): Promise<void> {
+    const courseId = this.courseId();
+    const sectionId = this.sectionId();
+    if (!courseId || !sectionId) return;
+
+    await this.courseSectionApiService.updateCourseSection(sectionId, courseId, this.editName, null, null, null);
+    const updated = await this.courseSectionApiService.getCourseSectionById(sectionId);
+    if (updated) {
+      this.sectionName.set(updated.name);
+      const course = this.courseService.getById(courseId);
+      this.title.set(`${course?.name ?? 'Kurs'} - ${updated.name}`);
+    }
+    this.isEditing.set(false);
+  }
+
+  cancelEdit(): void {
+    this.isEditing.set(false);
   }
 
   async downloadAsZip(): Promise<void> {

@@ -1,9 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { GroupsService } from '../groups.service';
+import { GroupApiService } from '../api-services/group-api-service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 @Component({
@@ -16,6 +17,7 @@ export class GroupView {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly groupsService = inject(GroupsService);
+  private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
 
   private readonly groupId = Number(this.route.snapshot.paramMap.get('id'));
@@ -23,9 +25,12 @@ export class GroupView {
   private readonly returnSectionId = Number(this.route.snapshot.queryParamMap.get('sectionId'));
 
   newMemberName = '';
+  isEditing = signal(false);
+  editName = '';
+  readonly nameOverride = signal<string | null>(null);
 
   readonly group = computed(() => this.groupsService.getGroupById(this.groupId));
-  readonly title = computed(() => this.group()?.name ?? 'Gruppen hittades inte');
+  readonly title = computed(() => this.nameOverride() ?? this.group()?.name ?? 'Gruppen hittades inte');
 
   addMember(): void {
     if (!this.group()) {
@@ -53,6 +58,24 @@ export class GroupView {
     }
 
     this.groupsService.removeMemberFromGroup(this.groupId, memberId);
+  }
+
+  startEdit(): void {
+    this.editName = this.nameOverride() ?? this.group()?.name ?? '';
+    this.isEditing.set(true);
+  }
+
+  async saveEdit(): Promise<void> {
+    await this.groupApiService.updateGroup(this.groupId, this.editName, this.returnSectionId);
+    const updated = await this.groupApiService.getGroupById(this.groupId);
+    if (updated) {
+      this.nameOverride.set(updated.name);
+    }
+    this.isEditing.set(false);
+  }
+
+  cancelEdit(): void {
+    this.isEditing.set(false);
   }
 
   goBack(): void {
