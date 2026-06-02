@@ -13,7 +13,7 @@ namespace CourseManager.Server.Models
         public string FileName { get; set; } = null!;
 
         [Required]
-        public string LocalPath { get; set; } = null!;
+        public string? LocalPath { get; set; }
 
         public string? CloudPath { get; set; }
 
