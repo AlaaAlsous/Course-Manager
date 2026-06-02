@@ -350,6 +350,8 @@ public static class FileEndpoints
                 "application/zip",
                 $"{entityType}-{entityId}.zip"
             );
+        });
+
         group.MapDelete("/course/{courseId:int}/{fileAssetId:int}", async (
             int courseId,
             int fileAssetId,
