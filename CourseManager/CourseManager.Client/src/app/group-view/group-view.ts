@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
 import ContentModule from '../content-module/content-module';
 import { GroupsService } from '../groups.service';
@@ -8,7 +8,7 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-group-view',
-  imports: [Layout, ContentModule, FormsModule],
+  imports: [Layout, ContentModule, FormsModule, RouterLink],
   templateUrl: './group-view.html',
   styleUrl: './group-view.scss',
 })

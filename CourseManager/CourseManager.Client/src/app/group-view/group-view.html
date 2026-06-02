@@ -34,12 +34,16 @@
 
         <ul>
           @for (member of selectedGroup.members; track member.id) {
-            <li>
+            <li
+              [routerLink]="['/participant']"
+              [queryParams]="{ id: member.id }"
+              class="group-view__member-link"
+            >
               <span>{{ member.name }}</span>
               <button
                 type="button"
                 class="group-view__remove-member"
-                (click)="removeMember(member.id)"
+                (click)="removeMember(member.id); $event.stopPropagation()"
               >
                 Ta bort
               </button>
