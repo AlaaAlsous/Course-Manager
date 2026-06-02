@@ -3,6 +3,7 @@ using CourseManager.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<BlobService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -30,6 +31,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials()
             .WithOrigins(
+                "https://coursemanager-app-gvdhhqf5fve7awff.germanywestcentral-01.azurewebsites.net",
                 "http://localhost:4200",
                 "https://localhost:4200"
             );
@@ -47,8 +49,11 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    db.Database.EnsureCreated();
 }
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseCors("Default");
 
@@ -57,7 +62,7 @@ app.MapCourseSectionEndpoints();
 app.MapPersonEndpoints();
 app.MapGroupEndpoints();
 app.MapFileEndpoints();
+app.MapFallbackToFile("index.html");
 
-app.MapGet("/", () => "CourseManager API is running");
 
 app.Run();
