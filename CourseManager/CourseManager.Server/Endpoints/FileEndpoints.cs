@@ -32,7 +32,9 @@ public static class FileEndpoints
             string entityType,
             int entityId,
             HttpRequest request,
-            IFileRepository repo) =>
+            IFileRepository repo,
+            BlobService blobService,
+            IConfiguration config) =>
         {
             var form = await request.ReadFormAsync();
             var uploadedFile = form.Files.FirstOrDefault();
@@ -40,27 +42,48 @@ public static class FileEndpoints
             if (uploadedFile is null)
                 return Results.BadRequest("No file uploaded");
 
-            var uploadsPath = Path.Combine("uploads");
-            Directory.CreateDirectory(uploadsPath);
-
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
             var originalName = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
             var extension = Path.GetExtension(uploadedFile.FileName);
             var finalFileName = $"{originalName}_{timestamp}{extension}";
-            var filePath = Path.Combine(uploadsPath, finalFileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await uploadedFile.CopyToAsync(stream);
+            var useAzure = !string.IsNullOrWhiteSpace(config["AzureStorage:ConnectionString"]);
 
-            var fileAsset = new FileAsset
+            FileAsset fileAsset;
+
+            if (useAzure)
             {
-                FileName = finalFileName,
-                LocalPath = filePath,
-                CloudPath = null,
-                StorageProvider = "local",
-                FileType = uploadedFile.ContentType,
-                FileSize = uploadedFile.Length
-            };
+                var blobUrl = await blobService.UploadAsync(finalFileName, uploadedFile.OpenReadStream());
+
+                fileAsset = new FileAsset
+                {
+                    FileName = finalFileName,
+                    LocalPath = null,
+                    CloudPath = blobUrl,
+                    StorageProvider = "azure",
+                    FileType = uploadedFile.ContentType,
+                    FileSize = uploadedFile.Length
+                };
+            }
+            else
+            {
+                var uploadsPath = Path.Combine("uploads");
+                Directory.CreateDirectory(uploadsPath);
+                var filePath = Path.Combine(uploadsPath, finalFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await uploadedFile.CopyToAsync(stream);
+
+                fileAsset = new FileAsset
+                {
+                    FileName = finalFileName,
+                    LocalPath = filePath,
+                    CloudPath = null,
+                    StorageProvider = "local",
+                    FileType = uploadedFile.ContentType,
+                    FileSize = uploadedFile.Length
+                };
+            }
 
             var created = await repo.CreateAsync(fileAsset);
 
@@ -69,20 +92,16 @@ public static class FileEndpoints
                 case "course":
                     await repo.AddToCourseAsync(entityId, created.FileAssetId);
                     break;
-
                 case "section":
                 case "coursesection":
                     await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
                     break;
-
                 case "group":
                     await repo.AddToGroupAsync(entityId, created.FileAssetId);
                     break;
-
                 case "person":
                     await repo.AddToPersonAsync(entityId, created.FileAssetId);
                     break;
-
                 default:
                     return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
             }
@@ -98,30 +117,53 @@ public static class FileEndpoints
                 created.UploadedAt
             ));
         });
-
         group.MapPost("/create-empty/{entityType}/{entityId:int}", async (
             string entityType,
             int entityId,
-            IFileRepository repo) =>
+            IFileRepository repo,
+            BlobService blobService,
+            IConfiguration config) =>
         {
-            var uploadsPath = Path.Combine("uploads");
-            Directory.CreateDirectory(uploadsPath);
-
             var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
             var fileName = $"note_{timestamp}.txt";
-            var filePath = Path.Combine(uploadsPath, fileName);
 
-            await File.WriteAllTextAsync(filePath, "");
+            var useAzure = !string.IsNullOrWhiteSpace(config["AzureStorage:ConnectionString"]);
 
-            var fileAsset = new FileAsset
+            FileAsset fileAsset;
+
+            if (useAzure)
             {
-                FileName = fileName,
-                LocalPath = filePath,
-                CloudPath = null,
-                StorageProvider = "local",
-                FileType = "text/plain",
-                FileSize = 0
-            };
+                using var mem = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(""));
+                var blobUrl = await blobService.UploadAsync(fileName, mem);
+
+                fileAsset = new FileAsset
+                {
+                    FileName = fileName,
+                    LocalPath = null,
+                    CloudPath = blobUrl,
+                    StorageProvider = "azure",
+                    FileType = "text/plain",
+                    FileSize = 0
+                };
+            }
+            else
+            {
+                var uploadsPath = Path.Combine("uploads");
+                Directory.CreateDirectory(uploadsPath);
+
+                var filePath = Path.Combine(uploadsPath, fileName);
+                await File.WriteAllTextAsync(filePath, "");
+
+                fileAsset = new FileAsset
+                {
+                    FileName = fileName,
+                    LocalPath = filePath,
+                    CloudPath = null,
+                    StorageProvider = "local",
+                    FileType = "text/plain",
+                    FileSize = 0
+                };
+            }
 
             var created = await repo.CreateAsync(fileAsset);
 
@@ -130,20 +172,16 @@ public static class FileEndpoints
                 case "course":
                     await repo.AddToCourseAsync(entityId, created.FileAssetId);
                     break;
-
                 case "section":
                 case "coursesection":
                     await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
                     break;
-
                 case "group":
                     await repo.AddToGroupAsync(entityId, created.FileAssetId);
                     break;
-
                 case "person":
                     await repo.AddToPersonAsync(entityId, created.FileAssetId);
                     break;
-
                 default:
                     return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
             }
@@ -209,21 +247,12 @@ public static class FileEndpoints
             ));
         });
 
-        group.MapGet("/{fileAssetId:int}/download", async (int fileAssetId, IFileRepository repo) =>
-        {
-            var file = await repo.GetByIdAsync(fileAssetId);
-            if (file is null || !System.IO.File.Exists(file.LocalPath))
-                return Results.NotFound();
-
-            var stream = new FileStream(file.LocalPath, FileMode.Open, FileAccess.Read);
-            return Results.File(stream, file.FileType, file.FileName);
-        });
-
         group.MapGet("/download/{entityType}/{entityId:int}", async (
             string entityType,
             int entityId,
             AppDbContext db,
-            IFileRepository repo) =>
+            IFileRepository repo,
+            BlobService blob) =>
         {
             using var memoryStream = new MemoryStream();
             using var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, true);
@@ -249,26 +278,27 @@ public static class FileEndpoints
                             return Results.NotFound("Course not found");
 
                         foreach (var cf in course.CourseFiles)
-                            await AddFileToZip(zip, repo, cf.FileAssetId, "Course/");
+                            await AddFileToZip(zip, repo, blob, cf.FileAssetId, "Course/");
 
                         foreach (var section in course.CourseSections)
                             foreach (var sf in section.CourseSectionFiles)
-                                await AddFileToZip(zip, repo, sf.FileAssetId, "Course/CourseSections/");
+                                await AddFileToZip(zip, repo, blob, sf.FileAssetId, "Course/CourseSections/");
 
                         foreach (var section in course.CourseSections)
                             foreach (var groupEntity in section.Groups)
                                 foreach (var gf in groupEntity.GroupFiles)
-                                    await AddFileToZip(zip, repo, gf.FileAssetId, "Course/Groups/");
+                                    await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Course/Groups/");
 
                         foreach (var cp in course.CoursePeople)
                         {
                             var personFiles = await repo.GetFilesForPersonAsync(cp.PersonId);
                             foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, file.FileAssetId, "Course/People/");
+                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "Course/People/");
                         }
 
                         break;
                     }
+
                 case "course-section":
                     {
                         var section = await db.CourseSections
@@ -283,17 +313,17 @@ public static class FileEndpoints
                             return Results.NotFound("CourseSection not found");
 
                         foreach (var sf in section.CourseSectionFiles)
-                            await AddFileToZip(zip, repo, sf.FileAssetId, "CourseSection/");
+                            await AddFileToZip(zip, repo, blob, sf.FileAssetId, "CourseSection/");
 
                         foreach (var groupEntity in section.Groups)
                             foreach (var gf in groupEntity.GroupFiles)
-                                await AddFileToZip(zip, repo, gf.FileAssetId, "CourseSection/Groups/");
+                                await AddFileToZip(zip, repo, blob, gf.FileAssetId, "CourseSection/Groups/");
 
                         foreach (var sp in section.CourseSectionPeople)
                         {
                             var personFiles = await repo.GetFilesForPersonAsync(sp.PersonId);
                             foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, file.FileAssetId, "CourseSection/People/");
+                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "CourseSection/People/");
                         }
 
                         break;
@@ -311,13 +341,13 @@ public static class FileEndpoints
                             return Results.NotFound("Group not found");
 
                         foreach (var gf in groupEntity.GroupFiles)
-                            await AddFileToZip(zip, repo, gf.FileAssetId, "Group/");
+                            await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Group/");
 
                         foreach (var gp in groupEntity.GroupPeople)
                         {
                             var personFiles = await repo.GetFilesForPersonAsync(gp.PersonId);
                             foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, file.FileAssetId, "Group/People/");
+                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "Group/People/");
                         }
 
                         break;
@@ -333,7 +363,7 @@ public static class FileEndpoints
                             return Results.NotFound("Person not found");
 
                         foreach (var pf in person.PersonFiles)
-                            await AddFileToZip(zip, repo, pf.FileAssetId, "Person/");
+                            await AddFileToZip(zip, repo, blob, pf.FileAssetId, "Person/");
 
                         break;
                     }
@@ -371,9 +401,9 @@ public static class FileEndpoints
         });
 
         group.MapDelete("/group/{groupId:int}/{fileAssetId:int}", async (
-        int groupId,
-        int fileAssetId,
-        IFileRepository repo) =>
+            int groupId,
+            int fileAssetId,
+            IFileRepository repo) =>
         {
             var ok = await repo.RemoveFileFromGroupAsync(groupId, fileAssetId);
             return ok ? Results.NoContent() : Results.NotFound();
@@ -391,15 +421,24 @@ public static class FileEndpoints
         return routes;
     }
 
-    static async Task AddFileToZip(ZipArchive zip, IFileRepository repo, int fileId, string folder)
+    static async Task AddFileToZip(ZipArchive zip, IFileRepository repo, BlobService blob, int fileId, string folder)
     {
         var file = await repo.GetByIdAsync(fileId);
-        if (file is null || !System.IO.File.Exists(file.LocalPath))
+        if (file is null)
             return;
 
         var entry = zip.CreateEntry($"{folder}{file.FileName}");
         using var entryStream = entry.Open();
-        using var fileStream = new FileStream(file.LocalPath, FileMode.Open, FileAccess.Read);
-        await fileStream.CopyToAsync(entryStream);
+
+        if (file.StorageProvider == "azure")
+        {
+            var stream = await blob.DownloadAsync(file.FileName);
+            await stream.CopyToAsync(entryStream);
+        }
+        else if (file.StorageProvider == "local" && file.LocalPath != null && File.Exists(file.LocalPath))
+        {
+            using var fileStream = new FileStream(file.LocalPath, FileMode.Open, FileAccess.Read);
+            await fileStream.CopyToAsync(entryStream);
+        }
     }
 }
