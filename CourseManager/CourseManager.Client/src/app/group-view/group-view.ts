@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
-import ContentModule from '../content-module/content-module';
+import { ContentModule } from '../content-module/content-module';
 import { GroupsService } from '../groups.service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 

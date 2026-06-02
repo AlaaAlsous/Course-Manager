@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, signal, inject } from '@angular/core';
 import { Layout } from '../layout/layout';
-import ContentModule from '../content-module/content-module';
+import { ContentModule } from '../content-module/content-module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CourseService } from '../all-courses/course.service';
 import { CourseSectionGroup } from '../all-courses/course.model';

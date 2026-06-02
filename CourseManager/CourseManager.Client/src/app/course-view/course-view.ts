@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../all-courses/course.service';
 import { CourseSection } from '../all-courses/course.model';
 import { RouterModule } from '@angular/router';
-import ContentModule from '../content-module/content-module';
+import { ContentModule } from '../content-module/content-module';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 @Component({

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
-import ContentModule from '../content-module/content-module';
+import { ContentModule } from '../content-module/content-module';
 import { PersonApiService } from '../api-services/person-api-service';
 
 @Component({
@@ -26,7 +26,7 @@ export class ParticipantDetail implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
-    this.personApiService.getPersonById(id).then(person => {
+    this.personApiService.getPersonById(id).then((person) => {
       this.selectedPerson = person;
       if (person) {
         this.title.set(person.fullName);

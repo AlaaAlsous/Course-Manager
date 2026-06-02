@@ -9,7 +9,7 @@ import { File, FilePreview } from './file-preview/file-preview';
   templateUrl: './content-module.html',
   styleUrl: './content-module.scss',
 })
-export default class ContentModule {
+export class ContentModule {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
   // TODO: need a required parameter which sets what and where to get files from
@@ -19,14 +19,8 @@ export default class ContentModule {
   /** The list of files managed by this component. */
   files: File[] = [];
 
-  /** Bound to the "new text file" name input. */
-  newTextFileName = '';
-
-  /** Bound to the "new text file" content textarea. */
-  newTextFileContent = '';
-
-  /** Whether the create-text-file form is visible. */
-  showTextForm = false;
+  /** Bound to the note / comment textarea. */
+  noteContent = '';
 
   constructor() {
     this.loadFiles();
@@ -36,6 +30,7 @@ export default class ContentModule {
   //       Expected to fetch all files for the current module from the backend
   //       and set this.files = response.
   private loadFiles(): void {
+    // Remember to convert from UTC to local time zone
     this.files = [
       {
         name: 'Course Syllabus',
@@ -95,10 +90,10 @@ export default class ContentModule {
     console.log('Upload files:', files);
   }
 
-  // TODO: Replace with actual API call via shared ApiService.
-  //       Send the new text file to the backend, then call loadFiles() to refresh.
-  private createTextFileOnApi(name: string, extension: string, content: string): void {
-    console.log('Create text file:', { name, extension, content });
+  /** Called when the user clicks "Spara" in the note section. */
+  publishNote(): void {
+    // TODO: implment
+    console.log('Publish note:', this.noteContent);
   }
 
   // TODO: Replace with actual API call via shared ApiService.
@@ -136,17 +131,6 @@ export default class ContentModule {
     this.uploadFilesToApi(input.files);
     // Reset so the same file can be picked again
     input.value = '';
-  }
-
-  /** Called when the user submits a new text file. */
-  onCreateTextFile(): void {
-    if (!this.newTextFileName.trim()) return;
-
-    this.createTextFileOnApi(this.newTextFileName.trim(), 'txt', this.newTextFileContent);
-
-    this.newTextFileName = '';
-    this.newTextFileContent = '';
-    this.showTextForm = false;
   }
 
   /** Called when the user clicks the delete icon on a file. */

@@ -1,8 +1,11 @@
 <div class="content-module">
   <div class="content-module__container">
     <div>
-      <div>
-        <h3 class="mt-1">Innehåll</h3>
+      <div class="mt-1 d-flex flex-row gap-1">
+        <h3 class="">Innehåll</h3>
+        <button class="content-module__action-btn" (click)="triggerFileUpload()">
+          Ladda upp fil
+        </button>
       </div>
 
       <!-- File actions toolbar -->
@@ -16,30 +19,24 @@
           class="content-module__file-input"
           accept="*"
         />
-        <button class="content-module__action-btn" (click)="triggerFileUpload()">
-          Ladda upp fil
-        </button>
-        <button class="content-module__action-btn" (click)="showTextForm = !showTextForm">
-          {{ showTextForm ? 'Stäng' : 'Ny textfil' }}
-        </button>
       </div>
 
-      <!-- Create text file form -->
-      @if (showTextForm) {
-        <div class="content-module__text-form mb-1">
-          <input
-            class="content-module__text-form-input"
-            [(ngModel)]="newTextFileName"
-            placeholder="Filnamn (utan .txt)"
-          />
-          <textarea
-            class="content-module__text-form-textarea"
-            [(ngModel)]="newTextFileContent"
-            placeholder="Skriv innehåll här..."
-          ></textarea>
-          <button class="content-module__action-btn" (click)="onCreateTextFile()">Skapa</button>
+      <div class="content-module__note-section mb-1">
+        <textarea
+          class="content-module__note-textarea"
+          [(ngModel)]="noteContent"
+          placeholder="Skriv en anteckning..."
+        ></textarea>
+        <div class="content-module__note-actions">
+          <button
+            class="content-module__note-save-btn"
+            (click)="publishNote()"
+            [disabled]="!noteContent.trim()"
+          >
+            Spara
+          </button>
         </div>
-      }
+      </div>
 
       <ul class="content-module__content-list">
         @for (group of groupedFileItems; track group.dateKey) {
