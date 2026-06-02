@@ -1,6 +1,9 @@
+using CourseManager.Server.Data;
 using CourseManager.Server.DTOs;
 using CourseManager.Server.Models;
 using CourseManager.Server.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 
 public static class FileEndpoints
 {
@@ -24,6 +27,7 @@ public static class FileEndpoints
                     file.UploadedAt
                 ));
         });
+
         group.MapPost("/upload/{entityType}/{entityId:int}", async (
             string entityType,
             int entityId,
@@ -95,6 +99,62 @@ public static class FileEndpoints
             ));
         });
 
+        group.MapPost("/create-empty/{entityType}/{entityId:int}", async (
+            string entityType,
+            int entityId,
+            IFileRepository repo) =>
+        {
+            var uploadsPath = Path.Combine("uploads");
+            Directory.CreateDirectory(uploadsPath);
+
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+            var fileName = $"note_{timestamp}.txt";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            await File.WriteAllTextAsync(filePath, "");
+
+            var fileAsset = new FileAsset
+            {
+                FileName = fileName,
+                LocalPath = filePath,
+                CloudPath = null,
+                StorageProvider = "local",
+                FileType = "text/plain",
+                FileSize = 0
+            };
+
+            var created = await repo.CreateAsync(fileAsset);
+
+            switch (entityType.ToLower())
+            {
+                case "course":
+                    await repo.AddToCourseAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "section":
+                case "coursesection":
+                    await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "group":
+                    await repo.AddToGroupAsync(entityId, created.FileAssetId);
+                    break;
+
+                case "person":
+                    await repo.AddToPersonAsync(entityId, created.FileAssetId);
+                    break;
+
+                default:
+                    return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
+            }
+
+            return Results.Ok(new
+            {
+                fileAssetId = created.FileAssetId,
+                fileName = created.FileName
+            });
+        });
+
         group.MapDelete("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo) =>
         {
             var deleted = await repo.DeleteAsync(fileAssetId);
@@ -159,6 +219,137 @@ public static class FileEndpoints
             return Results.File(stream, file.FileType, file.FileName);
         });
 
+        group.MapGet("/download/{entityType}/{entityId:int}", async (
+            string entityType,
+            int entityId,
+            AppDbContext db,
+            IFileRepository repo) =>
+        {
+            using var memoryStream = new MemoryStream();
+            using var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, true);
+
+            entityType = entityType.ToLower();
+
+            switch (entityType)
+            {
+                case "course":
+                    {
+                        var course = await db.Courses
+                            .Include(c => c.CourseFiles)
+                            .Include(c => c.CourseSections)
+                                .ThenInclude(cs => cs.CourseSectionFiles)
+                            .Include(c => c.CourseSections)
+                                .ThenInclude(cs => cs.Groups)
+                                    .ThenInclude(g => g.GroupFiles)
+                            .Include(c => c.CoursePeople)
+                                .ThenInclude(cp => cp.Person)
+                            .FirstOrDefaultAsync(c => c.CourseId == entityId);
+
+                        if (course is null)
+                            return Results.NotFound("Course not found");
+
+                        foreach (var cf in course.CourseFiles)
+                            await AddFileToZip(zip, repo, cf.FileAssetId, "Course/");
+
+                        foreach (var section in course.CourseSections)
+                            foreach (var sf in section.CourseSectionFiles)
+                                await AddFileToZip(zip, repo, sf.FileAssetId, "Course/CourseSections/");
+
+                        foreach (var section in course.CourseSections)
+                            foreach (var groupEntity in section.Groups)
+                                foreach (var gf in groupEntity.GroupFiles)
+                                    await AddFileToZip(zip, repo, gf.FileAssetId, "Course/Groups/");
+
+                        foreach (var cp in course.CoursePeople)
+                        {
+                            var personFiles = await repo.GetFilesForPersonAsync(cp.PersonId);
+                            foreach (var file in personFiles)
+                                await AddFileToZip(zip, repo, file.FileAssetId, "Course/People/");
+                        }
+
+                        break;
+                    }
+                case "course-section":
+                    {
+                        var section = await db.CourseSections
+                            .Include(s => s.CourseSectionFiles)
+                            .Include(s => s.Groups)
+                                .ThenInclude(g => g.GroupFiles)
+                            .Include(s => s.CourseSectionPeople)
+                                .ThenInclude(sp => sp.Person)
+                            .FirstOrDefaultAsync(s => s.CourseSectionId == entityId);
+
+                        if (section is null)
+                            return Results.NotFound("CourseSection not found");
+
+                        foreach (var sf in section.CourseSectionFiles)
+                            await AddFileToZip(zip, repo, sf.FileAssetId, "CourseSection/");
+
+                        foreach (var groupEntity in section.Groups)
+                            foreach (var gf in groupEntity.GroupFiles)
+                                await AddFileToZip(zip, repo, gf.FileAssetId, "CourseSection/Groups/");
+
+                        foreach (var sp in section.CourseSectionPeople)
+                        {
+                            var personFiles = await repo.GetFilesForPersonAsync(sp.PersonId);
+                            foreach (var file in personFiles)
+                                await AddFileToZip(zip, repo, file.FileAssetId, "CourseSection/People/");
+                        }
+
+                        break;
+                    }
+
+                case "group":
+                    {
+                        var groupEntity = await db.Groups
+                            .Include(g => g.GroupFiles)
+                            .Include(g => g.GroupPeople)
+                                .ThenInclude(gp => gp.Person)
+                            .FirstOrDefaultAsync(g => g.GroupId == entityId);
+
+                        if (groupEntity is null)
+                            return Results.NotFound("Group not found");
+
+                        foreach (var gf in groupEntity.GroupFiles)
+                            await AddFileToZip(zip, repo, gf.FileAssetId, "Group/");
+
+                        foreach (var gp in groupEntity.GroupPeople)
+                        {
+                            var personFiles = await repo.GetFilesForPersonAsync(gp.PersonId);
+                            foreach (var file in personFiles)
+                                await AddFileToZip(zip, repo, file.FileAssetId, "Group/People/");
+                        }
+
+                        break;
+                    }
+
+                case "person":
+                    {
+                        var person = await db.People
+                            .Include(p => p.PersonFiles)
+                            .FirstOrDefaultAsync(p => p.PersonId == entityId);
+
+                        if (person is null)
+                            return Results.NotFound("Person not found");
+
+                        foreach (var pf in person.PersonFiles)
+                            await AddFileToZip(zip, repo, pf.FileAssetId, "Person/");
+
+                        break;
+                    }
+
+                default:
+                    return Results.BadRequest("Invalid entity type. Use: course, course-section, group, person.");
+            }
+
+            zip.Dispose();
+            memoryStream.Position = 0;
+
+            return Results.File(
+                memoryStream,
+                "application/zip",
+                $"{entityType}-{entityId}.zip"
+            );
         group.MapDelete("/course/{courseId:int}/{fileAssetId:int}", async (
             int courseId,
             int fileAssetId,
@@ -196,5 +387,17 @@ public static class FileEndpoints
         });
 
         return routes;
+    }
+
+    static async Task AddFileToZip(ZipArchive zip, IFileRepository repo, int fileId, string folder)
+    {
+        var file = await repo.GetByIdAsync(fileId);
+        if (file is null || !System.IO.File.Exists(file.LocalPath))
+            return;
+
+        var entry = zip.CreateEntry($"{folder}{file.FileName}");
+        using var entryStream = entry.Open();
+        using var fileStream = new FileStream(file.LocalPath, FileMode.Open, FileAccess.Read);
+        await fileStream.CopyToAsync(entryStream);
     }
 }
