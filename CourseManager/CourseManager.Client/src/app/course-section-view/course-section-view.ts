@@ -97,6 +97,28 @@ export class CourseSectionView {
     this.groups = this.groups.filter((group) => group.id !== groupId);
   }
 
+  async downloadAsZip(): Promise<void> {
+    const sectionId = this.sectionId();
+    if (!sectionId) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5053/api/files/download/course-section/${sectionId}`
+      );
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kurstillfalle_${sectionId}.zip`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading zip:', error);
+    }
+  }
+
   goBack(): void {
     const courseId = this.courseId();
 
