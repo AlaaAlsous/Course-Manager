@@ -7,6 +7,7 @@ import { Group } from './dtos';
 export class GroupApiService {
 
   baseUrl = 'http://localhost:5053/api/group';
+  relationsBaseUrl = 'http://localhost:5053/api/relations';
   constructor() { }
 
 
@@ -81,6 +82,43 @@ export class GroupApiService {
       });
     } catch (error) {
       console.error('Error deleting group:', error);
+    }
+  }
+
+  async getAllPeople(groupId: number): Promise<number[]> {
+    try {
+      const response = await fetch(`${this.relationsBaseUrl}/group/${groupId}/people`);
+      const data = await response.json();
+      return (data as { personId: number }[]).map(p => p.personId);
+    } catch (error) {
+      console.error('Error fetching people in group:', error);
+      return [];
+    }
+  }
+
+  async addPerson(groupId: number, personId: number): Promise<boolean> {
+    try {
+      const response = await fetch(
+        `${this.relationsBaseUrl}/group/${groupId}/people/${personId}`,
+        { method: 'POST' }
+      );
+      return response.ok;
+    } catch (error) {
+      console.error('Error adding person to group:', error);
+      return false;
+    }
+  }
+
+  async deletePerson(groupId: number, personId: number): Promise<boolean> {
+    try {
+      const response = await fetch(
+        `${this.relationsBaseUrl}/group/${groupId}/people/${personId}`,
+        { method: 'DELETE' }
+      );
+      return response.ok;
+    } catch (error) {
+      console.error('Error removing person from group:', error);
+      return false;
     }
   }
 }
