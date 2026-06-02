@@ -1,6 +1,18 @@
 <div class="app-root-layout">
   <header class="top-nav">
-    <div class="top-nav__logo" (click)="redirectHome()">KursHanterare</div>
+    <div class="top-nav__breadish">
+      <span (click)="redirectHome()" style="cursor: pointer;">
+        Kurshanteraren
+      </span>
+      @if (title.length > 0) {
+        <span style="color: var(--color-text-muted);"> / </span>
+        <span>{{ title }}</span>
+      }
+    </div>
+    
+    <div>
+      <ng-content select="[title-actions]"></ng-content>
+    </div>
 
     <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
       <span></span>
@@ -14,11 +26,6 @@
     </nav>
   </header>
 
-  <section class="title-bar">
-    <h1>{{ title }}</h1>
-    <ng-content select="[title-actions]"></ng-content>
-  </section>
-
   <main class="page-container">
     <section class="page-sheet">
       <ng-content></ng-content>
@@ -26,6 +33,6 @@
   </main>
 
   <footer class="site-footer">
-    <p>KursHanterare - Din styrbara utbildningsplattform</p>
+    <p>Kurshanteraren - Din styrbara utbildningsplattform</p>
   </footer>
 </div>
