@@ -14,7 +14,7 @@ import { SnackbarType } from '../shared/snackbar/snackbar.service';
   styleUrls: ['./home.scss'],
 })
 export class Home {
-  title = signal('Hem');
+  title = signal('');
 
   private readonly router = inject(Router);
   private readonly courseService = inject(CourseService);
