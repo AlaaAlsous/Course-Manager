@@ -1,5 +1,6 @@
 import { Component, Input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { ThemeService } from '../theme.service';
 
 @Component({
   selector: 'app-layout',
@@ -9,7 +10,10 @@ import { Router, RouterLink } from '@angular/router';
   styleUrls: ['./layout.scss'],
 })
 export class Layout {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    public readonly themeService: ThemeService,
+  ) {}
 
   @Input() title = '';
 
@@ -25,5 +29,10 @@ export class Layout {
 
   closeMenu() {
     this.menuOpen.set(false);
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+    this.closeMenu();
   }
 }
