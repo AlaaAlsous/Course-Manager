@@ -1,12 +1,12 @@
 <app-layout [title]="title()">
   <div class="home-actions">
-    <button (click)="createCourse()">Skapa kurs</button>
+    <button (click)="createCourse()">Skapa program</button>
   </div>
 
   <div class="course-grid">
-    <h2>Befintliga kurser</h2>
+    <h2>Befintliga program</h2>
 
-    <p *ngIf="courses().length === 0" class="empty-state">Inga kurser att visa.</p>
+    <p *ngIf="courses().length === 0" class="empty-state">Inga program att visa.</p>
 
     <div class="course-cards" *ngIf="courses().length > 0">
       <article *ngFor="let c of courses()" class="course-card clickable" (click)="goToCourse(c.id)">

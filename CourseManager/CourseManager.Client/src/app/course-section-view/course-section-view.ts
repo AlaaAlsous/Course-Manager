@@ -47,7 +47,7 @@ export class CourseSectionView {
 
     if (section) {
       this.sectionName.set(section.name);
-      this.title.set(`${course?.name ?? 'Kurs'} - ${section.name}`);
+      this.title.set(`${course?.name ?? 'Program'} - ${section.name}`);
       this.groups = section.groups;
     }
   }
@@ -115,12 +115,19 @@ export class CourseSectionView {
     const sectionId = this.sectionId();
     if (!courseId || !sectionId) return;
 
-    await this.courseSectionApiService.updateCourseSection(sectionId, courseId, this.editName, null, null, null);
+    await this.courseSectionApiService.updateCourseSection(
+      sectionId,
+      courseId,
+      this.editName,
+      null,
+      null,
+      null,
+    );
     const updated = await this.courseSectionApiService.getCourseSectionById(sectionId);
     if (updated) {
       this.sectionName.set(updated.name);
       const course = this.courseService.getById(courseId);
-      this.title.set(`${course?.name ?? 'Kurs'} - ${updated.name}`);
+      this.title.set(`${course?.name ?? 'Program'} - ${updated.name}`);
     }
     this.isEditing.set(false);
   }
@@ -135,7 +142,7 @@ export class CourseSectionView {
 
     try {
       const response = await fetch(
-        `http://localhost:5053/api/files/download/course-section/${sectionId}`
+        `http://localhost:5053/api/files/download/course-section/${sectionId}`,
       );
       if (!response.ok) return;
 

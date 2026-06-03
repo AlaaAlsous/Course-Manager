@@ -12,7 +12,7 @@ import { CourseService } from '../all-courses/course.service';
   styleUrl: './all-courses.scss',
 })
 export class AllCourses {
-  title = signal('Alla kurser');
+  title = signal('Alla program');
 
   private readonly courseService = inject(CourseService);
 

@@ -19,7 +19,7 @@ import { CourseApiService } from '../api-services/course-api-service';
 })
 export class CourseView {
   private readonly location = inject(Location);
-  title = signal('Kurs');
+  title = signal('Program');
   courseId = signal<number | null>(null);
 
   sections = signal<CourseSection[]>([]);

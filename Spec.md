@@ -21,7 +21,7 @@ utbildningsmoment liksom varje grupp i detta moment, och kan exempelvis se ut
 såhär när han är klar:
 
 ```
-kursnamn-2026
+programnamn-2026
 ├── Fnatte-Knatte
 |   ├──fnatte-anteckningar.txt
 |   ├──knatte-anteckningar.txt
@@ -47,7 +47,7 @@ kursnamn-2026
 ## Förslag till MVP lösning
 
 - Skapa en mobilanpassad webbsida som är riktad till ansvariga personen, dvs
-  **inte** något som ska visas för kursdeltagarna
+  **inte** något som ska visas för programdeltagarna
 - Användern bör kunna skapa nya kurstillfällen, och bör kunna ge dessa valfria
   namn
   - Det bör gå att skapa grupper under varje kurstillfällen
@@ -62,7 +62,7 @@ kursnamn-2026
       regna, snöa, eller annars vara otympligt att göra det med fingrarna.
       Automatisk röst -> text för detta hade varit en **stor** bonus
     - Det bör även gå att på motsvarande sätt ta bilder med kameran, för ett
-      kurstille, en grupp eller bara för en specifik person
+      kurstillfälle, en grupp eller bara för en specifik person
     - Bör även gå att ladda upp filer på mostavarande sätt
 - Det bör gå att visa en vy för varje person för ett kurstillfälle, och då se
   allt denna person var involverad i. Alla bilder, texter, ljud osv som finns

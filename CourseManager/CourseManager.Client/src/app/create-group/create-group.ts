@@ -132,7 +132,7 @@ export class CreateGroup {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort kurs',
+      title: 'Ta bort program',
       message: `Vill du verkligen ta bort ${course.name} från gruppen?`,
       confirmText: 'Ta bort',
       cancelText: 'Avbryt',

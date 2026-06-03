@@ -1,15 +1,13 @@
 <div class="app-root-layout">
   <header class="top-nav">
     <div class="top-nav__breadish">
-      <span (click)="redirectHome()" style="cursor: pointer;">
-        Kurshanteraren
-      </span>
+      <span (click)="redirectHome()" style="cursor: pointer"> Programhanteraren </span>
       @if (title.length > 0) {
-        <span style="color: var(--color-text-muted);"> / </span>
+        <span style="color: var(--color-text-muted)"> / </span>
         <span>{{ title }}</span>
       }
     </div>
-    
+
     <div>
       <ng-content select="[title-actions]"></ng-content>
     </div>
@@ -21,7 +19,7 @@
     </button>
 
     <nav class="top-nav__links" [class.open]="menuOpen()">
-      <a routerLink="/all-courses" (click)="closeMenu()">Kurser</a>
+      <a routerLink="/all-courses" (click)="closeMenu()">Program</a>
       <a routerLink="/participants" (click)="closeMenu()">Deltagare</a>
     </nav>
   </header>
@@ -33,6 +31,6 @@
   </main>
 
   <footer class="site-footer">
-    <p>Kurshanteraren - Din styrbara utbildningsplattform</p>
+    <p>Programhanteraren - Din styrbara utbildningsplattform</p>
   </footer>
 </div>

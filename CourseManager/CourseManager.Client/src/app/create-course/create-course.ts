@@ -16,7 +16,7 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
 export class CreateCourse {
   private readonly location = inject(Location);
 
-  title = signal('Skapa kurs');
+  title = signal('Skapa program');
 
   name = '';
   description = '';
@@ -49,7 +49,7 @@ export class CreateCourse {
     }
 
     this.courseService.addCourse(this.name.trim());
-    this.snackbarService.show(SnackbarType.Success, 'Kurs skapad!');
+    this.snackbarService.show(SnackbarType.Success, 'Program skapat!');
     this.router.navigate(['/home']);
   }
 }

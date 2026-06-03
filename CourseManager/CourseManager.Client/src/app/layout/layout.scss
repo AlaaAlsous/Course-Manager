@@ -41,7 +41,9 @@
   font-weight: 500;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-md);
-  transition: background 150ms ease, color 150ms ease;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
 }
 
 .top-nav__links a:hover {
@@ -175,9 +177,5 @@
     width: 100%;
     padding: var(--space-md);
     border-radius: var(--radius-md);
-  }
-
-  .title-bar h1 {
-    font-size: var(--font-size-lg);
   }
 }
