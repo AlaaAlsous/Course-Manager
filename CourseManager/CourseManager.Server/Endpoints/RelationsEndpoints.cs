@@ -129,6 +129,48 @@ public static class RelationsEndpoints
             return Results.NoContent();
         });
 
+        group.MapGet("/person/{personId:int}", async (int personId, AppDbContext db) =>
+        {
+            var courses = await db.CoursePeople
+                .Where(cp => cp.PersonId == personId)
+                .Select(cp => new CourseDto(
+                    cp.Course.CourseId,
+                    cp.Course.Name,
+                    cp.Course.Description,
+                    cp.Course.CreatedAt
+                ))
+                .ToListAsync();
+
+            var sections = await db.CourseSectionPeople
+                .Where(sp => sp.PersonId == personId)
+                .Select(sp => new CourseSectionDto(
+                    sp.CourseSection.CourseSectionId,
+                    sp.CourseSection.Name,
+                    sp.CourseSection.Description,
+                    sp.CourseSection.CreatedAt,
+                    sp.CourseSection.StartDate,
+                    sp.CourseSection.EndDate,
+                    sp.CourseSection.CourseId
+                ))
+                .ToListAsync();
+
+            var groups = await db.GroupPeople
+                .Where(gp => gp.PersonId == personId)
+                .Select(gp => new GroupDto(
+                    gp.Group.GroupId,
+                    gp.Group.Name,
+                    gp.Group.CourseSectionId
+                ))
+                .ToListAsync();
+
+            return Results.Ok(new
+            {
+                Courses = courses,
+                Sections = sections,
+                Groups = groups
+            });
+        });
+
         return routes;
     }
 }
