@@ -81,16 +81,19 @@ export class CourseView {
   }
 
   async saveEdit(): Promise<void> {
-    const courseId = this.courseId();
-    if (!courseId) return;
+  const courseId = this.courseId();
+  if (!courseId) return;
 
-    await this.courseApiService.updateCourse(courseId, this.editName, null);
-    const updated = await this.courseApiService.getCourseById(courseId);
-    if (updated) {
-      this.title.set(updated.name);
-    }
-    this.isEditing.set(false);
-  }
+  await this.courseApiService.updateCourse(
+    courseId,
+    this.editName,
+    null
+  );
+
+  this.title.set(this.editName);
+
+  this.isEditing.set(false);
+}
 
   cancelEdit(): void {
     this.isEditing.set(false);

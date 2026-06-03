@@ -15,13 +15,27 @@
     <textarea id="description" name="description" rows="4" [(ngModel)]="description"></textarea>
 
     <label for="startDate">Startdatum (valfritt)</label>
-    <input id="startDate" name="startDate" type="date" [(ngModel)]="startDate" />
+    <input
+      id="startDate"
+      name="startDate"
+      type="date"
+      [(ngModel)]="startDate"
+      onclick="this.showPicker()"
+    />
 
     <label for="endDate">Slutdatum (valfritt)</label>
-    <input id="endDate" name="endDate" type="date" [(ngModel)]="endDate" />
+    <input
+      id="endDate"
+      name="endDate"
+      type="date"
+      [(ngModel)]="endDate"
+      onclick="this.showPicker()"
+    />
 
     @if (submitted && !isFormValid) {
-      <p class="validation">Fyll i namn och kontrollera att slutdatum inte är före startdatum.</p>
+      <p class="validation">
+        Fyll i namn och kontrollera att slutdatum inte är före startdatum.
+      </p>
     }
 
     <div class="create-kurstillfalle__actions">

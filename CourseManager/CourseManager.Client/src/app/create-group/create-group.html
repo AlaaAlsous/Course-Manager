@@ -2,53 +2,39 @@
   <div class="create-group-container">
     <header class="app-page-header create-group-header">
       <div class="app-page-header__content">
-        <h2>Create Group</h2>
+        <h2>Skapa Grupp</h2>
       </div>
 
       <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
     </header>
 
     <label>
-      Group Name
-      <input type="text" [(ngModel)]="name" placeholder="Enter group name" />
+      Gruppnamn
+      <input type="text" [(ngModel)]="name" placeholder="Önskat Gruppnamn..." />
     </label>
 
-    <button class="create-person-btn" (click)="goToCreatePerson()">Create Person</button>
+    <button class="create-person-btn" (click)="goToCreatePerson()">Skapa Person</button>
 
     <section class="card">
-      <h3>Add Existing Person</h3>
+      <h3>Lägg Till Tidigare Person</h3>
 
       <label>
         Select Person
         <select [(ngModel)]="selectedPersonId">
-          <option [ngValue]="null">Choose...</option>
+          <option [ngValue]="null">Välj...</option>
           <option *ngFor="let p of allPeople" [ngValue]="p.id">
             {{ p.name }}
           </option>
         </select>
       </label>
 
-      <button (click)="addExistingPerson()">Add to Group</button>
+      <button (click)="addExistingPerson()">Lägg till i Grupp</button>
     </section>
 
-    <section class="card">
-      <h3>Add Existing Course</h3>
-
-      <label>
-        Select Course
-        <select [(ngModel)]="selectedCourseId">
-          <option [ngValue]="null">Choose...</option>
-          <option *ngFor="let c of allCourses" [ngValue]="c.id">
-            {{ c.name }}
-          </option>
-        </select>
-      </label>
-
-      <button (click)="addExistingCourse()">Add Course</button>
-    </section>
+    
 
     <section class="card">
-      <h3>People in this Group</h3>
+      <h3>Personer i denna Grupp</h3>
 
       <ul>
         <li *ngFor="let p of groupPeople">
@@ -60,21 +46,10 @@
       </ul>
     </section>
 
-    <section class="card">
-      <h3>Courses in this Group</h3>
-
-      <ul>
-        <li *ngFor="let c of groupCourses">
-          <span>{{ c.name }}</span>
-          <button type="button" class="remove-btn" (click)="removeCourseFromGroup(c.id)">
-            Ta bort
-          </button>
-        </li>
-      </ul>
-    </section>
+    
 
     <div class="create-group-actions">
-      <button type="button" class="create-btn" (click)="createGroup()">Create Group</button>
+      <button type="button" class="create-btn" (click)="createGroup()">Skapa Grupp</button>
     </div>
   </div>
 </app-layout>
