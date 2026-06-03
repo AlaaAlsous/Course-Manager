@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var azureConn = builder.Configuration.GetConnectionString("AzureSqlConnection");
-    var localConn = "Data Source=data/course-manager.db";
 
     if (!string.IsNullOrWhiteSpace(azureConn))
     {
@@ -25,6 +24,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     else
     {
         Console.WriteLine("Using local SQLite Database");
+
+        // Resolve the path relative to the project directory so it works
+        // regardless of the current working directory (e.g. when run via npm run dev from root).
+        var contentRoot = builder.Environment.ContentRootPath;
+        var dbDir = Path.Combine(contentRoot, "data");
+        Directory.CreateDirectory(dbDir);
+        var dbPath = Path.Combine(dbDir, "course-manager.db");
+        var localConn = $"Data Source={dbPath}";
+
         options.UseSqlite(localConn);
     }
 });
