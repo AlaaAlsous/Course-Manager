@@ -13,22 +13,18 @@
           <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
           <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
         } @else {
-          <h1>{{ selectedPerson?.fullName }}</h1>
+          <h1>{{ selectedPerson.fullName }}</h1>
           <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
         }
-
-        <p>{{ selectedPerson?.email }}</p>
-
-        <p>{{ selectedPerson?.phone }}</p>
-
-        <p>{{ selectedPerson?.address }}</p>
-
-        <p>ID: {{ selectedPerson?.id }}</p>
+        <p>ID: {{ selectedPerson.personId }}</p>
       </div>
     </div>
 
     <div class="section">
-      <h2>Courses</h2>
+      <h2>Grupper</h2>
+      <span>TODO</span>
+      <h2>Kurstillfällen</h2>
+      <span>TODO</span>
 
       @for (course of (selectedPerson?.courses ?? []); track course) {
         <div class="note-card">

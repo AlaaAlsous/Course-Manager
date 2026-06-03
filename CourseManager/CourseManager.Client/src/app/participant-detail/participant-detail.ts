@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { PersonApiService } from '../api-services/person-api-service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
 
 @Component({
   selector: 'app-participant-detail',
@@ -26,14 +27,13 @@ export class ParticipantDetail implements OnInit {
 
   constructor(private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
-    this.personApiService.getPersonById(id).then((person) => {
-      this.selectedPerson = person;
-      if (person) {
-        this.title.set(person.fullName);
-      }
-    });
+    const person = await this.personApiService.getPersonById(id);
+    if(person === null) return;
+
+    this.selectedPerson = person;
+    this.title.set(person.fullName);
   }
 
   startEdit(): void {

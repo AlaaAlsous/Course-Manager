@@ -18,14 +18,15 @@
     <h2 class="participants-overview__heading">Deltagare</h2>
 
     <div class="participant-list">
-      <article
-        class="participant-item"
-        *ngFor="let person of filteredPersons()"
-        [routerLink]="['/participant']"
-        [queryParams]="{ id: person.id }"
-      >
-        {{ person.name }}
-      </article>
+      @for (person of filteredPersons(); track $index) {
+        <article
+          class="participant-item"
+          [routerLink]="['/participant']"
+          [queryParams]="{ id: person.personId}"
+        >
+          {{ person.fullName }}
+        </article>
+      }
     </div>
   </section>
 </app-layout>
