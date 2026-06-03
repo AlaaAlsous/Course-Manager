@@ -7,10 +7,12 @@ namespace CourseManager.Server.Repositories;
 public class FileRepository : IFileRepository
 {
     private readonly AppDbContext _db;
+    private readonly BlobService _blob;
 
-    public FileRepository(AppDbContext db)
+    public FileRepository(AppDbContext db, BlobService blob)
     {
         _db = db;
+        _blob = blob;
     }
 
     public async Task<FileAsset> CreateAsync(FileAsset file)
@@ -49,8 +51,15 @@ public class FileRepository : IFileRepository
         if (file.PersonFiles != null)
             _db.PersonFiles.RemoveRange(file.PersonFiles);
 
-        if (System.IO.File.Exists(file.LocalPath))
-            System.IO.File.Delete(file.LocalPath);
+        if (file.StorageProvider == "azure" && file.FileName != null)
+        {
+            await _blob.DeleteAsync(file.FileName);
+        }
+        if (file.StorageProvider == "local" && file.LocalPath != null)
+        {
+            if (System.IO.File.Exists(file.LocalPath))
+                System.IO.File.Delete(file.LocalPath);
+        }
 
         _db.FileAssets.Remove(file);
 
@@ -61,25 +70,49 @@ public class FileRepository : IFileRepository
     public async Task<string?> ReadFileContentAsync(int fileAssetId)
     {
         var file = await _db.FileAssets.FindAsync(fileAssetId);
-        if (file is null || !System.IO.File.Exists(file.LocalPath))
+        if (file is null)
             return null;
 
-        return await System.IO.File.ReadAllTextAsync(file.LocalPath);
+        if (file.StorageProvider == "azure")
+        {
+            var stream = await _blob.DownloadAsync(file.FileName);
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
+        }
+
+        if (file.StorageProvider == "local" && System.IO.File.Exists(file.LocalPath))
+            return await System.IO.File.ReadAllTextAsync(file.LocalPath);
+
+        return null;
     }
 
     public async Task<bool> WriteFileContentAsync(int fileAssetId, string content)
     {
         var file = await _db.FileAssets.FindAsync(fileAssetId);
-        if (file is null || !System.IO.File.Exists(file.LocalPath))
+        if (file is null)
             return false;
 
-        await System.IO.File.WriteAllTextAsync(file.LocalPath, content);
+        if (file.StorageProvider == "azure")
+        {
+            using var mem = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
+            await _blob.UploadAsync(file.FileName, mem);
 
-        var info = new FileInfo(file.LocalPath);
-        file.FileSize = info.Length;
-        await _db.SaveChangesAsync();
+            file.FileSize = mem.Length;
+            await _db.SaveChangesAsync();
+            return true;
+        }
 
-        return true;
+        if (file.StorageProvider == "local" && System.IO.File.Exists(file.LocalPath))
+        {
+            await System.IO.File.WriteAllTextAsync(file.LocalPath, content);
+
+            var info = new FileInfo(file.LocalPath);
+            file.FileSize = info.Length;
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<List<FileAsset>> GetFilesForCourseAsync(int courseId)
@@ -189,5 +222,4 @@ public class FileRepository : IFileRepository
         await _db.SaveChangesAsync();
         return true;
     }
-
 }

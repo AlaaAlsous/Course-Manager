@@ -3,7 +3,7 @@ namespace CourseManager.Server.DTOs;
 public record FileAssetDto(
     int FileAssetId,
     string FileName,
-    string LocalPath,
+    string? LocalPath,
     string? CloudPath,
     string StorageProvider,
     string FileType,
@@ -13,7 +13,7 @@ public record FileAssetDto(
 
 public record CreateFileAssetRequest(
     string FileName,
-    string LocalPath,
+    string? LocalPath,
     string? CloudPath,
     string StorageProvider,
     string FileType,
