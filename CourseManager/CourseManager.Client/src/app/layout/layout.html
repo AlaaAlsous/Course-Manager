@@ -8,7 +8,7 @@
       }
     </div>
 
-    <div>
+    <div class="top-nav__actions">
       <ng-content select="[title-actions]"></ng-content>
     </div>
 
@@ -21,6 +21,25 @@
     <nav class="top-nav__links" [class.open]="menuOpen()">
       <a routerLink="/all-courses" (click)="closeMenu()">Program</a>
       <a routerLink="/participants" (click)="closeMenu()">Deltagare</a>
+      <button
+        type="button"
+        class="theme-toggle"
+        [attr.aria-label]="themeService.theme() === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema'"
+        [attr.title]="themeService.theme() === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema'"
+        [attr.aria-pressed]="themeService.theme() === 'dark'"
+        (click)="toggleTheme()"
+      >
+        @if (themeService.theme() === 'dark') {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 4.5V2m0 20v-2.5M4.5 12H2m20 0h-2.5M5.64 5.64 3.87 3.87m16.26 16.26-1.77-1.77m0-12.72 1.77-1.77M3.87 20.13l1.77-1.77" />
+            <circle cx="12" cy="12" r="4.25" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20.25 14.8A8 8 0 0 1 9.2 3.75 8.5 8.5 0 1 0 20.25 14.8Z" />
+          </svg>
+        }
+      </button>
     </nav>
   </header>
 
@@ -33,4 +52,5 @@
   <footer class="site-footer">
     <p>Programhanteraren - Din styrbara utbildningsplattform</p>
   </footer>
+
 </div>

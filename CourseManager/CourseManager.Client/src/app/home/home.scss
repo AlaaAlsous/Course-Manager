@@ -17,7 +17,7 @@
   padding: var(--space-sm) var(--space-md);
   background: var(--color-primary);
   border-radius: var(--radius-md);
-  border: 1px solid #334155;
+  border: 1px solid var(--color-primary-border);
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -72,6 +72,14 @@
   align-items: center;
   padding: var(--space-md);
   cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.clickable:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
 }
 
 .item-row {
