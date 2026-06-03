@@ -9,21 +9,29 @@ export class CourseApiService {
 
   constructor() {}
 
-  async getAllCourses(): Promise<Course[]> {
+  async getAllCourses(): Promise<Course[] | null> {
     try {
       const response = await fetch(`${this.baseUrl}`);
+      if  (!response.ok) {
+        console.error('Error fetching courses:', response.statusText);
+        return null;
+      }
       const data = await response.json();
       console.log('Courses data:', data);
       return data as Course[];
     } catch (error) {
       console.error('Error fetching courses:', error);
-      return [];
+      return null;  
     }
   }
 
   async getCourseById(id: number): Promise<Course | null> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`);
+      if  (!response.ok) {
+        console.error('Error fetching course:', response.statusText);
+        return null;
+      }
       const data = await response.json();
       console.log('Course data:', data);
       return data as Course;
@@ -42,8 +50,11 @@ export class CourseApiService {
         },
         body: JSON.stringify({ name, description })
       });
+      if (!response.ok) {
+        console.error('Error creating course:', response.statusText);
+        return null;
+      }
       const data = await response.json();
-      console.log('Course created with ID:', data.courseId);
       return data.courseId;
     }
     catch (error) {
@@ -52,29 +63,39 @@ export class CourseApiService {
     }
   }
 
-  async updateCourse(id: number, name: string, description: string | null): Promise<void> {
+  async updateCourse(id: number, name: string, description: string | null): Promise<boolean> {
     try {
-      await fetch(`${this.baseUrl}/${id}`, {
+      const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ name, description })
       });
-      console.log('Course updated with ID:', id);
+      if (!response.ok) {
+        console.error('Error updating course:', response.statusText);
+        return false;
+      }
+      return true;
     } catch (error) {
       console.error('Error updating course:', error);
+      return false;
     }
   }
 
-  async deleteCourse(id: number): Promise<void> {
+  async deleteCourse(id: number): Promise<boolean> {
     try {
-      await fetch(`${this.baseUrl}/${id}`, {
+      const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'DELETE'
       });
-      console.log('Course deleted with ID:', id);
+      if (!response.ok) {
+        console.error('Error deleting course:', response.statusText);
+        return false;
+      }
+      return true;
     } catch (error) {
       console.error('Error deleting course:', error);
+      return false;
     }
   }
 }

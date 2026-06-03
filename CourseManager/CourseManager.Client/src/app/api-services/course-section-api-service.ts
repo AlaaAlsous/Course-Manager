@@ -10,32 +10,47 @@ export class CourseSectionApiService {
 
   constructor() { }
 
-  async getAllCourseSections(): Promise<CourseSection[]> {
+  async getAllCourseSections(): Promise<CourseSection[] | null> {
     try {
       const response = await fetch(`${this.baseUrl}`);
-      const data = await response.json();
-      return data as CourseSection[];
+      if (!response.ok) {
+          console.error('Error fetching course sections:', response.statusText);
+          return null;
+        }
+        const data = await response.json();
+        console.log('Course sections data:', data);
+        return data as CourseSection[];    
     } catch (error) {
       console.error('Error fetching course sections:', error);
-      return [];
+      return null;
     }
   }
 
-  async getCourseSectionsByCourseId(courseId: number): Promise<CourseSection[]> {
+  async getCourseSectionsByCourseId(courseId: number): Promise<CourseSection[] | null> {
     try {
       const response = await fetch(`${this.baseUrl}/course/${courseId}`);
+      if (!response.ok) {
+        console.error('Error fetching course sections:', response.statusText);
+        return null;
+      }
       const data = await response.json();
+      console.log('Course sections data:', data);
       return data as CourseSection[];
     } catch (error) {
       console.error('Error fetching course sections:', error);
-      return [];
+      return null;
     }
   }
 
   async getCourseSectionById(id: number): Promise<CourseSection | null> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`);
+      if (!response.ok) {
+        console.error('Error fetching course section:', response.statusText);
+        return null;
+      }
       const data = await response.json();
+      console.log('Course section data:', data);
       return data as CourseSection;
     } catch (error) {
       console.error('Error fetching course section:', error);
@@ -52,35 +67,54 @@ export class CourseSectionApiService {
         },
         body: JSON.stringify({ courseId, name, description, startDate, endDate })
       });
-      const data = await response.json();
-      return data.courseSectionId;
+     if(!response.ok) {
+        console.error('Error creating course section:', response.statusText);
+        return null;
+      }
+        const data = await response.json();
+        console.log('Course section created with ID:', data.courseSectionId);
+        return data.courseSectionId;
     } catch (error) {
       console.error('Error creating course section:', error);
       return null;
     }
   }
 
-  async updateCourseSection(id: number, courseId: number, name: string, description: string | null, startDate: string | null, endDate: string | null): Promise<void> {
+  async updateCourseSection(id: number, courseId: number, name: string, description: string | null, startDate: string | null, endDate: string | null): Promise<boolean> {
     try {
-      await fetch(`${this.baseUrl}/${id}`, {
+      const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ courseId, name, description, startDate, endDate })
       });
+      if (!response.ok) {
+        console.error('Error updating course section:', response.statusText);
+        return false;
+      }
+      console.log('Course section updated successfully');
+      return true;
     } catch (error) {
       console.error('Error updating course section:', error);
+      return false;
     }
   }
 
-  async deleteCourseSection(id: number): Promise<void> {
+  async deleteCourseSection(id: number): Promise<boolean> {
     try {
-      await fetch(`${this.baseUrl}/${id}`, {
+      const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'DELETE'
       });
+      if (!response.ok) {
+        console.error('Error deleting course section:', response.statusText);
+        return false;
+      }
+      console.log('Course section deleted successfully');
+      return true;
     } catch (error) {
       console.error('Error deleting course section:', error);
+      return false;
     }
   }
 
