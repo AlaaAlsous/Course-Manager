@@ -89,7 +89,7 @@
                 </div>
               </div>
               <div class="">
-                <app-file-preview [file]="item" />
+                <app-file-preview [file]="item" (textSave)="onTextSave($event)" />
               </div>
             </li>
           }

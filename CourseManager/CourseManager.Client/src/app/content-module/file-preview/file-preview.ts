@@ -17,6 +17,11 @@ export type File = {
   sourceUrl: string;
 };
 
+export interface TextSaveEvent {
+  fileAssetId: number;
+  content: string;
+}
+
 /** Known file extension groups for preview differentiation. */
 const TEXT_EXTENSIONS = new Set(['txt', 'md', 'csv']);
 const IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico']);
@@ -45,7 +50,7 @@ export class FilePreview {
   constructor(private cdr: ChangeDetectorRef) {}
 
   /** Emits the text content when the user clicks Save after editing. */
-  @Output() textSave = new EventEmitter<string>();
+  @Output() textSave = new EventEmitter<TextSaveEvent>();
 
   /** Text content fetched from the backend for text-type files. */
   textContent = '';
@@ -85,8 +90,13 @@ export class FilePreview {
 
   toggleEdit(): void {
     if (this.isEditing) {
-      // TODO: Connect textSave() to API when backend endpoint is ready.
-      this.textSave.emit(this.textContent);
+      const fileAssetId = this.file().fileAssetId;
+      if (fileAssetId === undefined) {
+        console.error('Cannot save text: fileAssetId is missing');
+        this.isEditing = !this.isEditing;
+        return;
+      }
+      this.textSave.emit({ fileAssetId, content: this.textContent });
     }
     this.isEditing = !this.isEditing;
   }

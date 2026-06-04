@@ -40,14 +40,18 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
   }
 
   protected confirm(): void {
-    // Resolve the pending request as confirmed.
+    // Guard: save + clear resolve so re-entrant cancel() via (closed) binding is no-op.
+    const resolve = this.resolve;
+    this.resolve = undefined;
     this.modal.close();
-    this.resolve?.(true);
+    resolve?.(true);
   }
 
   protected cancel(): void {
-    // Resolve the pending request as cancelled.
+    // Guard: save + clear resolve so re-entrant cancel() via (closed) binding is no-op.
+    const resolve = this.resolve;
+    this.resolve = undefined;
     this.modal.close();
-    this.resolve?.(false);
+    resolve?.(false);
   }
 }

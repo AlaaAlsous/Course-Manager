@@ -4,14 +4,14 @@ import { Component, EventEmitter, Output } from '@angular/core';
   selector: 'app-modal-window',
   imports: [],
   template: `
-  @if (isOpen) {
-    <div class="modal-base" (click)="close();">
-      <div class="modal-base-content" (click)="$event.stopPropagation()">
-        <ng-content/>
+    @if (isOpen) {
+      <div class="modal-base" (click)="close()">
+        <div class="modal-base-content" (click)="$event.stopPropagation()">
+          <ng-content />
+        </div>
       </div>
-    </div>
-  }
-    `,
+    }
+  `,
   styleUrl: './modal-window.scss',
 })
 
@@ -45,10 +45,12 @@ export class ModalWindow {
 
   close() {
     if (this._isOpen) {
+      this._isOpen = false;
       this.closed.emit();
       this.toggled.emit();
+    } else {
+      this._isOpen = false;
     }
-    this._isOpen = false;
   }
 
   toggle() {

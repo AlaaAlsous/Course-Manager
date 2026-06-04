@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { File as ContentFile, FilePreview } from './file-preview/file-preview';
+import { File as ContentFile, FilePreview, TextSaveEvent } from './file-preview/file-preview';
 import { FileApiService } from '../api-services/file-api-services';
 import { FileAsset } from '../api-services/dtos';
+import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 type ContentTargetType = 'course' | 'course-section' | 'group' | 'person';
 
@@ -22,8 +23,10 @@ interface ContentTarget {
 export class ContentModule {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('imageInput') imageInputRef!: ElementRef<HTMLInputElement>;
+
   private readonly router = inject(Router);
   private readonly fileApiService = inject(FileApiService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   /** The list of files managed by this component. */
@@ -211,22 +214,7 @@ export class ContentModule {
       return;
     }
 
-    if (target.entityType === 'course') {
-      await this.fileApiService.removeFileFromCourse(target.entityId, file.fileAssetId);
-    }
-
-    if (target.entityType === 'course-section') {
-      await this.fileApiService.removeFileFromCourseSection(target.entityId, file.fileAssetId);
-    }
-
-    if (target.entityType === 'group') {
-      await this.fileApiService.removeFileFromGroup(target.entityId, file.fileAssetId);
-    }
-
-    if (target.entityType === 'person') {
-      await this.fileApiService.removeFileFromPerson(target.entityId, file.fileAssetId);
-    }
-
+    await this.fileApiService.deleteFile(file.fileAssetId);
     await this.loadFiles();
   }
 
@@ -268,6 +256,19 @@ export class ContentModule {
 
   /** Called when the user clicks the delete icon on a file. */
   async onDeleteFile(file: ContentFile): Promise<void> {
-    await this.deleteFileOnApi(file);
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Ta bort fil',
+      message: 'Är du säker att du vill ta bort ' + file.name + '?',
+      confirmText: 'Ta bort',
+      cancelText: 'Avbryt',
+    });
+
+    if (confirmed) await this.deleteFileOnApi(file);
+  }
+
+  /** Called when the user clicks Save after editing a text file. */
+  async onTextSave(event: TextSaveEvent): Promise<void> {
+    await this.fileApiService.updateFileContent(event.fileAssetId, event.content);
+    await this.loadFiles();
   }
 }
