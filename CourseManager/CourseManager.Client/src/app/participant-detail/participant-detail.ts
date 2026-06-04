@@ -8,6 +8,7 @@ import { PersonApiService } from '../api-services/person-api-service';
 import { File as ContentFile } from '../content-module/file-preview/file-preview';
 import { FileApiService } from '../api-services/file-api-services';
 import { CourseSection, Group, PersonOverview, PersonOverviewFile } from '../api-services/dtos';
+import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 interface OverviewContentFile extends ContentFile {
   sourceType: string;
@@ -26,6 +27,7 @@ export class ParticipantDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly personApiService = inject(PersonApiService);
   private readonly fileApiService = inject(FileApiService);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
 
   title = signal('Detaljer för deltagare');
   loading = signal(true);
@@ -39,7 +41,7 @@ export class ParticipantDetail implements OnInit {
     () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
   );
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) { }
 
   async ngOnInit(): Promise<void> {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
@@ -152,6 +154,24 @@ export class ParticipantDetail implements OnInit {
     const id = this.personId();
     if (id) {
       await this.loadOverview(id);
+    }
+  }
+
+  async deletePerson() {
+    if (this.personId() !== null) {
+      const confirmed = await this.confirmDialogService.confirm({
+        title: `Ta bort deltagare`,
+        message: `Vill du verkligen ta bort deltagare '${this.overview()?.person.fullName}'?`,
+        confirmText: 'Ta bort',
+        cancelText: 'Avbryt',
+      });
+
+      if (!confirmed) {
+        return;
+      }
+
+      await this.personApiService.deletePerson(this.personId()!);
+      this.goBack();
     }
   }
 
