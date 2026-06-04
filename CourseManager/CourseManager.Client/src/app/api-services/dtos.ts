@@ -46,3 +46,9 @@ export interface PersonOverview {
     groups: Group[];
     files: PersonOverviewFile[];
 }
+
+export interface PersonRelations {
+  courses: any[];
+  sections: any[];
+  groups: any[];
+}
