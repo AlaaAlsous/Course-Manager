@@ -1,17 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Person } from './dtos';
+import { Course, CourseSection, Group, Person, PersonOverview, PersonOverviewFile } from './dtos';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PersonApiService {
   baseUrl = 'http://localhost:5053/api/person';
+  relationsBaseUrl = 'http://localhost:5053/api/relations';
   constructor() {}
 
   private mapPerson(data: any): Person {
     return {
       id: data.id ?? data.personId,
       fullName: data.fullName,
+    };
+  }
+
+  private mapCourse(data: any): Course {
+    return {
+      id: data.id ?? data.courseId,
+      name: data.name,
+      description: data.description ?? null,
+      createdAt: data.createdAt,
+    };
+  }
+
+  private mapCourseSection(data: any): CourseSection {
+    return {
+      id: data.id ?? data.courseSectionId,
+      courseId: data.courseId,
+      name: data.name,
+      description: data.description ?? null,
+      createdAt: data.createdAt,
+      startDate: data.startDate ?? null,
+      endDate: data.endDate ?? null,
+    };
+  }
+
+  private mapGroup(data: any): Group {
+    return {
+      id: data.id ?? data.groupId,
+      name: data.name,
+      courseSectionId: data.courseSectionId,
+    };
+  }
+
+  private mapFile(data: any): PersonOverviewFile {
+    return {
+      fileAssetId: data.fileAssetId,
+      fileName: data.fileName,
+      localPath: data.localPath ?? null,
+      cloudPath: data.cloudPath ?? null,
+      storageProvider: data.storageProvider,
+      fileType: data.fileType,
+      fileSize: data.fileSize,
+      uploadedAt: data.uploadedAt,
+      sourceType: data.sourceType,
+      sourceId: data.sourceId,
+      sourceName: data.sourceName,
     };
   }
 
@@ -43,6 +89,28 @@ export class PersonApiService {
       return this.mapPerson(data);
     } catch (error) {
       console.error('Error fetching person:', error);
+      return null;
+    }
+  }
+
+  async getPersonOverview(id: number): Promise<PersonOverview | null> {
+    try {
+      const response = await fetch(`${this.relationsBaseUrl}/person/${id}/overview`);
+      if (!response.ok) {
+        console.error('Error fetching person overview:', response.statusText);
+        return null;
+      }
+
+      const data = await response.json();
+      return {
+        person: this.mapPerson(data.person),
+        courses: (data.courses as any[]).map((course) => this.mapCourse(course)),
+        sections: (data.sections as any[]).map((section) => this.mapCourseSection(section)),
+        groups: (data.groups as any[]).map((group) => this.mapGroup(group)),
+        files: (data.files as any[]).map((file) => this.mapFile(file)),
+      };
+    } catch (error) {
+      console.error('Error fetching person overview:', error);
       return null;
     }
   }

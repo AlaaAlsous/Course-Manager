@@ -46,6 +46,7 @@ function previewTypeFromExtension(extension: string): PreviewType {
 })
 export class FilePreview {
   readonly file = input.required<File>();
+  readonly isReadonly = input(false);
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -89,6 +90,8 @@ export class FilePreview {
   }
 
   toggleEdit(): void {
+    if (this.isReadonly()) return;
+
     if (this.isEditing) {
       const fileAssetId = this.file().fileAssetId;
       if (fileAssetId === undefined) {

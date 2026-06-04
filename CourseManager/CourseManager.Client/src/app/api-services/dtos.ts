@@ -25,10 +25,24 @@ export interface Group {
 export interface FileAsset {
     fileAssetId: number;
     fileName: string;
-    localPath: string;
+    localPath: string | null;
     cloudPath: string | null;
     storageProvider: string;
     fileType: string;
     fileSize: number;
     uploadedAt: string;
+}
+
+export interface PersonOverviewFile extends FileAsset {
+    sourceType: string;
+    sourceId: number;
+    sourceName: string;
+}
+
+export interface PersonOverview {
+    person: Person;
+    courses: Course[];
+    sections: CourseSection[];
+    groups: Group[];
+    files: PersonOverviewFile[];
 }

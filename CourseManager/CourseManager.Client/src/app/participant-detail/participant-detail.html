@@ -2,39 +2,106 @@
   <div class="detail-page">
     <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
 
-    <div class="hero-card">
-      @if (selectedPerson?.imageUrl) {
-        <img class="profile-image" [src]="selectedPerson.imageUrl" [alt]="selectedPerson.fullName" />
-      }
-
-      <div class="hero-info">
-        @if (isEditing()) {
-          <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
-          <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
-          <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
-        } @else {
-          <h1>{{ selectedPerson.fullName }}</h1>
-          <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
-        }
-        <p>ID: {{ selectedPerson.personId }}</p>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Grupper</h2>
-      <span>TODO</span>
-      <h2>Kurstillfällen</h2>
-      <span>TODO</span>
-
-      @for (course of (selectedPerson?.courses ?? []); track course) {
-        <div class="note-card">
-          <p>{{ course }}</p>
+    @if (loading()) {
+      <section class="state-card">
+        <p>Laddar deltagare...</p>
+      </section>
+    } @else if (errorMessage()) {
+      <section class="state-card state-card--error">
+        <h2>Något gick fel</h2>
+        <p>{{ errorMessage() }}</p>
+      </section>
+    } @else if (overview(); as data) {
+      <div class="hero-card">
+        <div class="profile-placeholder" aria-hidden="true">
+          {{ data.person.fullName.charAt(0).toUpperCase() }}
         </div>
-      }
-    </div>
 
-    <div class="section">
-      <app-content-module></app-content-module>
-    </div>
+        <div class="hero-info">
+          @if (isEditing()) {
+            <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+            <div class="hero-actions">
+              <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+              <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+            </div>
+          } @else {
+            <h1>{{ data.person.fullName }}</h1>
+            <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+          }
+          <p>ID: {{ data.person.id }}</p>
+        </div>
+      </div>
+
+      <section class="overview-grid" aria-label="Deltagarens kopplingar">
+        <article class="overview-card">
+          <h2>Program</h2>
+          @for (course of data.courses; track course.id) {
+            <a class="relation-row" [routerLink]="['/course', course.id]">
+              <span>{{ course.name }}</span>
+              <small>Skapat {{ formatDate(course.createdAt) }}</small>
+            </a>
+          } @empty {
+            <p class="empty-state">Deltagaren är inte kopplad till något program.</p>
+          }
+        </article>
+
+        <article class="overview-card">
+          <h2>Kurstillfällen</h2>
+          @for (section of data.sections; track section.id) {
+            <a class="relation-row" [routerLink]="['/course', section.courseId, 'kurstillfalle', section.id]">
+              <span>{{ section.name }}</span>
+              <small>{{ courseNameForSection(section) }}</small>
+            </a>
+          } @empty {
+            <p class="empty-state">Deltagaren är inte kopplad till något kurstillfälle.</p>
+          }
+        </article>
+
+        <article class="overview-card">
+          <h2>Grupper</h2>
+          @for (group of data.groups; track group.id) {
+            <a class="relation-row" [routerLink]="['/groups', group.id]">
+              <span>{{ group.name }}</span>
+              <small>{{ sectionNameForGroup(group) }}</small>
+            </a>
+          } @empty {
+            <p class="empty-state">Deltagaren är inte kopplad till någon grupp.</p>
+          }
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Allt innehåll för deltagaren</h2>
+          <p>Visar innehåll från deltagaren, grupper, kurstillfällen och program.</p>
+        </div>
+
+        <div class="content-list">
+          @for (item of overviewFiles(); track item.fileAssetId) {
+            <article class="content-card">
+              <div class="content-card__meta">
+                <div>
+                  <h3>{{ item.name }}.{{ item.extension }}</h3>
+                  <p>{{ item.sourceType }}: {{ item.sourceName }}</p>
+                </div>
+                <small>{{ formatDate(item.date.toISOString()) }}</small>
+              </div>
+
+              <app-file-preview [file]="item" [isReadonly]="true" />
+            </article>
+          } @empty {
+            <p class="empty-state">Inget innehåll hittades för deltagaren än.</p>
+          }
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Lägg till innehåll direkt på deltagaren</h2>
+          <p>Nya anteckningar, bilder och filer kopplas till denna deltagare.</p>
+        </div>
+        <app-content-module></app-content-module>
+      </section>
+    }
   </div>
 </app-layout>
