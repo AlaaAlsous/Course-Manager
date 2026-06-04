@@ -12,7 +12,6 @@ namespace CourseManager.Server.Models
         [MaxLength(255)]
         public string FileName { get; set; } = null!;
 
-        [Required]
         public string? LocalPath { get; set; }
 
         public string? CloudPath { get; set; }
