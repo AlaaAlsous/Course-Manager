@@ -184,15 +184,17 @@ public static class RelationsEndpoints
 
             var directSections = await db.CourseSectionPeople
                 .Where(sp => sp.PersonId == personId)
+                .Include(sp => sp.CourseSection)
+                    .ThenInclude(cs => cs.Course)
                 .Select(sp => sp.CourseSection)
-                .Include(s => s.Course)
                 .ToListAsync();
 
             var groups = await db.GroupPeople
                 .Where(gp => gp.PersonId == personId)
+                .Include(gp => gp.Group)
+                    .ThenInclude(g => g.CourseSection)
+                        .ThenInclude(cs => cs.Course)
                 .Select(gp => gp.Group)
-                .Include(g => g.CourseSection)
-                    .ThenInclude(cs => cs.Course)
                 .ToListAsync();
 
             var sections = directSections
