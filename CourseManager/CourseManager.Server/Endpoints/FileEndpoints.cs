@@ -405,10 +405,9 @@ public static class FileEndpoints
             }
 
             zip.Dispose();
-            memoryStream.Position = 0;
 
             return Results.File(
-                memoryStream,
+                memoryStream.ToArray(),
                 "application/zip",
                 $"{entityType}-{entityId}.zip"
             );
