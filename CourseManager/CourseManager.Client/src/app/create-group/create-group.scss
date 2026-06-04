@@ -100,3 +100,31 @@ select:hover {
   padding-bottom: var(--space-sm);
   margin-bottom: var(--space-sm);
 }
+
+.person-selection {
+  max-width: 250px;
+}
+
+.personNameInput {
+  max-width: 250px;
+}
+
+.person-section-button {
+  margin-left: auto;
+  min-width: 110px;
+}
+
+.personInputContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  flex-direction: row;
+
+  @media (max-width:600px) {
+    flex-direction: column;
+
+    .person-section-button {
+      margin-left: 0;
+    }
+  }
+}

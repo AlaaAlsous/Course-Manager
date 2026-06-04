@@ -21,33 +21,35 @@
 
       <label>
         <span>Skapa en ny deltagare</span>
-        <div class="d-flex gap-1 w-full">
+        <div class="personInputContainer">
           <input
             ngModel
             #personNameInput
             placeholder="Skriv ett namn"
-            class="w-available mr-1"
+            class="w-available mr-1 personNameInput"
             type="text"
           />
-          <button class="" (click)="createPerson()">Skapa Person</button>
+          <button class="person-section-button" (click)="createPerson()">Skapa</button>
         </div>
 
         <span>Välj en existerande deltagare</span>
-        <div class="d-flex gap-1 w-full">
-          <select class="w-available mr-1" [(ngModel)]="selectedPersonId">
+        <div class="personInputContainer">
+          <select class="w-available mr-1 person-selection" [(ngModel)]="selectedPersonId">
             <option [ngValue]="null">Välj...</option>
             <option *ngFor="let p of allPeople" [ngValue]="p.id">
               {{ p.name }}
             </option>
           </select>
-          <button (click)="addExistingPerson()">Lägg till i Grupp</button>
+          <button class="person-section-button" (click)="addExistingPerson()">
+            Lägg till i Grupp
+          </button>
         </div>
       </label>
     </section>
 
     @if (groupPeople().length > 0) {
       <section class="card">
-        <h3>Personer i denna Grupp</h3>
+        <h3>Deltagare i denna Grupp</h3>
 
         <ul>
           <li class="person-in-group-list-item" *ngFor="let p of groupPeople()">
