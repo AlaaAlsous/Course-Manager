@@ -29,169 +29,153 @@ public static class FileEndpoints
         });
 
         group.MapPost("/upload/{entityType}/{entityId:int}", async (
-            string entityType,
-            int entityId,
-            HttpRequest request,
-            IFileRepository repo,
-            BlobService blobService,
-            IConfiguration config) =>
-        {
-            var form = await request.ReadFormAsync();
-            var uploadedFile = form.Files.FirstOrDefault();
+          string entityType,
+          int entityId,
+          HttpRequest request,
+          AppDbContext db,
+          IFileRepository repo,
+          BlobService blobService,
+          IConfiguration config) =>
+      {
+          var type = entityType.ToLower();
+          if (type is not ("course" or "section" or "coursesection" or "group" or "person"))
+              return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
 
-            if (uploadedFile is null)
-                return Results.BadRequest("No file uploaded");
+          var entityExists = type switch
+          {
+              "course" => await db.Courses.AnyAsync(c => c.CourseId == entityId),
+              "section" => await db.CourseSections.AnyAsync(s => s.CourseSectionId == entityId),
+              "coursesection" => await db.CourseSections.AnyAsync(s => s.CourseSectionId == entityId),
+              "group" => await db.Groups.AnyAsync(g => g.GroupId == entityId),
+              "person" => await db.People.AnyAsync(p => p.PersonId == entityId),
+              _ => false
+          };
 
-            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
-            var originalName = Path.GetFileNameWithoutExtension(uploadedFile.FileName);
-            var extension = Path.GetExtension(uploadedFile.FileName);
-            var finalFileName = $"{originalName}_{timestamp}{extension}";
+          if (!entityExists)
+              return Results.NotFound("Entity with given ID does not exist.");
 
-            var useAzure = !string.IsNullOrWhiteSpace(config["AzureStorage:ConnectionString"]);
+          var form = await request.ReadFormAsync();
+          var uploadedFile = form.Files.FirstOrDefault();
 
-            FileAsset fileAsset;
+          if (uploadedFile is null)
+              return Results.BadRequest("No file uploaded");
 
-            if (useAzure)
-            {
-                var blobUrl = await blobService.UploadAsync(finalFileName, uploadedFile.OpenReadStream());
+          var safeName = Path.GetFileName(uploadedFile.FileName);
 
-                fileAsset = new FileAsset
-                {
-                    FileName = finalFileName,
-                    LocalPath = null,
-                    CloudPath = blobUrl,
-                    StorageProvider = "azure",
-                    FileType = uploadedFile.ContentType,
-                    FileSize = uploadedFile.Length
-                };
-            }
-            else
-            {
-                var uploadsPath = Path.Combine("uploads");
-                Directory.CreateDirectory(uploadsPath);
-                var filePath = Path.Combine(uploadsPath, finalFileName);
+          if (string.IsNullOrWhiteSpace(safeName))
+              return Results.BadRequest("Invalid file name.");
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await uploadedFile.CopyToAsync(stream);
+          if (safeName.Length > 200)
+              return Results.BadRequest("File name too long.");
 
-                fileAsset = new FileAsset
-                {
-                    FileName = finalFileName,
-                    LocalPath = filePath,
-                    CloudPath = null,
-                    StorageProvider = "local",
-                    FileType = uploadedFile.ContentType,
-                    FileSize = uploadedFile.Length
-                };
-            }
+          if (safeName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+              return Results.BadRequest("File name contains invalid characters.");
 
-            var created = await repo.CreateAsync(fileAsset);
+          var allowedMimeTypes = new[]
+          {
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "application/pdf",
+        "text/plain"
+          };
 
-            switch (entityType.ToLower())
-            {
-                case "course":
-                    await repo.AddToCourseAsync(entityId, created.FileAssetId);
-                    break;
-                case "section":
-                case "coursesection":
-                    await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
-                    break;
-                case "group":
-                    await repo.AddToGroupAsync(entityId, created.FileAssetId);
-                    break;
-                case "person":
-                    await repo.AddToPersonAsync(entityId, created.FileAssetId);
-                    break;
-                default:
-                    return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
-            }
+          if (!allowedMimeTypes.Contains(uploadedFile.ContentType))
+              return Results.BadRequest("Invalid file type.");
 
-            return Results.Ok(new FileAssetDto(
-                created.FileAssetId,
-                created.FileName,
-                created.LocalPath,
-                created.CloudPath,
-                created.StorageProvider,
-                created.FileType,
-                created.FileSize,
-                created.UploadedAt
-            ));
-        });
-        group.MapPost("/create-empty/{entityType}/{entityId:int}", async (
-            string entityType,
-            int entityId,
-            IFileRepository repo,
-            BlobService blobService,
-            IConfiguration config) =>
-        {
-            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
-            var fileName = $"note_{timestamp}.txt";
+          var allowedExtensions = new[] { ".png", ".jpg", ".jpeg", ".pdf", ".txt" };
+          var extension = Path.GetExtension(safeName).ToLower();
 
-            var useAzure = !string.IsNullOrWhiteSpace(config["AzureStorage:ConnectionString"]);
+          if (!allowedExtensions.Contains(extension))
+              return Results.BadRequest("Invalid file extension.");
 
-            FileAsset fileAsset;
+          const long maxSize = 50 * 1024 * 1024;
 
-            if (useAzure)
-            {
-                using var mem = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(""));
-                var blobUrl = await blobService.UploadAsync(fileName, mem);
+          if (uploadedFile.Length > maxSize)
+              return Results.BadRequest("File too large. Max 50 MB.");
 
-                fileAsset = new FileAsset
-                {
-                    FileName = fileName,
-                    LocalPath = null,
-                    CloudPath = blobUrl,
-                    StorageProvider = "azure",
-                    FileType = "text/plain",
-                    FileSize = 0
-                };
-            }
-            else
-            {
-                var uploadsPath = Path.Combine("uploads");
-                Directory.CreateDirectory(uploadsPath);
+          var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss_fff");
+          var originalName = Path.GetFileNameWithoutExtension(safeName);
+          var finalFileName = $"{originalName}_{timestamp}{extension}";
 
-                var filePath = Path.Combine(uploadsPath, fileName);
-                await File.WriteAllTextAsync(filePath, "");
+          var useAzure = !string.IsNullOrWhiteSpace(config["AzureStorage:ConnectionString"]);
 
-                fileAsset = new FileAsset
-                {
-                    FileName = fileName,
-                    LocalPath = filePath,
-                    CloudPath = null,
-                    StorageProvider = "local",
-                    FileType = "text/plain",
-                    FileSize = 0
-                };
-            }
+          FileAsset? fileAsset = null;
 
-            var created = await repo.CreateAsync(fileAsset);
+          try
+          {
+              if (useAzure)
+              {
+                  var blobUrl = await blobService.UploadAsync(finalFileName, uploadedFile.OpenReadStream());
 
-            switch (entityType.ToLower())
-            {
-                case "course":
-                    await repo.AddToCourseAsync(entityId, created.FileAssetId);
-                    break;
-                case "section":
-                case "coursesection":
-                    await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
-                    break;
-                case "group":
-                    await repo.AddToGroupAsync(entityId, created.FileAssetId);
-                    break;
-                case "person":
-                    await repo.AddToPersonAsync(entityId, created.FileAssetId);
-                    break;
-                default:
-                    return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
-            }
+                  fileAsset = new FileAsset
+                  {
+                      FileName = finalFileName,
+                      LocalPath = null,
+                      CloudPath = blobUrl,
+                      StorageProvider = "azure",
+                      FileType = uploadedFile.ContentType,
+                      FileSize = uploadedFile.Length
+                  };
+              }
+              else
+              {
+                  var uploadsPath = Path.Combine("uploads");
+                  Directory.CreateDirectory(uploadsPath);
+                  var filePath = Path.Combine(uploadsPath, finalFileName);
 
-            return Results.Ok(new
-            {
-                fileAssetId = created.FileAssetId,
-                fileName = created.FileName
-            });
-        });
+                  using var stream = new FileStream(filePath, FileMode.Create);
+                  await uploadedFile.CopyToAsync(stream);
+
+                  fileAsset = new FileAsset
+                  {
+                      FileName = finalFileName,
+                      LocalPath = filePath,
+                      CloudPath = null,
+                      StorageProvider = "local",
+                      FileType = uploadedFile.ContentType,
+                      FileSize = uploadedFile.Length
+                  };
+              }
+
+              var created = await repo.CreateAsync(fileAsset);
+
+              switch (type)
+              {
+                  case "course":
+                      await repo.AddToCourseAsync(entityId, created.FileAssetId);
+                      break;
+                  case "section":
+                  case "coursesection":
+                      await repo.AddToCourseSectionAsync(entityId, created.FileAssetId);
+                      break;
+                  case "group":
+                      await repo.AddToGroupAsync(entityId, created.FileAssetId);
+                      break;
+                  case "person":
+                      await repo.AddToPersonAsync(entityId, created.FileAssetId);
+                      break;
+              }
+
+              return Results.Ok(new FileAssetDto(
+                  created.FileAssetId,
+                  created.FileName,
+                  created.LocalPath,
+                  created.CloudPath,
+                  created.StorageProvider,
+                  created.FileType,
+                  created.FileSize,
+                  created.UploadedAt
+              ));
+          }
+          catch (Exception ex)
+          {
+              if (!useAzure && fileAsset?.LocalPath is not null && File.Exists(fileAsset.LocalPath))
+                  File.Delete(fileAsset.LocalPath);
+
+              return Results.Problem($"Upload failed: {ex.Message}");
+          }
+      });
 
         group.MapDelete("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo) =>
         {
