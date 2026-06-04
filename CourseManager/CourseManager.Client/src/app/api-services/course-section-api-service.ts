@@ -5,40 +5,49 @@ import { CourseSection } from './dtos';
   providedIn: 'root',
 })
 export class CourseSectionApiService {
-
   baseUrl = 'http://localhost:5053/api/course-section';
 
-  constructor() { }
+  constructor() {}
 
-  async getAllCourseSections(): Promise<CourseSection[] | null> {
+  private mapCourseSection(data: any): CourseSection {
+    return {
+      id: data.id ?? data.courseSectionId,
+      courseId: data.courseId,
+      name: data.name,
+      description: data.description ?? null,
+      createdAt: data.createdAt,
+      startDate: data.startDate ?? null,
+      endDate: data.endDate ?? null,
+    };
+  }
+
+  async getAllCourseSections(): Promise<CourseSection[]> {
     try {
       const response = await fetch(`${this.baseUrl}`);
       if (!response.ok) {
-          console.error('Error fetching course sections:', response.statusText);
-          return null;
-        }
-        const data = await response.json();
-        console.log('Course sections data:', data);
-        return data as CourseSection[];    
+        console.error('Error fetching course sections:', response.statusText);
+        return [];
+      }
+      const data = await response.json();
+      return (data as any[]).map((section) => this.mapCourseSection(section));
     } catch (error) {
       console.error('Error fetching course sections:', error);
-      return null;
+      return [];
     }
   }
 
-  async getCourseSectionsByCourseId(courseId: number): Promise<CourseSection[] | null> {
+  async getCourseSectionsByCourseId(courseId: number): Promise<CourseSection[]> {
     try {
       const response = await fetch(`${this.baseUrl}/course/${courseId}`);
       if (!response.ok) {
         console.error('Error fetching course sections:', response.statusText);
-        return null;
+        return [];
       }
       const data = await response.json();
-      console.log('Course sections data:', data);
-      return data as CourseSection[];
+      return (data as any[]).map((section) => this.mapCourseSection(section));
     } catch (error) {
       console.error('Error fetching course sections:', error);
-      return null;
+      return [];
     }
   }
 
@@ -50,44 +59,56 @@ export class CourseSectionApiService {
         return null;
       }
       const data = await response.json();
-      console.log('Course section data:', data);
-      return data as CourseSection;
+      return this.mapCourseSection(data);
     } catch (error) {
       console.error('Error fetching course section:', error);
       return null;
     }
   }
 
-  async createCourseSection(courseId: number, name: string, description: string | null, startDate: string | null, endDate: string | null): Promise<number | null> {
+  async createCourseSection(
+    courseId: number,
+    name: string,
+    description: string | null,
+    startDate: string | null,
+    endDate: string | null,
+  ): Promise<number | null> {
     try {
       const response = await fetch(`${this.baseUrl}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseId, name, description, startDate, endDate })
+        body: JSON.stringify({ courseId, name, description, startDate, endDate }),
       });
-     if(!response.ok) {
+      if (!response.ok) {
         console.error('Error creating course section:', response.statusText);
         return null;
       }
-        const data = await response.json();
-        console.log('Course section created with ID:', data.courseSectionId);
-        return data.courseSectionId;
+      const data = await response.json();
+      console.log('Course section created with ID:', data.courseSectionId);
+      return data.courseSectionId;
     } catch (error) {
       console.error('Error creating course section:', error);
       return null;
     }
   }
 
-  async updateCourseSection(id: number, courseId: number, name: string, description: string | null, startDate: string | null, endDate: string | null): Promise<boolean> {
+  async updateCourseSection(
+    id: number,
+    courseId: number,
+    name: string,
+    description: string | null,
+    startDate: string | null,
+    endDate: string | null,
+  ): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseId, name, description, startDate, endDate })
+        body: JSON.stringify({ courseId, name, description, startDate, endDate }),
       });
       if (!response.ok) {
         console.error('Error updating course section:', response.statusText);
@@ -104,7 +125,7 @@ export class CourseSectionApiService {
   async deleteCourseSection(id: number): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       if (!response.ok) {
         console.error('Error deleting course section:', response.statusText);
@@ -117,5 +138,4 @@ export class CourseSectionApiService {
       return false;
     }
   }
-
 }

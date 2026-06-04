@@ -5,6 +5,20 @@
   margin-bottom: var(--space-md);
 }
 
+.course-section-view__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.course-section-view__title-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .course-section-view__actions {
   display: flex;
   align-items: center;

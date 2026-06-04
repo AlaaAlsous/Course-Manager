@@ -1,6 +1,6 @@
 <app-layout [title]="title()">
   <section class="edit-group">
-    @if (group) {
+    @if (group()) {
       <header class="edit-group__header">
         <div class="app-page-header__content">
           <h2>Edit Group</h2>
@@ -23,6 +23,7 @@
 
       <div class="edit-group__actions">
         <button type="button" (click)="saveGroup()">Save</button>
+        <button type="button" (click)="deleteGroup()">Ta bort</button>
         <button type="button" (click)="cancel()">Cancel</button>
       </div>
     } @else {

@@ -12,8 +12,16 @@
       <article *ngFor="let c of courses()" class="course-card clickable" (click)="goToCourse(c.id)">
         <div class="item-row">
           <span>{{ c.name }}</span>
-          <small>Skapad {{ getRelativeDate(c.created) }}</small>
+          <small>Skapad {{ getRelativeDate(c.createdAt) }}</small>
         </div>
+
+        <button
+          type="button"
+          class="app-back-button home-delete-button"
+          (click)="$event.stopPropagation(); deleteCourse(c.id, c.name)"
+        >
+          Ta bort
+        </button>
 
         <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path

@@ -5,37 +5,42 @@ import { Person } from './dtos';
   providedIn: 'root',
 })
 export class PersonApiService {
-
   baseUrl = 'http://localhost:5053/api/person';
-  constructor() { }
+  constructor() {}
 
-async getAllPersons(): Promise<Person[] | null> {
-  try {
-    const response = await fetch(`${this.baseUrl}`);
-    if  (!response.ok) {
-      console.error('Error fetching persons:', response.statusText);
-      return null;
-    }
-    const data = await response.json();
-    console.log('Persons data:', data);
-    return data as Person[];
-  } catch (error) {
-    console.error('Error fetching persons:', error);
-    return null;
+  private mapPerson(data: any): Person {
+    return {
+      id: data.id ?? data.personId,
+      fullName: data.fullName,
+    };
   }
-}
 
+  async getAllPersons(): Promise<Person[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}`);
+      if (!response.ok) {
+        console.error('Error fetching persons:', response.statusText);
+        return [];
+      }
+      const data = await response.json();
+      console.log('Persons data:', data);
+      return (data as any[]).map((person) => this.mapPerson(person));
+    } catch (error) {
+      console.error('Error fetching persons:', error);
+      return [];
+    }
+  }
 
   async getPersonById(id: number): Promise<Person | null> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`);
-      if  (!response.ok) {
+      if (!response.ok) {
         console.error('Error fetching person:', response.statusText);
         return null;
       }
       const data = await response.json();
       console.log('Person data:', data);
-      return data as Person;
+      return this.mapPerson(data);
     } catch (error) {
       console.error('Error fetching person:', error);
       return null;
@@ -47,17 +52,18 @@ async getAllPersons(): Promise<Person[] | null> {
       const response = await fetch(`${this.baseUrl}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fullName })
+        body: JSON.stringify({ fullName }),
       });
       if (!response.ok) {
         console.error('Error creating person:', response.statusText);
         return null;
       }
       const data = await response.json();
-      console.log('Person created with ID:', data.personId);
-      return data.personId;
+      const personId = data.id ?? data.personId;
+      console.log('Person created with ID:', personId);
+      return personId;
     } catch (error) {
       console.error('Error creating person:', error);
       return null;
@@ -69,9 +75,9 @@ async getAllPersons(): Promise<Person[] | null> {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fullName })
+        body: JSON.stringify({ fullName }),
       });
       if (!response.ok) {
         console.error('Error updating person:', response.statusText);
@@ -88,7 +94,7 @@ async getAllPersons(): Promise<Person[] | null> {
   async deletePerson(id: number): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       if (!response.ok) {
         console.error('Error deleting person:', response.statusText);

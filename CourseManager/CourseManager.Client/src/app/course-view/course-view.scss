@@ -5,6 +5,20 @@
   margin-bottom: var(--space-md);
 }
 
+.kurstillfalle-overview__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kurstillfalle-overview__title-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .kurstillfalle-overview__actions {
   display: flex;
   align-items: center;

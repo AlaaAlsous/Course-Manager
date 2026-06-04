@@ -2,10 +2,10 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { CourseService } from '../all-courses/course.service';
 import { Snackbar } from '../shared/snackbar/snackbar';
-import { SnackbarService } from '../shared/snackbar/snackbar.service';
-import { SnackbarType } from '../shared/snackbar/snackbar.service';
+import { CourseApiService } from '../api-services/course-api-service';
+import { Course } from '../api-services/dtos';
+import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -15,16 +15,25 @@ import { SnackbarType } from '../shared/snackbar/snackbar.service';
 })
 export class Home {
   title = signal('');
+  private readonly courseList = signal<Course[]>([]);
 
   private readonly router = inject(Router);
-  private readonly courseService = inject(CourseService);
-  private readonly snackbarService = inject(SnackbarService);
+  private readonly courseApiService = inject(CourseApiService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
+
+  constructor() {
+    void this.loadCourses();
+  }
+
+  private async loadCourses(): Promise<void> {
+    const courses = await this.courseApiService.getAllCourses();
+    this.courseList.set(courses);
+  }
 
   courses = computed(() =>
-    this.courseService
-      .courses()
+    this.courseList()
       .slice()
-      .sort((a, b) => b.created.localeCompare(a.created)),
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
   );
 
   getRelativeDate(dateString: string): string {
@@ -48,5 +57,26 @@ export class Home {
 
   createPerson() {
     this.router.navigate(['/participants/create']);
+  }
+
+  async deleteCourse(courseId: number, courseName: string): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Ta bort program',
+      message: `Vill du verkligen ta bort "${courseName}"?`,
+      confirmText: 'Ta bort',
+      cancelText: 'Avbryt',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    const deleted = await this.courseApiService.deleteCourse(courseId);
+
+    if (!deleted) {
+      return;
+    }
+
+    await this.loadCourses();
   }
 }

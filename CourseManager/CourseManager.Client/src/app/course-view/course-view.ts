@@ -1,14 +1,19 @@
 import { Location } from '@angular/common';
-import { Component, signal, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CourseService } from '../all-courses/course.service';
-import { CourseSection } from '../all-courses/course.model';
 import { RouterModule } from '@angular/router';
 import { ContentModule } from '../content-module/content-module';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CourseApiService } from '../api-services/course-api-service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
+import { CourseSection } from '../api-services/dtos';
+import { GroupApiService } from '../api-services/group-api-service';
+
+interface CourseSectionViewModel extends CourseSection {
+  groupCount: number;
+}
 
 @Component({
   selector: 'app-course-view',
@@ -22,12 +27,13 @@ export class CourseView {
   title = signal('Program');
   courseId = signal<number | null>(null);
 
-  sections = signal<CourseSection[]>([]);
+  sections = signal<CourseSectionViewModel[]>([]);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly courseService = inject(CourseService);
   private readonly courseApiService = inject(CourseApiService);
+  private readonly courseSectionApiService = inject(CourseSectionApiService);
+  private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
 
   isEditing = signal(false);
@@ -36,13 +42,40 @@ export class CourseView {
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.courseId.set(id);
+    void this.loadCourseData();
+  }
 
-    const course = this.courseService.getById(id);
+  private async loadCourseData(): Promise<void> {
+    const courseId = this.courseId();
+
+    if (!courseId) {
+      return;
+    }
+
+    const [course, sections, allGroups] = await Promise.all([
+      this.courseApiService.getCourseById(courseId),
+      this.courseSectionApiService.getCourseSectionsByCourseId(courseId),
+      this.groupApiService.getAllGroups(),
+    ]);
 
     if (course) {
       this.title.set(course.name);
-      this.sections.set(this.courseService.getSectionsByCourseId(id));
     }
+
+    const groupCountBySectionId = new Map<number, number>();
+    for (const group of allGroups) {
+      groupCountBySectionId.set(
+        group.courseSectionId,
+        (groupCountBySectionId.get(group.courseSectionId) ?? 0) + 1,
+      );
+    }
+
+    this.sections.set(
+      sections.map((section) => ({
+        ...section,
+        groupCount: groupCountBySectionId.get(section.id) ?? 0,
+      })),
+    );
   }
 
   sectionRoute(sectionId: number): (string | number)[] {
@@ -54,12 +87,6 @@ export class CourseView {
   }
 
   async deleteSection(sectionId: number): Promise<void> {
-    const courseId = this.courseId();
-
-    if (!courseId) {
-      return;
-    }
-
     const confirmed = await this.confirmDialog.confirm({
       title: 'Ta bort kurstillfälle',
       message: 'Vill du verkligen ta bort detta kurstillfälle?',
@@ -71,8 +98,33 @@ export class CourseView {
       return;
     }
 
-    this.courseService.deleteSection(courseId, sectionId);
-    this.sections.set(this.courseService.getSectionsByCourseId(courseId));
+    await this.courseSectionApiService.deleteCourseSection(sectionId);
+    await this.loadCourseData();
+  }
+
+  async deleteCourse(): Promise<void> {
+    const courseId = this.courseId();
+    if (!courseId) {
+      return;
+    }
+
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Ta bort program',
+      message: 'Vill du verkligen ta bort detta program?',
+      confirmText: 'Ta bort',
+      cancelText: 'Avbryt',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    const deleted = await this.courseApiService.deleteCourse(courseId);
+    if (!deleted) {
+      return;
+    }
+
+    this.router.navigate(['/all-courses']);
   }
 
   startEdit(): void {

@@ -22,7 +22,7 @@ export const routes: Routes = [
   { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
   { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
   { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
-  { path: 'group', pathMatch: 'full', redirectTo: 'groups' },
+  { path: 'group', pathMatch: 'full', redirectTo: 'home' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'create-course', component: CreateCourse, data: { title: 'Create Course' } },
   {

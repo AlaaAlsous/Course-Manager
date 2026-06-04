@@ -4,12 +4,25 @@
       <header class="group-view__header">
         <div>
           @if (isEditing()) {
-            <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
-            <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
-            <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+            <div class="group-view__title-row">
+              <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+              <div class="group-view__header-actions">
+                <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+                <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+              </div>
+            </div>
           } @else {
-            <h2>{{ nameOverride() ?? selectedGroup.name }}</h2>
-            <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+            <div class="group-view__title-row">
+              <h2>{{ selectedGroup.name }}</h2>
+              <div class="group-view__header-actions">
+                <button type="button" class="app-back-button" (click)="startEdit()">
+                  Redigera
+                </button>
+                <button type="button" class="app-back-button" (click)="deleteGroup()">
+                  Ta bort grupp
+                </button>
+              </div>
+            </div>
           }
           <p>
             {{ selectedGroup.members.length }}
@@ -17,9 +30,13 @@
           </p>
         </div>
 
-        <button type="button" class="app-back-button" (click)="goBack()">
-          Tillbaka till grupper
-        </button>
+        @if (!isEditing()) {
+          <div class="group-view__header-actions">
+            <button type="button" class="app-back-button" (click)="goBack()">
+              Tillbaka till grupper
+            </button>
+          </div>
+        }
       </header>
 
       <section class="group-view__members">
@@ -45,14 +62,16 @@
               [queryParams]="{ id: member.id }"
               class="group-view__member-link"
             >
-              <span>{{ member.name }}</span>
-              <button
-                type="button"
-                class="group-view__remove-member"
-                (click)="removeMember(member.id); $event.stopPropagation()"
-              >
-                Ta bort
-              </button>
+              <div class="group-view__member-content">
+                <span>{{ member.name }}</span>
+                <button
+                  type="button"
+                  class="group-view__remove-member"
+                  (click)="removeMember(member.id); $event.stopPropagation()"
+                >
+                  Ta bort
+                </button>
+              </div>
             </li>
           }
         </ul>
@@ -70,4 +89,6 @@
       </button>
     </section>
   }
+
+  <app-snackbar></app-snackbar>
 </app-layout>

@@ -1,13 +1,19 @@
 import { Location } from '@angular/common';
-import { Component, signal, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CourseService } from '../all-courses/course.service';
-import { CourseSectionGroup } from '../all-courses/course.model';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
+import { CourseApiService } from '../api-services/course-api-service';
+import { GroupApiService } from '../api-services/group-api-service';
+
+interface CourseSectionGroup {
+  id: number;
+  name: string;
+  memberCount: number;
+}
 
 @Component({
   selector: 'app-course-section-view',
@@ -23,12 +29,13 @@ export class CourseSectionView {
   courseId = signal<number | null>(null);
   sectionId = signal<number | null>(null);
 
-  groups: CourseSectionGroup[] = [];
+  groups = signal<CourseSectionGroup[]>([]);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly courseService = inject(CourseService);
+  private readonly courseApiService = inject(CourseApiService);
   private readonly courseSectionApiService = inject(CourseSectionApiService);
+  private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
 
   sectionName = signal('');
@@ -41,15 +48,42 @@ export class CourseSectionView {
 
     this.courseId.set(courseId);
     this.sectionId.set(sectionId);
+    void this.loadSectionData();
+  }
 
-    const course = this.courseService.getById(courseId);
-    const section = this.courseService.getSectionById(courseId, sectionId);
+  private async loadSectionData(): Promise<void> {
+    const courseId = this.courseId();
+    const sectionId = this.sectionId();
 
-    if (section) {
-      this.sectionName.set(section.name);
-      this.title.set(`${course?.name ?? 'Program'} - ${section.name}`);
-      this.groups = section.groups;
+    if (!courseId || !sectionId) {
+      return;
     }
+
+    const [course, section, groups] = await Promise.all([
+      this.courseApiService.getCourseById(courseId),
+      this.courseSectionApiService.getCourseSectionById(sectionId),
+      this.groupApiService.getGroupByCourseSectionId(sectionId),
+    ]);
+
+    if (!section) {
+      return;
+    }
+
+    this.sectionName.set(section.name);
+    this.title.set(`${course?.name ?? 'Program'} - ${section.name}`);
+
+    const groupsWithCounts = await Promise.all(
+      groups.map(async (group) => {
+        const members = await this.groupApiService.getAllPeople(group.id);
+        return {
+          id: group.id,
+          name: group.name,
+          memberCount: members.length,
+        };
+      }),
+    );
+
+    this.groups.set(groupsWithCounts);
   }
 
   groupRoute(groupId: number): (string | number)[] {
@@ -83,10 +117,7 @@ export class CourseSectionView {
   }
 
   async deleteGroup(groupId: number): Promise<void> {
-    const courseId = this.courseId();
-    const sectionId = this.sectionId();
-
-    if (!courseId || !sectionId) {
+    if (!this.sectionId()) {
       return;
     }
 
@@ -101,8 +132,8 @@ export class CourseSectionView {
       return;
     }
 
-    this.courseService.removeGroupFromSection(courseId, sectionId, groupId);
-    this.groups = this.groups.filter((group) => group.id !== groupId);
+    await this.groupApiService.deleteGroup(groupId);
+    await this.loadSectionData();
   }
 
   startEdit(): void {
@@ -126,7 +157,7 @@ export class CourseSectionView {
     const updated = await this.courseSectionApiService.getCourseSectionById(sectionId);
     if (updated) {
       this.sectionName.set(updated.name);
-      const course = this.courseService.getById(courseId);
+      const course = await this.courseApiService.getCourseById(courseId);
       this.title.set(`${course?.name ?? 'Program'} - ${updated.name}`);
     }
     this.isEditing.set(false);

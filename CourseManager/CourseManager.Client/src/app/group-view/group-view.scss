@@ -10,6 +10,21 @@
   gap: 1rem;
 }
 
+.group-view__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.group-view__header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .group-view__header h2,
 .group-view__header p {
   margin: 0;
@@ -73,8 +88,14 @@
 .group-view__members li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 1rem;
+}
+
+.group-view__member-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .group-view__member-link {

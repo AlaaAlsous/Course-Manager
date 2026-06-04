@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { CourseService } from '../all-courses/course.service';
+import { CourseApiService } from '../api-services/course-api-service';
 import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 @Component({
@@ -24,7 +24,7 @@ export class CreateCourse {
 
   constructor(
     private router: Router,
-    private courseService: CourseService,
+    private courseApiService: CourseApiService,
     private snackbarService: SnackbarService,
   ) {}
 
@@ -41,14 +41,24 @@ export class CreateCourse {
     this.router.navigate(['/home']);
   }
 
-  onSubmit() {
+  async onSubmit(): Promise<void> {
     this.submitted = true;
 
     if (!this.isFormValid) {
       return;
     }
 
-    this.courseService.addCourse(this.name.trim());
+    const createdCourseId = await this.courseApiService.createCourse(
+      this.name.trim(),
+      this.description.trim() || null,
+    );
+
+    if (!createdCourseId) {
+      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa program.');
+      return;
+    }
+
+    await this.courseApiService.getCourseById(createdCourseId);
     this.snackbarService.show(SnackbarType.Success, 'Program skapat!');
     this.router.navigate(['/home']);
   }

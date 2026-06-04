@@ -78,6 +78,7 @@ app.MapCourseEndpoints();
 app.MapCourseSectionEndpoints();
 app.MapPersonEndpoints();
 app.MapGroupEndpoints();
+app.MapRelationsEndpoints();
 app.MapFileEndpoints();
 app.MapFallbackToFile("index.html");
 

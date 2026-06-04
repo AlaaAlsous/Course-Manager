@@ -6,20 +6,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { SnackbarType } from '../shared/snackbar/snackbar.service';
 import { SnackbarService } from '../shared/snackbar/snackbar.service';
+import { Snackbar } from '../shared/snackbar/snackbar';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { PersonApiService } from '../api-services/person-api-service';
+import { GroupApiService } from '../api-services/group-api-service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
 interface Person {
-  id: number;
-  name: string;
-}
-
-interface Course {
   id: number;
   name: string;
 }
 
 @Component({
   selector: 'app-create-group',
-  imports: [FormsModule, Layout, NgFor],
+  imports: [FormsModule, Layout, NgFor, Snackbar],
   templateUrl: './create-group.html',
   styleUrl: './create-group.scss',
 })
@@ -27,6 +26,9 @@ export class CreateGroup {
   private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly personApiService = inject(PersonApiService);
+  private readonly groupApiService = inject(GroupApiService);
+  private readonly courseSectionApiService = inject(CourseSectionApiService);
 
   title = signal('Create Group');
 
@@ -34,22 +36,9 @@ export class CreateGroup {
 
   groupPeople: Person[] = [];
 
-  allPeople: Person[] = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' },
-  ];
-
-  groupCourses: Course[] = [];
-
-  allCourses: Course[] = [
-    { id: 1, name: 'Course A' },
-    { id: 2, name: 'Course B' },
-    { id: 3, name: 'Course C' },
-  ];
+  allPeople: Person[] = [];
 
   selectedPersonId: number | null = null;
-  selectedCourseId: number | null = null;
 
   private readonly returnCourseId = Number(this.route.snapshot.queryParamMap.get('courseId'));
   private readonly returnSectionId = Number(this.route.snapshot.queryParamMap.get('sectionId'));
@@ -57,7 +46,18 @@ export class CreateGroup {
   constructor(
     private router: Router,
     private snackbarService: SnackbarService,
-  ) {}
+  ) {
+    void this.loadInitialData();
+  }
+
+  private async loadInitialData(): Promise<void> {
+    const people = await this.personApiService.getAllPersons();
+
+    this.allPeople = people.map((person) => ({
+      id: person.id,
+      name: person.fullName,
+    }));
+  }
 
   goBack() {
     if (this.hasValidReturnSection()) {
@@ -111,55 +111,38 @@ export class CreateGroup {
     }
   }
 
-  addExistingCourse() {
-    if (!this.selectedCourseId) return;
-
-    const course = this.allCourses.find((c) => c.id === this.selectedCourseId);
-    if (!course) return;
-
-    this.groupCourses.push(course);
-
-    this.allCourses = this.allCourses.filter((c) => c.id !== this.selectedCourseId);
-
-    this.selectedCourseId = null;
-  }
-
-  async removeCourseFromGroup(courseId: number): Promise<void> {
-    const course = this.groupCourses.find((c) => c.id === courseId);
-
-    if (!course) {
-      return;
-    }
-
-    const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort program',
-      message: `Vill du verkligen ta bort ${course.name} från gruppen?`,
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
-    });
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.groupCourses = this.groupCourses.filter((c) => c.id !== courseId);
-
-    if (!this.allCourses.some((c) => c.id === course.id)) {
-      this.allCourses = [...this.allCourses, course].sort((a, b) => a.id - b.id);
-    }
-  }
-
   goToCreatePerson() {
     this.router.navigate(['/participants/create']);
   }
 
-  createGroup() {
-    if (!this.name.trim()) return;
+  async createGroup(): Promise<void> {
+    const groupName = this.name.trim();
 
-    console.log('Group created:', {
-      name: this.name,
-      people: this.groupPeople,
-    });
+    if (!groupName) {
+      return;
+    }
+
+    if (!this.hasValidReturnSection()) {
+      this.snackbarService.show(
+        SnackbarType.Failure,
+        'Kan inte skapa grupp utan valt kurstillfälle.',
+      );
+      return;
+    }
+
+    const createdGroupId = await this.groupApiService.createGroup(groupName, this.returnSectionId);
+
+    if (!createdGroupId) {
+      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa grupp.');
+      return;
+    }
+
+    for (const person of this.groupPeople) {
+      await this.groupApiService.addPerson(createdGroupId, person.id);
+    }
+
+    await this.groupApiService.getGroupById(createdGroupId);
+    await this.courseSectionApiService.getCourseSectionById(this.returnSectionId);
     this.snackbarService.show(SnackbarType.Success, 'Group created successfully!');
 
     if (this.hasValidReturnSection()) {

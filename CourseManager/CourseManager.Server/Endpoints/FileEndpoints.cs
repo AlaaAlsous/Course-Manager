@@ -211,6 +211,54 @@ public static class FileEndpoints
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
+        group.MapGet("/{fileAssetId:int}/download", async (
+            int fileAssetId,
+            IFileRepository repo,
+            BlobService blobService) =>
+        {
+            var file = await repo.GetByIdAsync(fileAssetId);
+            if (file is null)
+                return Results.NotFound("File not found");
+
+            if (file.StorageProvider == "azure")
+            {
+                var stream = await blobService.DownloadAsync(file.FileName);
+                return Results.File(stream, file.FileType ?? "application/octet-stream", file.FileName);
+            }
+
+            if (file.StorageProvider == "local" && file.LocalPath is not null && System.IO.File.Exists(file.LocalPath))
+            {
+                var stream = System.IO.File.OpenRead(file.LocalPath);
+                return Results.File(stream, file.FileType ?? "application/octet-stream", file.FileName);
+            }
+
+            return Results.NotFound("File content not found on disk or blob storage");
+        });
+
+        group.MapGet("/{fileAssetId:int}/inline", async (
+            int fileAssetId,
+            IFileRepository repo,
+            BlobService blobService) =>
+        {
+            var file = await repo.GetByIdAsync(fileAssetId);
+            if (file is null)
+                return Results.NotFound("File not found");
+
+            if (file.StorageProvider == "azure")
+            {
+                var stream = await blobService.DownloadAsync(file.FileName);
+                return Results.File(stream, file.FileType ?? "application/octet-stream");
+            }
+
+            if (file.StorageProvider == "local" && file.LocalPath is not null && System.IO.File.Exists(file.LocalPath))
+            {
+                var stream = System.IO.File.OpenRead(file.LocalPath);
+                return Results.File(stream, file.FileType ?? "application/octet-stream");
+            }
+
+            return Results.NotFound("File content not found on disk or blob storage");
+        });
+
         group.MapGet("/course/{courseId:int}", async (int courseId, IFileRepository repo) =>
         {
             var files = await repo.GetFilesForCourseAsync(courseId);

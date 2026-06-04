@@ -9,6 +9,7 @@ export enum PreviewType {
 }
 
 export type File = {
+  fileAssetId?: number;
   name: string;
   extension: string;
   date: Date;
@@ -60,6 +61,10 @@ export class FilePreview {
     return previewTypeFromExtension(this.file().extension);
   }
 
+  get hasSourceUrl(): boolean {
+    return this.file().sourceUrl.trim().length > 0;
+  }
+
   /** Expose enum so the template can use it in @switch. */
   protected readonly PreviewType = PreviewType;
 
@@ -67,11 +72,11 @@ export class FilePreview {
     if (this.previewType !== PreviewType.Text) return;
 
     try {
-      if (this.file().sourceUrl.length === 0 || this.file().sourceUrl === '')
-        throw new Error('Invalid file URL');
+      if (!this.hasSourceUrl) throw new Error('Invalid file URL');
       const response = await fetch(this.file().sourceUrl);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       this.textContent = await response.text();
+      this.cdr.detectChanges();
     } catch {
       this.textLoadFailed = true;
       this.cdr.markForCheck();

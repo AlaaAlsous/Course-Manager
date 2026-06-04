@@ -17,7 +17,9 @@
   <section class="courses-overview" aria-label="All courses overview">
     <h2 class="courses-overview__heading">Tillgängliga program</h2>
 
-    <div class="course-list">
+    <p *ngIf="filteredCourses().length === 0" class="empty-state">Inga program att visa.</p>
+
+    <div class="course-list" *ngIf="filteredCourses().length > 0">
       <article
         class="course-card"
         *ngFor="let c of filteredCourses()"

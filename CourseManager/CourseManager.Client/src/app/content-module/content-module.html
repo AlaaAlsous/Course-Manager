@@ -57,23 +57,34 @@
           </li>
           @for (item of group.items; track item) {
             <li class="mb-2">
-              <div class="d-flex align-items-center justify-space-between">
-                <span>{{ item.name }}.{{ item.extension }}</span>
-                <div class="d-flex gap-1">
+              <div class="content-module__file-row d-flex align-items-center justify-space-between">
+                <span class="content-module__file-name">{{ item.name }}.{{ item.extension }}</span>
+                <div class="content-module__file-actions d-flex gap-1">
                   <a
-                    class="text-primary"
-                    [href]="item.sourceUrl"
-                    [download]="item.name + '.' + item.extension"
+                    class="content-module__icon-btn content-module__icon-btn--download"
+                    [attr.href]="getDownloadUrl(item)"
+                    [attr.download]="item.name + '.' + item.extension"
+                    [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
                     title="Ladda ner"
-                    >⤓</a
                   >
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                      <path
+                        d="M10 3a1 1 0 0 1 1 1v6.59l1.8-1.8a1 1 0 1 1 1.4 1.42l-3.5 3.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.42l1.8 1.8V4a1 1 0 0 1 1-1Zm-5 11a1 1 0 0 1 1 1v1h8v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"
+                      />
+                    </svg>
+                  </a>
 
                   <button
-                    class="content-module__icon-btn text-danger"
+                    class="content-module__icon-btn content-module__icon-btn--remove"
                     (click)="onDeleteFile(item)"
+                    [attr.aria-label]="'Ta bort ' + item.name + '.' + item.extension"
                     title="Ta bort"
                   >
-                    ✕
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                      <path
+                        d="M6.4 5a1 1 0 0 1 .7.3L10 8.17l2.9-2.88a1 1 0 1 1 1.4 1.42L11.4 9.6l2.88 2.9a1 1 0 1 1-1.42 1.4L10 11.01l-2.9 2.88a1 1 0 0 1-1.4-1.42l2.88-2.9-2.88-2.88A1 1 0 0 1 6.4 5Z"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>

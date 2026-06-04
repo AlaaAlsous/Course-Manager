@@ -57,7 +57,10 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-xs);
   overflow: hidden;
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .course-card:hover {
@@ -109,6 +112,10 @@
   height: 20px;
   color: var(--color-text-light);
   margin-left: var(--space-sm);
+}
+
+.home-delete-button {
+  margin-left: auto;
 }
 
 .empty-state {

@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { CourseService } from '../all-courses/course.service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
+import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-create-course-section',
@@ -22,7 +23,8 @@ export class CreateCourseSection {
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly courseService = inject(CourseService);
+  private readonly courseSectionApiService = inject(CourseSectionApiService);
+  private readonly snackbarService = inject(SnackbarService);
 
   readonly courseId = Number(this.route.snapshot.paramMap.get('courseId'));
 
@@ -47,7 +49,7 @@ export class CreateCourseSection {
     this.router.navigate(['/home']);
   }
 
-  createKurstillfalle(): void {
+  async createKurstillfalle(): Promise<void> {
     this.submitted = true;
 
     if (!this.isFormValid) {
@@ -59,12 +61,20 @@ export class CreateCourseSection {
       return;
     }
 
-    this.courseService.addSection(this.courseId, {
-      name: this.name.trim(),
-      description: this.description.trim() || undefined,
-      startDate: this.startDate || undefined,
-      endDate: this.endDate || undefined,
-    });
+    const createdSectionId = await this.courseSectionApiService.createCourseSection(
+      this.courseId,
+      this.name.trim(),
+      this.description.trim() || null,
+      this.startDate || null,
+      this.endDate || null,
+    );
+
+    if (!createdSectionId) {
+      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa kurstillfälle.');
+      return;
+    }
+
+    await this.courseSectionApiService.getCourseSectionById(createdSectionId);
 
     this.router.navigate(['/course', this.courseId]);
   }

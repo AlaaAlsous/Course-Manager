@@ -23,6 +23,11 @@
   gap: var(--space-md);
 }
 
+.empty-state {
+  color: var(--color-text-light);
+  font-size: var(--font-size-md);
+}
+
 .course-card {
   background: var(--color-bg-primary);
   border-radius: var(--radius-md);
@@ -39,7 +44,10 @@
   color: var(--color-text);
   cursor: pointer;
 
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .course-card:hover {

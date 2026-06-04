@@ -3,21 +3,34 @@
     <header class="app-page-header kurstillfalle-overview__header">
       <div class="app-page-header__content">
         @if (isEditing()) {
-          <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
-          <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
-          <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+          <div class="kurstillfalle-overview__title-row">
+            <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+            <div class="kurstillfalle-overview__title-actions">
+              <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
+              <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+            </div>
+          </div>
         } @else {
-          <h2>{{ title() }}</h2>
-          <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+          <div class="kurstillfalle-overview__title-row">
+            <h2>{{ title() }}</h2>
+            <div class="kurstillfalle-overview__title-actions">
+              <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
+              <button type="button" class="app-back-button" (click)="deleteCourse()">
+                Ta bort program
+              </button>
+            </div>
+          </div>
         }
       </div>
 
-      <div class="kurstillfalle-overview__actions">
-        <button type="button" class="app-back-button" [routerLink]="createKurstillfalleRoute()">
-          Skapa kurstillfälle
-        </button>
-        <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
-      </div>
+      @if (!isEditing()) {
+        <div class="kurstillfalle-overview__actions">
+          <button type="button" class="app-back-button" [routerLink]="createKurstillfalleRoute()">
+            Skapa kurstillfälle
+          </button>
+          <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+        </div>
+      }
     </header>
 
     <ul class="kurstillfalle-list">
@@ -26,7 +39,7 @@
           <div class="kurstillfalle-card-row">
             <div class="kurstillfalle-card">
               <h3>{{ section.name }}</h3>
-              <p>{{ section.groups.length }} grupper</p>
+              <p>{{ section.groupCount }} grupper</p>
             </div>
             <button
               type="button"
