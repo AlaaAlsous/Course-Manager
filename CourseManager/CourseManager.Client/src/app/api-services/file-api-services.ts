@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FileAsset } from './dtos';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileApiService {
-  baseUrl = 'http://localhost:5053/api/files';
+  private baseUrl = `${environment.apiUrl}/files`;
 
   constructor() {}
 

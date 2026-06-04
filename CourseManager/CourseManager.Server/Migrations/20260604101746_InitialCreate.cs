@@ -15,11 +15,11 @@ namespace CourseManager.Server.Migrations
                 name: "Courses",
                 columns: table => new
                 {
-                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,31 +27,31 @@ namespace CourseManager.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Files",
+                name: "FileAssets",
                 columns: table => new
                 {
-                    FileAssetId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FileName = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    LocalPath = table.Column<string>(type: "TEXT", nullable: false),
-                    CloudPath = table.Column<string>(type: "TEXT", nullable: true),
-                    StorageProvider = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    FileType = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    FileSize = table.Column<long>(type: "INTEGER", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FileAssetId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    LocalPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CloudPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StorageProvider = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FileSize = table.Column<long>(type: "bigint", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Files", x => x.FileAssetId);
+                    table.PrimaryKey("PK_FileAssets", x => x.FileAssetId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "People",
                 columns: table => new
                 {
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FullName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false)
+                    PersonId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,14 +62,14 @@ namespace CourseManager.Server.Migrations
                 name: "CourseSections",
                 columns: table => new
                 {
-                    CourseSectionId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CourseSectionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,8 +86,8 @@ namespace CourseManager.Server.Migrations
                 name: "CourseFiles",
                 columns: table => new
                 {
-                    CourseId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FileAssetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    FileAssetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,9 +99,9 @@ namespace CourseManager.Server.Migrations
                         principalColumn: "CourseId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseFiles_Files_FileAssetId",
+                        name: "FK_CourseFiles_FileAssets_FileAssetId",
                         column: x => x.FileAssetId,
-                        principalTable: "Files",
+                        principalTable: "FileAssets",
                         principalColumn: "FileAssetId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -110,8 +110,8 @@ namespace CourseManager.Server.Migrations
                 name: "CoursePeople",
                 columns: table => new
                 {
-                    CourseId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -134,16 +134,16 @@ namespace CourseManager.Server.Migrations
                 name: "PersonFiles",
                 columns: table => new
                 {
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FileAssetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    FileAssetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersonFiles", x => new { x.PersonId, x.FileAssetId });
                     table.ForeignKey(
-                        name: "FK_PersonFiles_Files_FileAssetId",
+                        name: "FK_PersonFiles_FileAssets_FileAssetId",
                         column: x => x.FileAssetId,
-                        principalTable: "Files",
+                        principalTable: "FileAssets",
                         principalColumn: "FileAssetId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -158,8 +158,8 @@ namespace CourseManager.Server.Migrations
                 name: "CourseSectionFiles",
                 columns: table => new
                 {
-                    CourseSectionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FileAssetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CourseSectionId = table.Column<int>(type: "int", nullable: false),
+                    FileAssetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,9 +171,9 @@ namespace CourseManager.Server.Migrations
                         principalColumn: "CourseSectionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseSectionFiles_Files_FileAssetId",
+                        name: "FK_CourseSectionFiles_FileAssets_FileAssetId",
                         column: x => x.FileAssetId,
-                        principalTable: "Files",
+                        principalTable: "FileAssets",
                         principalColumn: "FileAssetId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -182,8 +182,8 @@ namespace CourseManager.Server.Migrations
                 name: "CourseSectionPeople",
                 columns: table => new
                 {
-                    CourseSectionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CourseSectionId = table.Column<int>(type: "int", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,10 +206,10 @@ namespace CourseManager.Server.Migrations
                 name: "Groups",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    CourseSectionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    GroupId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CourseSectionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,16 +226,16 @@ namespace CourseManager.Server.Migrations
                 name: "GroupFiles",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FileAssetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    GroupId = table.Column<int>(type: "int", nullable: false),
+                    FileAssetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GroupFiles", x => new { x.GroupId, x.FileAssetId });
                     table.ForeignKey(
-                        name: "FK_GroupFiles_Files_FileAssetId",
+                        name: "FK_GroupFiles_FileAssets_FileAssetId",
                         column: x => x.FileAssetId,
-                        principalTable: "Files",
+                        principalTable: "FileAssets",
                         principalColumn: "FileAssetId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -250,8 +250,8 @@ namespace CourseManager.Server.Migrations
                 name: "GroupPeople",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false)
+                    GroupId = table.Column<int>(type: "int", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -302,8 +302,8 @@ namespace CourseManager.Server.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Files_FileName",
-                table: "Files",
+                name: "IX_FileAssets_FileName",
+                table: "FileAssets",
                 column: "FileName");
 
             migrationBuilder.CreateIndex(
@@ -360,7 +360,7 @@ namespace CourseManager.Server.Migrations
                 name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "Files");
+                name: "FileAssets");
 
             migrationBuilder.DropTable(
                 name: "People");

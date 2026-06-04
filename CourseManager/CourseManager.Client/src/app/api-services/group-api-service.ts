@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Group } from './dtos';
+import { environment } from '../../environments/environment';
 
 interface PersonDto {
   id: number;
@@ -10,8 +11,8 @@ interface PersonDto {
   providedIn: 'root',
 })
 export class GroupApiService {
-  baseUrl = 'http://localhost:5053/api/group';
-  relationsBaseUrl = 'http://localhost:5053/api/relations';
+  private baseUrl = `${environment.apiUrl}/group`;
+  private relationsBaseUrl = `${environment.apiUrl}/relations`;
   constructor() {}
 
   private mapGroup(data: any): Group {

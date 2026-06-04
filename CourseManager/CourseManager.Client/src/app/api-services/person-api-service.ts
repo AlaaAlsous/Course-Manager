@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Course, CourseSection, Group, Person, PersonOverview, PersonOverviewFile } from './dtos';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PersonApiService {
-  baseUrl = 'http://localhost:5053/api/person';
-  relationsBaseUrl = 'http://localhost:5053/api/relations';
+  private baseUrl = `${environment.apiUrl}/person`;
+  private relationsBaseUrl = `${environment.apiUrl}/relations`;
   constructor() {}
 
   private mapPerson(data: any): Person {

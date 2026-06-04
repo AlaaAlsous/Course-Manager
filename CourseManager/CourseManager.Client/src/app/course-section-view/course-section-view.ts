@@ -8,6 +8,7 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
 import { CourseApiService } from '../api-services/course-api-service';
 import { GroupApiService } from '../api-services/group-api-service';
+import { environment } from '../../environments/environment';
 
 interface CourseSectionGroup {
   id: number;
@@ -173,7 +174,7 @@ export class CourseSectionView {
 
     try {
       const response = await fetch(
-        `http://localhost:5053/api/files/download/course-section/${sectionId}`,
+        `${environment.apiUrl}/files/download/course-section/${sectionId}`,
       );
       if (!response.ok) return;
 
