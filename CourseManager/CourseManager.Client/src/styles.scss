@@ -1,5 +1,5 @@
 @use 'utilities';
-@use 'utilities-mixin' as *;
+@use 'utilities-mixin'as *;
 
 :root {
   color-scheme: light;
@@ -41,50 +41,36 @@
 
   --color-nav-bg: var(--color-bg-secondary);
   --color-nav-text: rgba(255, 255, 255, 0.9);
-  --app-bg-gradient: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg) 78%, #ffffff 22%),
-    color-mix(in srgb, var(--color-bg) 92%, #d9e6f6 8%)
-  );
+  --app-bg-gradient: linear-gradient(180deg,
+      color-mix(in srgb, var(--color-bg) 78%, #ffffff 22%),
+      color-mix(in srgb, var(--color-bg) 92%, #d9e6f6 8%));
   --app-bg-spot-left: rgba(78, 140, 203, 0.2);
   --app-bg-spot-right: rgba(145, 176, 214, 0.16);
-  --page-sheet-bg: linear-gradient(
-    160deg,
-    color-mix(in srgb, #ffffff 84%, #eaf2fb 16%),
-    color-mix(in srgb, #ffffff 58%, #e3edf8 42%)
-  );
+  --page-sheet-bg: linear-gradient(160deg,
+      color-mix(in srgb, #ffffff 84%, #eaf2fb 16%),
+      color-mix(in srgb, #ffffff 58%, #e3edf8 42%));
   --page-sheet-border: color-mix(in srgb, var(--color-border-light) 72%, #ffffff 28%);
   --page-sheet-shadow: 0 18px 40px -26px rgba(17, 35, 58, 0.28);
-  --title-bar-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg-primary) 88%, var(--color-surface) 12%),
-    color-mix(in srgb, var(--color-bg-primary) 78%, var(--color-surface) 22%)
-  );
-  --app-bg-gradient: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg) 94%, #0a111a 6%),
-    var(--color-bg)
-  );
+  --title-bar-bg: linear-gradient(180deg,
+      color-mix(in srgb, var(--color-bg-primary) 88%, var(--color-surface) 12%),
+      color-mix(in srgb, var(--color-bg-primary) 78%, var(--color-surface) 22%));
+  --app-bg-gradient: linear-gradient(180deg,
+      color-mix(in srgb, var(--color-bg) 94%, #0a111a 6%),
+      var(--color-bg));
   --app-bg-spot-left: rgba(32, 97, 148, 0.16);
   --app-bg-spot-right: rgba(37, 74, 110, 0.14);
-  --page-sheet-bg: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--color-bg-primary) 86%, var(--color-surface) 14%),
-    color-mix(in srgb, var(--color-bg-primary) 72%, var(--color-surface) 28%)
-  );
+  --page-sheet-bg: linear-gradient(165deg,
+      color-mix(in srgb, var(--color-bg-primary) 86%, var(--color-surface) 14%),
+      color-mix(in srgb, var(--color-bg-primary) 72%, var(--color-surface) 28%));
   --page-sheet-border: var(--color-border-light);
   --page-sheet-shadow: var(--shadow-lg);
   --title-bar-bg: color-mix(in srgb, var(--color-bg-primary) 86%, var(--color-surface) 14%);
-  --color-toggle-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, #ffffff 84%, var(--color-primary) 16%),
-    color-mix(in srgb, #ffffff 68%, var(--color-primary) 32%)
-  );
-  --color-toggle-bg-hover: linear-gradient(
-    180deg,
-    color-mix(in srgb, #ffffff 72%, var(--color-primary) 28%),
-    color-mix(in srgb, #ffffff 56%, var(--color-primary) 44%)
-  );
+  --color-toggle-bg: linear-gradient(180deg,
+      color-mix(in srgb, #ffffff 84%, var(--color-primary) 16%),
+      color-mix(in srgb, #ffffff 68%, var(--color-primary) 32%));
+  --color-toggle-bg-hover: linear-gradient(180deg,
+      color-mix(in srgb, #ffffff 72%, var(--color-primary) 28%),
+      color-mix(in srgb, #ffffff 56%, var(--color-primary) 44%));
   --color-toggle-border: color-mix(in srgb, var(--color-primary) 32%, #ffffff 68%);
   --color-toggle-icon-bg: color-mix(in srgb, #ffffff 58%, var(--color-primary) 42%);
   --color-toggle-icon-color: #23435f;
@@ -179,11 +165,9 @@
   --color-primary-hover: #1d6da9;
   --color-primary-soft: rgba(44, 132, 201, 0.2);
   --color-primary-border: rgba(44, 132, 201, 0.46);
-  --color-toggle-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-primary) 74%, white 26%),
-    var(--color-primary-hover)
-  );
+  --color-toggle-bg: linear-gradient(180deg,
+      color-mix(in srgb, var(--color-primary) 74%, white 26%),
+      var(--color-primary-hover));
   --color-toggle-bg-hover: color-mix(in srgb, var(--color-primary-hover) 82%, black 18%);
   --color-toggle-border: var(--color-primary-border);
   --color-toggle-icon-bg: color-mix(in srgb, var(--color-primary) 70%, white 30%);
@@ -253,6 +237,14 @@ a:hover {
 
 button {
   @include button;
+}
+
+.delete-button {
+  @include delete-button
+}
+
+.card {
+  @include card;
 }
 
 .app-page-header {
