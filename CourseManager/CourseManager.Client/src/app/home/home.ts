@@ -58,25 +58,4 @@ export class Home {
   createPerson() {
     this.router.navigate(['/participants/create']);
   }
-
-  async deleteCourse(courseId: number, courseName: string): Promise<void> {
-    const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort program',
-      message: `Vill du verkligen ta bort "${courseName}"?`,
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
-    });
-
-    if (!confirmed) {
-      return;
-    }
-
-    const deleted = await this.courseApiService.deleteCourse(courseId);
-
-    if (!deleted) {
-      return;
-    }
-
-    await this.loadCourses();
-  }
 }
