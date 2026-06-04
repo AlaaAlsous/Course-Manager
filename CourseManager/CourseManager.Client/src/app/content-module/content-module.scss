@@ -138,6 +138,54 @@
     justify-content: flex-end;
   }
 
+  /* Overview (categorised) view */
+  &__overview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  &__overview-group {
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    background: var(--color-surface);
+  }
+
+  &__overview-group-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0 0 var(--space-md);
+    font-size: 1.1rem;
+    color: var(--color-text);
+  }
+
+  &__overview-source-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.15em 0.55em;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: var(--color-text-inverted);
+    white-space: nowrap;
+  }
+
+  &__toggle-overview-btn {
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-text-inverted);
+      border-color: var(--color-primary);
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+  }
+
   &__note-save-btn {
     font-size: var(--font-size-sm);
     padding: var(--space-xs) var(--space-md);

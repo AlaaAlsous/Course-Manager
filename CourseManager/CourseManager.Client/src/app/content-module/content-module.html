@@ -9,6 +9,16 @@
         <button class="content-module__action-btn" (click)="triggerImageUpload()">
           {{ hasCamera ? 'Ta bild' : 'Ladda upp bild' }}
         </button>
+
+        @if (hasOverview()) {
+          <button
+            class="content-module__action-btn content-module__toggle-overview-btn"
+            [class.content-module__toggle-overview-btn--active]="showOverview()"
+            (click)="toggleOverview()"
+          >
+            {{ showOverview() ? 'Dölj översikt' : 'Visa översikt' }}
+          </button>
+        }
       </div>
 
       <!-- File actions toolbar -->
@@ -33,68 +43,127 @@
         />
       </div>
 
-      <div class="content-module__note-section mb-1">
-        <textarea
-          class="content-module__note-textarea"
-          [(ngModel)]="noteContent"
-          placeholder="Skriv en anteckning..."
-        ></textarea>
-        <div class="content-module__note-actions">
-          <button
-            class="content-module__note-save-btn"
-            (click)="publishNote()"
-            [disabled]="!noteContent.trim()"
-          >
-            Spara
-          </button>
+      @if (!showOverview()) {
+        <div class="content-module__note-section mb-1">
+          <textarea
+            class="content-module__note-textarea"
+            [(ngModel)]="noteContent"
+            placeholder="Skriv en anteckning..."
+          ></textarea>
+          <div class="content-module__note-actions">
+            <button
+              class="content-module__note-save-btn"
+              (click)="publishNote()"
+              [disabled]="!noteContent.trim()"
+            >
+              Spara
+            </button>
+          </div>
         </div>
-      </div>
+      }
 
-      <ul class="content-module__content-list">
-        @for (group of groupedFileItems; track group.dateKey) {
-          <li class="mt-2 content-module__date-header">
-            <span class="fw-600 text-muted">{{ group.dateKey }}</span>
-          </li>
-          @for (item of group.items; track item) {
-            <li class="mb-2">
-              <div class="content-module__file-row d-flex align-items-center justify-space-between">
-                <span class="content-module__file-name">{{ item.name }}.{{ item.extension }}</span>
-                <div class="content-module__file-actions d-flex gap-1">
-                  <a
-                    class="content-module__icon-btn content-module__icon-btn--download"
-                    [attr.href]="getDownloadUrl(item)"
-                    [attr.download]="item.name + '.' + item.extension"
-                    [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
-                    title="Ladda ner"
-                  >
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                      <path
-                        d="M10 3a1 1 0 0 1 1 1v6.59l1.8-1.8a1 1 0 1 1 1.4 1.42l-3.5 3.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.42l1.8 1.8V4a1 1 0 0 1 1-1Zm-5 11a1 1 0 0 1 1 1v1h8v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"
-                      />
-                    </svg>
-                  </a>
+      <!-- Overview (categorised) view, shown when toggled on -->
+      @if (showOverview()) {
+        <div class="content-module__overview">
+          @for (group of overviewFileGroups(); track group.sourceType + '|' + group.sourceName) {
+            <div class="content-module__overview-group">
+              <h4 class="content-module__overview-group-title">
+                <span class="content-module__overview-source-badge">{{
+                  group.sourceTypeLabel
+                }}</span>
+                {{ group.sourceName }}
+              </h4>
 
-                  <button
-                    class="content-module__icon-btn content-module__icon-btn--remove"
-                    (click)="onDeleteFile(item)"
-                    [attr.aria-label]="'Ta bort ' + item.name + '.' + item.extension"
-                    title="Ta bort"
-                  >
-                    <svg viewBox="0 0 20 20" aria-hidden="true">
-                      <path
-                        d="M6.4 5a1 1 0 0 1 .7.3L10 8.17l2.9-2.88a1 1 0 1 1 1.4 1.42L11.4 9.6l2.88 2.9a1 1 0 1 1-1.42 1.4L10 11.01l-2.9 2.88a1 1 0 0 1-1.4-1.42l2.88-2.9-2.88-2.88A1 1 0 0 1 6.4 5Z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="">
-                <app-file-preview [file]="item" (textSave)="onTextSave($event)" />
-              </div>
-            </li>
+              <ul class="content-module__content-list">
+                @for (item of group.items; track item.fileAssetId) {
+                  <li class="mb-2">
+                    <div
+                      class="content-module__file-row d-flex align-items-center justify-space-between"
+                    >
+                      <span class="content-module__file-name"
+                        >{{ item.name }}.{{ item.extension }}</span
+                      >
+                      <div class="content-module__file-actions d-flex gap-1">
+                        <a
+                          class="content-module__icon-btn content-module__icon-btn--download"
+                          [attr.href]="getDownloadUrl(item)"
+                          [attr.download]="item.name + '.' + item.extension"
+                          [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
+                          title="Ladda ner"
+                        >
+                          <svg viewBox="0 0 20 20" aria-hidden="true">
+                            <path
+                              d="M10 3a1 1 0 0 1 1 1v6.59l1.8-1.8a1 1 0 1 1 1.4 1.42l-3.5 3.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.42l1.8 1.8V4a1 1 0 0 1 1-1Zm-5 11a1 1 0 0 1 1 1v1h8v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"
+                            />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="">
+                      <app-file-preview [file]="item" [isReadonly]="true" />
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          } @empty {
+            <p class="empty-state">Inget innehåll hittades för deltagarens kopplingar.</p>
           }
-        }
-      </ul>
+        </div>
+      }
+
+      <!-- Direct file list (default view), hidden when overview is shown -->
+      @if (!showOverview()) {
+        <ul class="content-module__content-list">
+          @for (group of groupedFileItems; track group.dateKey) {
+            <li class="mt-2 content-module__date-header">
+              <span class="fw-600 text-muted">{{ group.dateKey }}</span>
+            </li>
+            @for (item of group.items; track item) {
+              <li class="mb-2">
+                <div
+                  class="content-module__file-row d-flex align-items-center justify-space-between"
+                >
+                  <span class="content-module__file-name"
+                    >{{ item.name }}.{{ item.extension }}</span
+                  >
+                  <div class="content-module__file-actions d-flex gap-1">
+                    <a
+                      class="content-module__icon-btn content-module__icon-btn--download"
+                      [attr.href]="getDownloadUrl(item)"
+                      [attr.download]="item.name + '.' + item.extension"
+                      [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
+                      title="Ladda ner"
+                    >
+                      <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <path
+                          d="M10 3a1 1 0 0 1 1 1v6.59l1.8-1.8a1 1 0 1 1 1.4 1.42l-3.5 3.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.42l1.8 1.8V4a1 1 0 0 1 1-1Zm-5 11a1 1 0 0 1 1 1v1h8v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"
+                        />
+                      </svg>
+                    </a>
+
+                    <button
+                      class="content-module__icon-btn content-module__icon-btn--remove"
+                      (click)="onDeleteFile(item)"
+                      [attr.aria-label]="'Ta bort ' + item.name + '.' + item.extension"
+                      title="Ta bort"
+                    >
+                      <svg viewBox="0 0 20 20" aria-hidden="true">
+                        <path
+                          d="M6.4 5a1 1 0 0 1 .7.3L10 8.17l2.9-2.88a1 1 0 1 1 1.4 1.42L11.4 9.6l2.88 2.9a1 1 0 1 1-1.42 1.4L10 11.01l-2.9 2.88a1 1 0 0 1-1.4-1.42l2.88-2.9-2.88-2.88A1 1 0 0 1 6.4 5Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="">
+                  <app-file-preview [file]="item" (textSave)="onTextSave($event)" />
+                </div>
+              </li>
+            }
+          }
+        </ul>
+      }
     </div>
   </div>
 </div>

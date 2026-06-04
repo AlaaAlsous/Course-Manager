@@ -1,9 +1,20 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ViewChild,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { File as ContentFile, FilePreview, TextSaveEvent } from './file-preview/file-preview';
 import { FileApiService } from '../api-services/file-api-services';
-import { FileAsset } from '../api-services/dtos';
+import { FileAsset, PersonOverviewFile } from '../api-services/dtos';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 
 type ContentTargetType = 'course' | 'course-section' | 'group' | 'person';
@@ -11,6 +22,37 @@ type ContentTargetType = 'course' | 'course-section' | 'group' | 'person';
 interface ContentTarget {
   entityType: ContentTargetType;
   entityId: number;
+}
+
+interface OverviewFileGroup {
+  sourceType: string;
+  sourceTypeLabel: string;
+  sourceName: string;
+  items: ContentFile[];
+}
+
+/** Maps the internal sourceType value to a user‑friendly Swedish label. */
+const SOURCE_TYPE_LABELS: Record<string, string> = {
+  course: 'Program',
+  'course-section': 'Kurstillfälle',
+  group: 'Grupp',
+  person: 'Person',
+};
+
+function parseFileName(fileName: string): { name: string; extension: string } {
+  const lastDotIndex = fileName.lastIndexOf('.');
+
+  if (lastDotIndex <= 0 || lastDotIndex === fileName.length - 1) {
+    return {
+      name: fileName,
+      extension: 'bin',
+    };
+  }
+
+  return {
+    name: fileName.slice(0, lastDotIndex),
+    extension: fileName.slice(lastDotIndex + 1),
+  };
 }
 
 @Component({
@@ -29,8 +71,82 @@ export class ContentModule {
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  // ---- Inputs & Outputs ----
+
+  /**
+   * When viewing a person, the parent component can supply the full
+   * PersonOverview files so the user can choose to view everything the
+   * person is connected to, categorised by source.
+   */
+  readonly overviewFiles = input<PersonOverviewFile[]>([]);
+
+  /**
+   * Emitted whenever a file is uploaded or note published so the parent
+   * can refresh the overview data.
+   */
+  @Output() readonly contentChanged = new EventEmitter<void>();
+
+  // ---- Signals ----
+
   /** The list of files managed by this component. */
   files: ContentFile[] = [];
+
+  /** Toggle between direct files and the overview (categorised) view. */
+  readonly showOverview = signal(false);
+
+  /** Whether overview files are available (i.e. parent provided them). */
+  readonly hasOverview = computed(() => this.overviewFiles().length > 0);
+
+  /**
+   * Overview files grouped by their origin (sourceType + sourceName).
+   * Only populated when showOverview() is true.
+   */
+  readonly overviewFileGroups = computed<OverviewFileGroup[]>(() => {
+    if (!this.showOverview()) {
+      return [];
+    }
+
+    const groups = new Map<string, OverviewFileGroup>();
+
+    for (const file of this.overviewFiles()) {
+      // Use a composite key so entities with the same name but different types don't merge.
+      const key = `${file.sourceType}|${file.sourceId}`;
+
+      if (!groups.has(key)) {
+        groups.set(key, {
+          sourceType: file.sourceType,
+          sourceTypeLabel: SOURCE_TYPE_LABELS[file.sourceType] ?? file.sourceType,
+          sourceName: file.sourceName,
+          items: [],
+        });
+      }
+
+      const parsed = parseFileName(file.fileName);
+      groups.get(key)!.items.push({
+        fileAssetId: file.fileAssetId,
+        name: parsed.name,
+        extension: parsed.extension,
+        date: new Date(file.uploadedAt),
+        sourceUrl: this.fileApiService.getInlineUrl(file.fileAssetId),
+      });
+    }
+
+    return Array.from(groups.values()).sort((a, b) => {
+      const order: Record<string, number> = {
+        Program: 0,
+        Kurstillfälle: 1,
+        Grupp: 2,
+        Deltagare: 3,
+      };
+      return (order[a.sourceType] ?? 99) - (order[b.sourceType] ?? 99);
+    });
+  });
+
+  /** Toggle between the two views. */
+  toggleOverview(): void {
+    this.showOverview.update((v) => !v);
+    this.cdr.detectChanges();
+  }
 
   /** Returns the download URL for a file (forces browser download). */
   getDownloadUrl(file: ContentFile): string {
@@ -107,24 +223,8 @@ export class ContentModule {
     return entityType;
   }
 
-  private parseFileName(fileName: string): { name: string; extension: string } {
-    const lastDotIndex = fileName.lastIndexOf('.');
-
-    if (lastDotIndex <= 0 || lastDotIndex === fileName.length - 1) {
-      return {
-        name: fileName,
-        extension: 'bin',
-      };
-    }
-
-    return {
-      name: fileName.slice(0, lastDotIndex),
-      extension: fileName.slice(lastDotIndex + 1),
-    };
-  }
-
   private mapFileAsset(asset: FileAsset): ContentFile {
-    const parsedName = this.parseFileName(asset.fileName);
+    const parsedName = parseFileName(asset.fileName);
 
     return {
       fileAssetId: asset.fileAssetId,
@@ -204,13 +304,12 @@ export class ContentModule {
 
     this.noteContent = '';
     await this.loadFiles();
+    this.contentChanged.emit();
     this.cdr.detectChanges();
   }
 
   private async deleteFileOnApi(file: ContentFile): Promise<void> {
-    const target = this.resolveContentTarget();
-
-    if (!target || !file.fileAssetId) {
+    if (!file.fileAssetId) {
       return;
     }
 
@@ -250,6 +349,7 @@ export class ContentModule {
     if (!input.files || input.files.length === 0) return;
 
     await this.uploadFilesToApi(input.files);
+    this.contentChanged.emit();
     // Reset so the same file can be picked again
     input.value = '';
   }
@@ -263,12 +363,16 @@ export class ContentModule {
       cancelText: 'Avbryt',
     });
 
-    if (confirmed) await this.deleteFileOnApi(file);
+    if (confirmed) {
+      await this.deleteFileOnApi(file);
+      this.contentChanged.emit();
+    }
   }
 
   /** Called when the user clicks Save after editing a text file. */
   async onTextSave(event: TextSaveEvent): Promise<void> {
     await this.fileApiService.updateFileContent(event.fileAssetId, event.content);
     await this.loadFiles();
+    this.contentChanged.emit();
   }
 }

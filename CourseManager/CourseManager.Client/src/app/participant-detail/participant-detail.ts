@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { PersonApiService } from '../api-services/person-api-service';
-import { File as ContentFile, FilePreview } from '../content-module/file-preview/file-preview';
+import { File as ContentFile } from '../content-module/file-preview/file-preview';
 import { FileApiService } from '../api-services/file-api-services';
 import { CourseSection, Group, PersonOverview, PersonOverviewFile } from '../api-services/dtos';
 
@@ -17,7 +17,7 @@ interface OverviewContentFile extends ContentFile {
 @Component({
   selector: 'app-participant-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, Layout, ContentModule, FilePreview],
+  imports: [CommonModule, FormsModule, RouterModule, Layout, ContentModule],
   templateUrl: './participant-detail.html',
   styleUrls: ['./participant-detail.scss'],
 })
@@ -35,7 +35,9 @@ export class ParticipantDetail implements OnInit {
   isEditing = signal(false);
   editName = '';
 
-  overviewFiles = computed(() => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? []);
+  overviewFiles = computed(
+    () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
+  );
 
   constructor(private route: ActivatedRoute) {}
 
@@ -123,11 +125,17 @@ export class ParticipantDetail implements OnInit {
   }
 
   courseNameForSection(section: CourseSection): string {
-    return this.overview()?.courses.find((course) => course.id === section.courseId)?.name ?? 'Okänt program';
+    return (
+      this.overview()?.courses.find((course) => course.id === section.courseId)?.name ??
+      'Okänt program'
+    );
   }
 
   sectionNameForGroup(group: Group): string {
-    return this.overview()?.sections.find((section) => section.id === group.courseSectionId)?.name ?? 'Okänt kurstillfälle';
+    return (
+      this.overview()?.sections.find((section) => section.id === group.courseSectionId)?.name ??
+      'Okänt kurstillfälle'
+    );
   }
 
   formatDate(dateString: string | null): string {
@@ -138,6 +146,13 @@ export class ParticipantDetail implements OnInit {
       month: 'short',
       day: 'numeric',
     }).format(new Date(dateString));
+  }
+
+  async onContentChanged(): Promise<void> {
+    const id = this.personId();
+    if (id) {
+      await this.loadOverview(id);
+    }
   }
 
   goBack(): void {
