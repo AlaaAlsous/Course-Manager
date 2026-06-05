@@ -190,6 +190,23 @@ export class CourseSectionView {
     }
   }
 
+  async deleteCourseSection(): Promise<void> {
+    const sectionId = this.sectionId();
+    if (!sectionId) return;
+
+    const confirmed = await this.confirmDialog.confirm({
+      title: 'Ta bort kurstillfälle',
+      message: 'Vill du verkligen ta bort detta kurstillfälle?',
+      confirmText: 'Ta bort',
+      cancelText: 'Avbryt',
+    });
+
+    if (!confirmed) return;
+
+    await this.courseSectionApiService.deleteCourseSection(sectionId);
+    this.goBack();
+  }
+
   goBack(): void {
     const courseId = this.courseId();
 
