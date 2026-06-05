@@ -11,14 +11,6 @@
     <label for="course-name">Namn</label>
     <input id="course-name" name="name" type="text" [(ngModel)]="name" required />
 
-    <label for="course-description">Beskrivning (valfritt)</label>
-    <textarea
-      id="course-description"
-      name="description"
-      rows="4"
-      [(ngModel)]="description"
-    ></textarea>
-
     @if (submitted && !isFormValid) {
       <p class="validation">Namn är obligatoriskt.</p>
     }

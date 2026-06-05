@@ -19,7 +19,6 @@ export class CreateCourse {
   title = signal('Skapa program');
 
   name = '';
-  description = '';
   submitted = false;
 
   constructor(
@@ -48,10 +47,7 @@ export class CreateCourse {
       return;
     }
 
-    const createdCourseId = await this.courseApiService.createCourse(
-      this.name.trim(),
-      this.description.trim() || null,
-    );
+    const createdCourseId = await this.courseApiService.createCourse(this.name.trim(), null);
 
     if (!createdCourseId) {
       this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa program.');
