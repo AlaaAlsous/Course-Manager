@@ -2,6 +2,14 @@
   padding: 1rem;
   display: grid;
   gap: var(--space-lg);
+  min-width: 0;
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .hero-card {
@@ -40,6 +48,7 @@
 .hero-info {
   text-align: center;
   color: var(--color-text);
+  min-width: 0;
 }
 
 .hero-actions {
@@ -51,8 +60,8 @@
 
 .hero-info h1 {
   font-size: 2rem;
-
   margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .hero-info p {
@@ -113,6 +122,29 @@
 
 .relation-row span {
   font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 450px) {
+  .detail-page {
+    padding: 0;
+    gap: var(--space-md);
+  }
+
+  .hero-card,
+  .state-card,
+  .overview-card,
+  .content-card {
+    padding: var(--space-md);
+  }
+
+  .hero-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .section {
+    margin-top: var(--space-md);
+  }
 }
 
 .relation-row small,

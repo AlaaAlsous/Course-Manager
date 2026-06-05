@@ -12,6 +12,11 @@
     list-style-type: none;
   }
 
+  &__toolbar {
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
   &__date-header {
     border-bottom: 2px solid var(--color-border);
 
