@@ -48,6 +48,16 @@ public class PersonRepository : IPersonRepository
         if (person is null)
             return false;
 
+        // Remove related join table records first to avoid FK conflicts
+        var groupPeople = await _db.GroupPeople.Where(gp => gp.PersonId == personId).ToListAsync();
+        _db.GroupPeople.RemoveRange(groupPeople);
+
+        var coursePeople = await _db.CoursePeople.Where(cp => cp.PersonId == personId).ToListAsync();
+        _db.CoursePeople.RemoveRange(coursePeople);
+
+        var courseSectionPeople = await _db.CourseSectionPeople.Where(csp => csp.PersonId == personId).ToListAsync();
+        _db.CourseSectionPeople.RemoveRange(courseSectionPeople);
+
         _db.People.Remove(person);
         await _db.SaveChangesAsync();
         return true;
