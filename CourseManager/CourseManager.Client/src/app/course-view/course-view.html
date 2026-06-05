@@ -15,7 +15,7 @@
             <h2>{{ title() }}</h2>
             <div class="kurstillfalle-overview__title-actions">
               <button type="button" class="app-back-button" (click)="startEdit()">Redigera</button>
-              <button type="button" class="app-back-button" (click)="deleteCourse()">
+              <button type="button" class="delete-button" (click)="deleteCourse()">
                 Ta bort program
               </button>
             </div>
@@ -41,13 +41,6 @@
               <h3>{{ section.name }}</h3>
               <p>{{ section.groupCount }} grupper</p>
             </div>
-            <button
-              type="button"
-              class="app-back-button"
-              (click)="$event.stopPropagation(); deleteSection(section.id)"
-            >
-              Ta bort
-            </button>
           </div>
         </li>
       } @empty {

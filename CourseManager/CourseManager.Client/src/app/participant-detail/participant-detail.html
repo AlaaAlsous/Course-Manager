@@ -1,8 +1,10 @@
 <app-layout [title]="title()">
   <div class="detail-page">
-    <div style="display: flex; flex-direction: row;">
-      <button type="button" (click)="deletePerson()">Ta bort deltagare</button>
-      <div style="display: flex; justify-content: right; width: 100%;">
+    <div style="display: flex; flex-direction: row">
+      <button type="button" class="delete-button" (click)="deletePerson()">
+        Ta bort deltagare
+      </button>
+      <div style="display: flex; justify-content: right; width: 100%">
         <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
       </div>
     </div>

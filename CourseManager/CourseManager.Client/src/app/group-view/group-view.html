@@ -18,7 +18,7 @@
                 <button type="button" class="app-back-button" (click)="startEdit()">
                   Redigera
                 </button>
-                <button type="button" class="app-back-button" (click)="deleteGroup()">
+                <button type="button" class="delete-button" (click)="deleteGroup()">
                   Ta bort grupp
                 </button>
               </div>
@@ -66,7 +66,7 @@
                 <span>{{ member.name }}</span>
                 <button
                   type="button"
-                  class="group-view__remove-member"
+                  class="delete-button"
                   (click)="removeMember(member.id); $event.stopPropagation()"
                 >
                   Ta bort
