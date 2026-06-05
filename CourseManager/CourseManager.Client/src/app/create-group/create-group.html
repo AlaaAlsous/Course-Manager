@@ -13,37 +13,54 @@
       <input type="text" [(ngModel)]="name" placeholder="Önskat Gruppnamn..." />
     </label>
 
-    <button class="create-person-btn" (click)="goToCreatePerson()">Skapa Person</button>
-
     <section class="card">
-      <h3>Lägg Till Tidigare Person</h3>
+      <div class="d-flex gap-1">
+        <h3>Lägg Till Deltagare</h3>
+        <sub class="text-muted">(valfritt)</sub>
+      </div>
 
       <label>
-        Select Person
-        <select [(ngModel)]="selectedPersonId">
-          <option [ngValue]="null">Välj...</option>
-          <option *ngFor="let p of allPeople" [ngValue]="p.id">
-            {{ p.name }}
-          </option>
-        </select>
-      </label>
+        <span>Skapa en ny deltagare</span>
+        <div class="personInputContainer">
+          <input
+            ngModel
+            #personNameInput
+            placeholder="Skriv ett namn"
+            class="w-available mr-1 personNameInput"
+            type="text"
+          />
+          <button class="person-section-button" (click)="createPerson()">Skapa</button>
+        </div>
 
-      <button (click)="addExistingPerson()">Lägg till i Grupp</button>
-    </section>
-
-    <section class="card">
-      <h3>Personer i denna Grupp</h3>
-
-      <ul>
-        <li *ngFor="let p of groupPeople">
-          <span>{{ p.name }}</span>
-          <button type="button" class="remove-btn" (click)="removePersonFromGroup(p.id)">
-            Ta bort
+        <span>Välj en existerande deltagare</span>
+        <div class="personInputContainer">
+          <select class="w-available mr-1 person-selection" [(ngModel)]="selectedPersonId">
+            <option [ngValue]="null">Välj...</option>
+            <option *ngFor="let p of allPeople" [ngValue]="p.id">
+              {{ p.name }}
+            </option>
+          </select>
+          <button class="person-section-button" (click)="addExistingPerson()">
+            Lägg till i Grupp
           </button>
-        </li>
-      </ul>
+        </div>
+      </label>
     </section>
 
+    @if (groupPeople().length > 0) {
+      <section class="card">
+        <h3>Deltagare i denna Grupp</h3>
+
+        <ul>
+          <li class="person-in-group-list-item" *ngFor="let p of groupPeople()">
+            <span>{{ p.name }}</span>
+            <button type="button" class="delete-button" (click)="removePersonFromGroup(p.id)">
+              Ta bort
+            </button>
+          </li>
+        </ul>
+      </section>
+    }
     <div class="create-group-actions">
       <button type="button" class="create-btn" (click)="createGroup()">Skapa Grupp</button>
     </div>

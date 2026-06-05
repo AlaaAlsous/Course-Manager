@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { PersonApiService } from '../api-services/person-api-service';
 import { GroupApiService } from '../api-services/group-api-service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
+
 interface Person {
   id: number;
   name: string;
@@ -34,7 +35,7 @@ export class CreateGroup {
 
   name = '';
 
-  groupPeople: Person[] = [];
+  groupPeople = signal<Person[]>([]);
 
   allPeople: Person[] = [];
 
@@ -42,6 +43,8 @@ export class CreateGroup {
 
   private readonly returnCourseId = Number(this.route.snapshot.queryParamMap.get('courseId'));
   private readonly returnSectionId = Number(this.route.snapshot.queryParamMap.get('sectionId'));
+
+  @ViewChild('personNameInput') nameInputRef!: ElementRef<HTMLInputElement>;
 
   constructor(
     private router: Router,
@@ -79,7 +82,7 @@ export class CreateGroup {
     const person = this.allPeople.find((p) => p.id === this.selectedPersonId);
     if (!person) return;
 
-    this.groupPeople.push(person);
+    this.groupPeople.update((people) => [...people, person]);
 
     this.allPeople = this.allPeople.filter((p) => p.id !== this.selectedPersonId);
 
@@ -87,7 +90,7 @@ export class CreateGroup {
   }
 
   async removePersonFromGroup(personId: number): Promise<void> {
-    const person = this.groupPeople.find((p) => p.id === personId);
+    const person = this.groupPeople().find((p) => p.id === personId);
 
     if (!person) {
       return;
@@ -104,29 +107,41 @@ export class CreateGroup {
       return;
     }
 
-    this.groupPeople = this.groupPeople.filter((p) => p.id !== personId);
+    this.groupPeople.update((people) => people.filter((p) => p.id !== personId));
 
     if (!this.allPeople.some((p) => p.id === person.id)) {
       this.allPeople = [...this.allPeople, person].sort((a, b) => a.id - b.id);
     }
   }
 
-  goToCreatePerson() {
-    this.router.navigate(['/participants/create']);
+  async createPerson() {
+    const name = this.nameInputRef.nativeElement.value;
+    const id = await this.personApiService.createPerson(name);
+    console.log(id);
+    if (id === null) {
+      this.snackbarService.show(SnackbarType.Failure, `Kunde inte skapa deltagare '${name}'`);
+      return;
+    } else {
+      this.snackbarService.show(SnackbarType.Success, `Deltagare '${name}' skapades`);
+    }
+
+    const person = await this.personApiService.getPersonById(id);
+    if (person) {
+      this.groupPeople.update((people) => [...people, { id, name }]);
+      this.nameInputRef.nativeElement.value = '';
+    }
   }
 
   async createGroup(): Promise<void> {
     const groupName = this.name.trim();
 
     if (!groupName) {
+      this.snackbarService.show(SnackbarType.Failure, 'Kan inte skapa grupp utan namn');
       return;
     }
 
     if (!this.hasValidReturnSection()) {
-      this.snackbarService.show(
-        SnackbarType.Failure,
-        'Kan inte skapa grupp utan valt kurstillfälle.',
-      );
+      this.snackbarService.show(SnackbarType.Failure, 'Kan inte skapa grupp utan kurstillfälle.');
       return;
     }
 
@@ -137,7 +152,7 @@ export class CreateGroup {
       return;
     }
 
-    for (const person of this.groupPeople) {
+    for (const person of this.groupPeople()) {
       await this.groupApiService.addPerson(createdGroupId, person.id);
     }
 

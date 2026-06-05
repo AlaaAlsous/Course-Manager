@@ -1,4 +1,4 @@
-@use 'utilities-mixin' as *;
+@use 'utilities-mixin'as *;
 
 .create-group-container {
   display: flex;
@@ -50,17 +50,6 @@ select:hover {
   border-color: var(--color-control-hover-border);
 }
 
-.card {
-  background: var(--color-primary-bg);
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-elevated);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
-}
-
 .card h3 {
   font-size: var(--font-size-lg);
   margin-bottom: var(--space-sm);
@@ -86,29 +75,11 @@ select:hover {
   gap: var(--space-sm);
 }
 
-.remove-btn {
-  padding: 0.25rem 0.6rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-}
-
 .create-group-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-sm);
   margin-top: var(--space-lg);
-}
-
-.create-person-btn {
-  align-self: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  transition: 0.2s;
 }
 
 .create-person-btn:hover {
@@ -122,4 +93,38 @@ select:hover {
   padding: var(--space-md);
   font-size: var(--font-size-md);
   font-weight: 600;
+}
+
+.person-in-group-list-item {
+  border-bottom: 1px dashed var(--color-border);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.person-selection {
+  max-width: 250px;
+}
+
+.personNameInput {
+  max-width: 250px;
+}
+
+.person-section-button {
+  margin-left: auto;
+  min-width: 110px;
+}
+
+.personInputContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  flex-direction: row;
+
+  @media (max-width:600px) {
+    flex-direction: column;
+
+    .person-section-button {
+      margin-left: 0;
+    }
+  }
 }
