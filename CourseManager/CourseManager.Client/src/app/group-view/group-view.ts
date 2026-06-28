@@ -169,7 +169,7 @@ export class GroupView {
   }
 
   async saveEdit(): Promise<void> {
-    await this.groupApiService.updateGroup(this.groupId, this.editName, this.returnSectionId);
+    await this.groupApiService.updateGroup(this.groupId, this.editName);
     await this.loadGroupData();
     this.isEditing.set(false);
   }

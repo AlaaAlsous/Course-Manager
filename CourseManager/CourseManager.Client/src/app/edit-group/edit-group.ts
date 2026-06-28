@@ -59,7 +59,7 @@ export class EditGroup {
       return;
     }
 
-    await this.groupApiService.updateGroup(selectedGroup.id, name, selectedGroup.courseSectionId);
+    await this.groupApiService.updateGroup(selectedGroup.id, name);
     await this.groupApiService.getGroupById(selectedGroup.id);
 
     this.router.navigate(['/groups', this.groupId], {
