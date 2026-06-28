@@ -97,14 +97,14 @@ export class GroupApiService {
     }
   }
 
-  async updateGroup(id: number, name: string, courseSectionId: number): Promise<boolean> {
+  async updateGroup(id: number, name: string): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, courseSectionId }),
+        body: JSON.stringify({ name }),
       });
       if (!response.ok) {
         console.error('Error updating group:', response.statusText);

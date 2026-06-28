@@ -404,8 +404,6 @@ public static class FileEndpoints
                     return Results.BadRequest("Invalid entity type. Use: course, course-section, group, person.");
             }
 
-            zip.Dispose();
-
             return Results.File(
                 memoryStream.ToArray(),
                 "application/zip",

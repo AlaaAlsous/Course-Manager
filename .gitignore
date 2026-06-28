@@ -83,6 +83,7 @@ $RECYCLE.BIN/
 .env.*
 
 # ===== Build / Output =====
+uploads/
 publish/
 wwwroot/
 PublishScripts/
