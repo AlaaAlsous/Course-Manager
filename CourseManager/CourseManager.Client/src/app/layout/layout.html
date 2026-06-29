@@ -1,11 +1,7 @@
 <div class="app-root-layout">
   <header class="top-nav">
-    <div class="top-nav__breadish">
-      <span (click)="redirectHome()" style="cursor: pointer"> Course Manager </span>
-      @if (title.length > 0) {
-        <span style="color: var(--color-text-muted)"> / </span>
-        <span>{{ title }}</span>
-      }
+    <div class="top-nav__logo">
+      <span (click)="redirectHome()" style="cursor: pointer">Course Manager</span>
     </div>
 
     <div class="top-nav__actions">
@@ -18,7 +14,6 @@
       <span></span>
     </button>
 
-    <!-- Backdrop overlay for mobile menu -->
     <div class="nav-overlay" [class.open]="menuOpen()" (click)="closeMenu()"></div>
 
     <nav class="top-nav__links" [class.open]="menuOpen()">
@@ -27,14 +22,20 @@
       <button
         type="button"
         class="theme-toggle"
-        [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
-        [attr.title]="themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+        [attr.aria-label]="
+          themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+        "
+        [attr.title]="
+          themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+        "
         [attr.aria-pressed]="themeService.theme() === 'dark'"
         (click)="toggleTheme()"
       >
         @if (themeService.theme() === 'dark') {
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 4.5V2m0 20v-2.5M4.5 12H2m20 0h-2.5M5.64 5.64 3.87 3.87m16.26 16.26-1.77-1.77m0-12.72 1.77-1.77M3.87 20.13l1.77-1.77" />
+            <path
+              d="M12 4.5V2m0 20v-2.5M4.5 12H2m20 0h-2.5M5.64 5.64 3.87 3.87m16.26 16.26-1.77-1.77m0-12.72 1.77-1.77M3.87 20.13l1.77-1.77"
+            />
             <circle cx="12" cy="12" r="4.25" />
           </svg>
         } @else {
@@ -46,6 +47,20 @@
     </nav>
   </header>
 
+  @if (title.length > 0) {
+    <div class="breadcrumb-bar">
+      <span class="breadcrumb-bar__home" (click)="redirectHome()">Home</span>
+      @for (crumb of breadcrumbs; track crumb.label) {
+        <span class="breadcrumb-bar__separator">/</span>
+        @if (crumb.route) {
+          <a class="breadcrumb-bar__link" [routerLink]="crumb.route">{{ crumb.label }}</a>
+        } @else {
+          <span class="breadcrumb-bar__current">{{ crumb.label }}</span>
+        }
+      }
+    </div>
+  }
+
   <main class="page-container">
     <section class="page-sheet">
       <ng-content></ng-content>
@@ -55,5 +70,4 @@
   <footer class="site-footer">
     <p>&copy; {{ currentYear }} Course Manager</p>
   </footer>
-
 </div>

@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
 import { GroupApiService } from '../api-services/group-api-service';
+import { CourseApiService } from '../api-services/course-api-service';
+import { CourseSectionApiService } from '../api-services/course-section-api-service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { PersonApiService } from '../api-services/person-api-service';
 import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
@@ -29,6 +31,8 @@ export class GroupView {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly groupApiService = inject(GroupApiService);
+  private readonly courseApiService = inject(CourseApiService);
+  private readonly courseSectionApiService = inject(CourseSectionApiService);
   private readonly personApiService = inject(PersonApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly snackbarService = inject(SnackbarService);
@@ -44,8 +48,34 @@ export class GroupView {
 
   readonly title = computed(() => this.group()?.name ?? 'Group not found');
 
+  courseName = signal('');
+  sectionName = signal('');
+
+  breadcrumbs = computed(() => {
+    if (this.returnCourseId && this.returnSectionId) {
+      return [
+        { label: this.courseName() || 'Course', route: `/course/${this.returnCourseId}` },
+        { label: this.sectionName() || 'Section', route: `/course/${this.returnCourseId}/course-section/${this.returnSectionId}` },
+        { label: this.title() },
+      ];
+    }
+    return [{ label: this.title() }];
+  });
+
   constructor() {
     void this.loadGroupData();
+    void this.loadBreadcrumbNames();
+  }
+
+  private async loadBreadcrumbNames(): Promise<void> {
+    if (this.returnCourseId) {
+      const course = await this.courseApiService.getCourseById(this.returnCourseId);
+      if (course) this.courseName.set(course.name);
+    }
+    if (this.returnSectionId) {
+      const section = await this.courseSectionApiService.getCourseSectionById(this.returnSectionId);
+      if (section) this.sectionName.set(section.name);
+    }
   }
 
   private async loadGroupData(): Promise<void> {

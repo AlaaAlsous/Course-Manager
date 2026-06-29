@@ -42,6 +42,46 @@ export class ParticipantDetail implements OnInit {
     () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
   );
 
+  breadcrumbs = computed(() => {
+    const data = this.overview();
+    if (!data) return [];
+
+    const crumbs: { label: string; route?: string }[] = [];
+
+    if (data.groups.length > 0) {
+      const group = data.groups[0];
+      const section = data.sections.find((s) => s.id === group.courseSectionId);
+      if (section) {
+        const course = data.courses.find((c) => c.id === section.courseId);
+        if (course) {
+          crumbs.push({ label: course.name, route: `/course/${course.id}` });
+        }
+        crumbs.push({
+          label: section.name,
+          route: `/course/${section.courseId}/course-section/${section.id}`,
+        });
+      }
+      crumbs.push({ label: group.name, route: `/groups/${group.id}` });
+    } else if (data.sections.length > 0) {
+      const section = data.sections[0];
+      const course = data.courses.find((c) => c.id === section.courseId);
+      if (course) {
+        crumbs.push({ label: course.name, route: `/course/${course.id}` });
+      }
+      crumbs.push({
+        label: section.name,
+        route: `/course/${section.courseId}/course-section/${section.id}`,
+      });
+    } else if (data.courses.length > 0) {
+      const course = data.courses[0];
+      crumbs.push({ label: course.name, route: `/course/${course.id}` });
+    }
+
+    crumbs.push({ label: data.person.fullName });
+
+    return crumbs;
+  });
+
   constructor(private route: ActivatedRoute) { }
 
   async ngOnInit(): Promise<void> {

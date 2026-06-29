@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
@@ -41,8 +41,21 @@ export class CourseSectionView {
   private readonly snackbarService = inject(SnackbarService);
 
   sectionName = signal('');
+  courseName = signal('');
   isEditing = signal(false);
   editName = '';
+
+  breadcrumbs = computed(() => {
+    const courseId = this.courseId();
+    const course = this.courseName();
+    if (courseId && course) {
+      return [
+        { label: course, route: `/course/${courseId}` },
+        { label: this.sectionName() || this.title() },
+      ];
+    }
+    return [{ label: this.title() }];
+  });
 
   constructor() {
     const courseId = Number(this.route.snapshot.paramMap.get('courseId'));
@@ -72,6 +85,7 @@ export class CourseSectionView {
     }
 
     this.sectionName.set(section.name);
+    this.courseName.set(course?.name ?? '');
     this.title.set(`${course?.name ?? 'Course'} - ${section.name}`);
 
     const groupsWithCounts = await Promise.all(

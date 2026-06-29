@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +28,10 @@ export class CourseView {
   courseId = signal<number | null>(null);
 
   sections = signal<CourseSectionViewModel[]>([]);
+
+  breadcrumbs = computed(() => [
+    { label: this.title() },
+  ]);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

@@ -16,6 +16,8 @@ export class Layout {
 
   @Input() title = '';
 
+  @Input() breadcrumbs: { label: string; route?: string }[] = [];
+
   menuOpen = signal(false);
 
   readonly currentYear = new Date().getFullYear();
