@@ -1,4 +1,8 @@
 <app-layout [title]="title()">
+  <div class="home-actions">
+    <button [routerLink]="['/participants/create']">Create Participant</button>
+  </div>
+
   <section title-actions class="title-search">
     <button
       type="button"
@@ -11,11 +15,20 @@
         <circle cx="11" cy="11" r="6" />
       </svg>
     </button>
-    <input #searchInput type="search" placeholder="Search participants..." (input)="onSearchChange($event)" />
+    <input
+      #searchInput
+      type="search"
+      placeholder="Search participants..."
+      (input)="onSearchChange($event)"
+    />
   </section>
 
   <section class="participants-overview" aria-label="Participants overview">
     <h2 class="participants-overview__heading">Participants</h2>
+
+    @if (filteredPersons().length === 0) {
+      <p class="empty-state">No participants to show.</p>
+    }
 
     <div class="participant-list">
       @for (person of filteredPersons(); track $index) {
@@ -24,7 +37,14 @@
           [routerLink]="['/participant']"
           [queryParams]="{ id: person.id }"
         >
-          {{ person.fullName }}
+          <span class="participant-item__name">{{ person.fullName }}</span>
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
         </article>
       }
     </div>

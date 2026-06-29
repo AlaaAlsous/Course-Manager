@@ -10,10 +10,11 @@
   <form (ngSubmit)="createPerson(nameInput.value)">
     <div class="form-input">
       <label for="name">Name</label>
-      <input #nameInput type="text" id="name" name="name" required placeholder="Name" />
+      <input #nameInput type="text" id="name" name="name" required placeholder="Enter name" />
     </div>
 
-    <button type="submit">Create Participant</button>
+    <div class="actions">
+      <button type="submit" class="primary">Create Participant</button>
+    </div>
   </form>
-
 </app-layout>

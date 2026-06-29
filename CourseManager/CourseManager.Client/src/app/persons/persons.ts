@@ -14,7 +14,7 @@ import { PersonApiService } from '../api-services/person-api-service';
 export class Persons implements OnInit {
   private readonly personApiService = inject(PersonApiService)
 
-  title = signal('Deltagare');
+  title = signal('Participants');
   searchTerm = signal('');
   persons = signal<any[]>([]);
 

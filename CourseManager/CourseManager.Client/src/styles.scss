@@ -857,6 +857,14 @@ textarea {
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
+.participant-item__name {
+  font-size: var(--font-md);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
 
 .kurstillfalle-overview__header {
   align-items: center;
