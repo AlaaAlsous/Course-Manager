@@ -6,7 +6,6 @@ import { ContentModule } from '../content-module/content-module';
 import { GroupApiService } from '../api-services/group-api-service';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { PersonApiService } from '../api-services/person-api-service';
-import { Snackbar } from '../shared/snackbar/snackbar';
 import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 interface GroupMemberViewModel {
@@ -23,7 +22,7 @@ interface GroupViewModel {
 
 @Component({
   selector: 'app-group-view',
-  imports: [Layout, ContentModule, FormsModule, RouterLink, Snackbar],
+  imports: [Layout, ContentModule, FormsModule, RouterLink],
   templateUrl: './group-view.html',
 })
 export class GroupView {

@@ -8,6 +8,7 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
 import { CourseApiService } from '../api-services/course-api-service';
 import { GroupApiService } from '../api-services/group-api-service';
+import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 import { environment } from '../../environments/environment';
 
 interface CourseSectionGroup {
@@ -37,6 +38,7 @@ export class CourseSectionView {
   private readonly courseSectionApiService = inject(CourseSectionApiService);
   private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly snackbarService = inject(SnackbarService);
 
   sectionName = signal('');
   isEditing = signal(false);
@@ -132,7 +134,10 @@ export class CourseSectionView {
       return;
     }
 
-    await this.groupApiService.deleteGroup(groupId);
+    const deleted = await this.groupApiService.deleteGroup(groupId);
+    if (deleted) {
+      this.snackbarService.show(SnackbarType.Success, 'Grupp borttagen.');
+    }
     await this.loadSectionData();
   }
 
@@ -202,7 +207,10 @@ export class CourseSectionView {
 
     if (!confirmed) return;
 
-    await this.courseSectionApiService.deleteCourseSection(sectionId);
+    const deleted = await this.courseSectionApiService.deleteCourseSection(sectionId);
+    if (deleted) {
+      this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle borttaget.');
+    }
     this.goBack();
   }
 

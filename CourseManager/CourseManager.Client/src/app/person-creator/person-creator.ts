@@ -1,25 +1,23 @@
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Layout } from '../layout/layout';
 import { Router } from '@angular/router';
+import { Layout } from '../layout/layout';
 import { PersonApiService } from '../api-services/person-api-service';
-import { Snackbar } from '../shared/snackbar/snackbar';
 import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-person-creator',
-  imports: [Layout, FormsModule, Snackbar],
+  imports: [Layout, FormsModule],
   templateUrl: './person-creator.html',
 })
 export class PersonCreator {
   private readonly location = inject(Location);
   private readonly personApiService = inject(PersonApiService);
   private readonly snackbarService = inject(SnackbarService);
+  private readonly router = inject(Router);
 
   title = signal('Skapa deltagare');
-
-  constructor(private router: Router) {}
 
   goBack() {
     if (window.history.length > 1) {
@@ -30,12 +28,19 @@ export class PersonCreator {
   }
 
   async createPerson(name: string) {
-    const id = await this.personApiService.createPerson(name);
-    console.log(id);
-    if(id === null)
-      this.snackbarService.show(SnackbarType.Failure, `Kunde inte skapa deltagare '${name}'`);
-    else {
-      this.snackbarService.show(SnackbarType.Success, `Deltagare '${name}' skapades`);
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      this.snackbarService.show(SnackbarType.Failure, 'Namn får inte vara tomt.');
+      return;
+    }
+    const id = await this.personApiService.createPerson(trimmedName);
+    if (id === null) {
+      this.snackbarService.show(
+        SnackbarType.Failure,
+        `Kunde inte skapa deltagare '${trimmedName}'`,
+      );
+    } else {
+      this.snackbarService.show(SnackbarType.Success, `Deltagare '${trimmedName}' skapades`);
       this.goBack();
     }
   }

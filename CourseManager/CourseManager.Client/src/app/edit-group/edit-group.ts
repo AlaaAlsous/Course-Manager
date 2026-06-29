@@ -5,6 +5,7 @@ import { Layout } from '../layout/layout';
 import { GroupApiService } from '../api-services/group-api-service';
 import { Group } from '../api-services/dtos';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-edit-group',
@@ -16,6 +17,7 @@ export class EditGroup {
   private readonly router = inject(Router);
   private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly snackbarService = inject(SnackbarService);
 
   private readonly groupId = Number(this.route.snapshot.paramMap.get('id'));
   private readonly returnCourseId = Number(this.route.snapshot.queryParamMap.get('courseId'));
@@ -102,6 +104,7 @@ export class EditGroup {
       return;
     }
 
+    this.snackbarService.show(SnackbarType.Success, 'Gruppen togs bort.');
     this.router.navigate(['/home']);
   }
 

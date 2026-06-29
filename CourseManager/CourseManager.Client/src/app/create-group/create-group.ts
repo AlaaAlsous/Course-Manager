@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { SnackbarType } from '../shared/snackbar/snackbar.service';
 import { SnackbarService } from '../shared/snackbar/snackbar.service';
-import { Snackbar } from '../shared/snackbar/snackbar';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 import { PersonApiService } from '../api-services/person-api-service';
 import { GroupApiService } from '../api-services/group-api-service';
@@ -19,7 +18,7 @@ interface Person {
 
 @Component({
   selector: 'app-create-group',
-  imports: [FormsModule, Layout, NgFor, Snackbar],
+  imports: [FormsModule, Layout, NgFor],
   templateUrl: './create-group.html',
 })
 export class CreateGroup {
@@ -114,15 +113,17 @@ export class CreateGroup {
   }
 
   async createPerson() {
-    const name = this.nameInputRef.nativeElement.value;
+    const name = this.nameInputRef.nativeElement.value.trim();
+    if (!name) {
+      this.snackbarService.show(SnackbarType.Failure, 'Namn får inte vara tomt.');
+      return;
+    }
     const id = await this.personApiService.createPerson(name);
-    console.log(id);
     if (id === null) {
       this.snackbarService.show(SnackbarType.Failure, `Kunde inte skapa deltagare '${name}'`);
       return;
-    } else {
-      this.snackbarService.show(SnackbarType.Success, `Deltagare '${name}' skapades`);
     }
+    this.snackbarService.show(SnackbarType.Success, `Deltagare '${name}' skapades`);
 
     const person = await this.personApiService.getPersonById(id);
     if (person) {

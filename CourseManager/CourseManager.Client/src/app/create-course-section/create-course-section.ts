@@ -74,6 +74,7 @@ export class CreateCourseSection {
     }
 
     await this.courseSectionApiService.getCourseSectionById(createdSectionId);
+    this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle skapat!');
 
     this.router.navigate(['/course', this.courseId]);
   }

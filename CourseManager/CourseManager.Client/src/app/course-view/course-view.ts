@@ -10,6 +10,7 @@ import { CourseApiService } from '../api-services/course-api-service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
 import { CourseSection } from '../api-services/dtos';
 import { GroupApiService } from '../api-services/group-api-service';
+import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 interface CourseSectionViewModel extends CourseSection {
   groupCount: number;
@@ -34,6 +35,7 @@ export class CourseView {
   private readonly courseSectionApiService = inject(CourseSectionApiService);
   private readonly groupApiService = inject(GroupApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly snackbarService = inject(SnackbarService);
 
   isEditing = signal(false);
   editName = '';
@@ -97,7 +99,10 @@ export class CourseView {
       return;
     }
 
-    await this.courseSectionApiService.deleteCourseSection(sectionId);
+    const deleted = await this.courseSectionApiService.deleteCourseSection(sectionId);
+    if (deleted) {
+      this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle borttaget.');
+    }
     await this.loadCourseData();
   }
 
@@ -123,6 +128,7 @@ export class CourseView {
       return;
     }
 
+    this.snackbarService.show(SnackbarType.Success, 'Program borttaget.');
     this.router.navigate(['/all-courses']);
   }
 
@@ -132,19 +138,15 @@ export class CourseView {
   }
 
   async saveEdit(): Promise<void> {
-  const courseId = this.courseId();
-  if (!courseId) return;
+    const courseId = this.courseId();
+    if (!courseId) return;
 
-  await this.courseApiService.updateCourse(
-    courseId,
-    this.editName,
-    null
-  );
+    await this.courseApiService.updateCourse(courseId, this.editName, null);
 
-  this.title.set(this.editName);
+    this.title.set(this.editName);
 
-  this.isEditing.set(false);
-}
+    this.isEditing.set(false);
+  }
 
   cancelEdit(): void {
     this.isEditing.set(false);

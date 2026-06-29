@@ -2,14 +2,13 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
-import { Snackbar } from '../shared/snackbar/snackbar';
 import { CourseApiService } from '../api-services/course-api-service';
 import { Course } from '../api-services/dtos';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf, Layout, Snackbar],
+  imports: [NgFor, NgIf, Layout],
   templateUrl: './home.html',
 })
 export class Home {
