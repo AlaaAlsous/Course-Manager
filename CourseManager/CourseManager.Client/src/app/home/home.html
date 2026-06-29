@@ -1,18 +1,18 @@
 <app-layout [title]="title()">
   <div class="home-actions">
-    <button (click)="createCourse()">Skapa program</button>
+    <button (click)="createCourse()">Create Course</button>
   </div>
 
   <div class="course-grid">
-    <h2>Befintliga program</h2>
+    <h2>Existing Courses</h2>
 
-    <p *ngIf="courses().length === 0" class="empty-state">Inga program att visa.</p>
+    <p *ngIf="courses().length === 0" class="empty-state">No courses to show.</p>
 
     <div class="course-cards" *ngIf="courses().length > 0">
       <article *ngFor="let c of courses()" class="course-card clickable" (click)="goToCourse(c.id)">
         <div class="item-row">
           <span>{{ c.name }}</span>
-          <small>Skapad {{ getRelativeDate(c.createdAt) }}</small>
+          <small>Created {{ getRelativeDate(c.createdAt) }}</small>
         </div>
 
         <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

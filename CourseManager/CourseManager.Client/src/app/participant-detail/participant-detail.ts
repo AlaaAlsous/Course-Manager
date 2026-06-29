@@ -30,7 +30,7 @@ export class ParticipantDetail implements OnInit {
   private readonly confirmDialogService = inject(ConfirmDialogService);
   private readonly snackbarService = inject(SnackbarService);
 
-  title = signal('Detaljer för deltagare');
+  title = signal('Participant Details');
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   overview = signal<PersonOverview | null>(null);
@@ -42,13 +42,13 @@ export class ParticipantDetail implements OnInit {
     () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
   );
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) { }
 
   async ngOnInit(): Promise<void> {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
     if (!Number.isFinite(id) || id <= 0) {
       this.loading.set(false);
-      this.errorMessage.set('Deltagaren kunde inte hittas eftersom länken saknar ett giltigt id.');
+      this.errorMessage.set('Participant could not be found because the link is missing a valid id.');
       return;
     }
 
@@ -63,8 +63,8 @@ export class ParticipantDetail implements OnInit {
     const overview = await this.personApiService.getPersonOverview(id);
     if (!overview) {
       this.overview.set(null);
-      this.title.set('Deltagaren hittades inte');
-      this.errorMessage.set('Deltagaren hittades inte eller kunde inte laddas.');
+      this.title.set('Participant not found');
+      this.errorMessage.set('Participant not found or could not be loaded.');
       this.loading.set(false);
       return;
     }
@@ -115,7 +115,7 @@ export class ParticipantDetail implements OnInit {
 
     const updated = await this.personApiService.updatePerson(id, name);
     if (!updated) {
-      this.errorMessage.set('Kunde inte uppdatera deltagaren.');
+      this.errorMessage.set('Could not update participant.');
       return;
     }
 
@@ -130,21 +130,21 @@ export class ParticipantDetail implements OnInit {
   courseNameForSection(section: CourseSection): string {
     return (
       this.overview()?.courses.find((course) => course.id === section.courseId)?.name ??
-      'Okänt program'
+      'Unknown course'
     );
   }
 
   sectionNameForGroup(group: Group): string {
     return (
       this.overview()?.sections.find((section) => section.id === group.courseSectionId)?.name ??
-      'Okänt kurstillfälle'
+      'Unknown course section'
     );
   }
 
   formatDate(dateString: string | null): string {
-    if (!dateString) return 'Datum saknas';
+    if (!dateString) return 'Missing date';
 
-    return new Intl.DateTimeFormat('sv-SE', {
+    return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -161,10 +161,10 @@ export class ParticipantDetail implements OnInit {
   async deletePerson() {
     if (this.personId() !== null) {
       const confirmed = await this.confirmDialogService.confirm({
-        title: `Ta bort deltagare`,
-        message: `Vill du verkligen ta bort deltagare '${this.overview()?.person.fullName}'?`,
-        confirmText: 'Ta bort',
-        cancelText: 'Avbryt',
+        title: 'Delete Participant',
+        message: `Are you sure you want to delete participant '${this.overview()?.person.fullName}'?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
       });
 
       if (!confirmed) {
@@ -172,7 +172,7 @@ export class ParticipantDetail implements OnInit {
       }
 
       await this.personApiService.deletePerson(this.personId()!);
-      this.snackbarService.show(SnackbarType.Success, 'Deltagare borttagen.');
+      this.snackbarService.show(SnackbarType.Success, 'Participant deleted.');
       this.goBack();
     }
   }

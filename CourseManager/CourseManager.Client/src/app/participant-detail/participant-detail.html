@@ -1,21 +1,21 @@
 <app-layout [title]="title()">
   <div class="detail-page">
     <div style="display: flex; flex-direction: row">
-      <button type="button" class="delete-button btn-sm" (click)="deletePerson()" title="Ta bort deltagare">
+      <button type="button" class="delete-button btn-sm" (click)="deletePerson()" title="Delete participant">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
       </button>
       <div style="display: flex; justify-content: right; width: 100%">
-        <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+        <button type="button" class="app-back-button" (click)="goBack()">Back</button>
       </div>
     </div>
 
     @if (loading()) {
       <section class="state-card">
-        <p>Laddar deltagare...</p>
+        <p>Loading participant...</p>
       </section>
     } @else if (errorMessage()) {
       <section class="state-card state-card--error">
-        <h2>Något gick fel</h2>
+        <h2>Something went wrong</h2>
         <p>{{ errorMessage() }}</p>
       </section>
     } @else if (overview(); as data) {
@@ -28,55 +28,55 @@
           @if (isEditing()) {
             <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
             <div class="hero-actions">
-              <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
-              <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+              <button type="button" class="app-back-button" (click)="saveEdit()">Save</button>
+              <button type="button" class="app-back-button" (click)="cancelEdit()">Cancel</button>
             </div>
           } @else {
             <h1>{{ data.person.fullName }}</h1>
-            <button type="button" class="app-back-button btn-sm" (click)="startEdit()" title="Redigera">
+            <button type="button" class="app-back-button btn-sm" (click)="startEdit()" title="Edit">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
           }
         </div>
       </div>
 
-      <section class="overview-grid" aria-label="Deltagarens kopplingar">
+      <section class="overview-grid" aria-label="Participant's connections">
         <article class="overview-card">
-          <h2>Program</h2>
+          <h2>Courses</h2>
           @for (course of data.courses; track course.id) {
             <a class="relation-row" [routerLink]="['/course', course.id]">
               <span>{{ course.name }}</span>
-              <small>Skapat {{ formatDate(course.createdAt) }}</small>
+              <small>Created {{ formatDate(course.createdAt) }}</small>
             </a>
           } @empty {
-            <p class="empty-state">Deltagaren är inte kopplad till något program.</p>
+            <p class="empty-state">The participant is not linked to any course.</p>
           }
         </article>
 
         <article class="overview-card">
-          <h2>Kurstillfällen</h2>
+          <h2>Course Sections</h2>
           @for (section of data.sections; track section.id) {
             <a
               class="relation-row"
-              [routerLink]="['/course', section.courseId, 'kurstillfalle', section.id]"
+              [routerLink]="['/course', section.courseId, 'course-section', section.id]"
             >
               <span>{{ section.name }}</span>
               <small>{{ courseNameForSection(section) }}</small>
             </a>
           } @empty {
-            <p class="empty-state">Deltagaren är inte kopplad till något kurstillfälle.</p>
+            <p class="empty-state">The participant is not linked to any course section.</p>
           }
         </article>
 
         <article class="overview-card">
-          <h2>Grupper</h2>
+          <h2>Groups</h2>
           @for (group of data.groups; track group.id) {
             <a class="relation-row" [routerLink]="['/groups', group.id]">
               <span>{{ group.name }}</span>
               <small>{{ sectionNameForGroup(group) }}</small>
             </a>
           } @empty {
-            <p class="empty-state">Deltagaren är inte kopplad till någon grupp.</p>
+            <p class="empty-state">The participant is not linked to any group.</p>
           }
         </article>
       </section>

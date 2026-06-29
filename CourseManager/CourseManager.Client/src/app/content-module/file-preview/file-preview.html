@@ -2,7 +2,7 @@
   @case (PreviewType.Text) {
     @if (textLoadFailed) {
       <div class="file-preview file-preview--unknown">
-        <span class="fs-sm text-muted">Denna fil kan inte förhandsvisas</span>
+        <span class="fs-sm text-muted">This file cannot be previewed</span>
       </div>
     } @else {
       <div class="file-preview file-preview--text">
@@ -14,7 +14,7 @@
         ></textarea>
         @if (!isReadonly()) {
           <button class="file-preview__edit-btn" (click)="toggleEdit()">
-            {{ isEditing ? 'Spara' : 'Redigera' }}
+            {{ isEditing ? 'Save' : 'Edit' }}
           </button>
         }
       </div>
@@ -28,20 +28,20 @@
   @case (PreviewType.Voice) {
     <div class="file-preview file-preview--voice">
       <audio controls [src]="file().sourceUrl" class="file-preview__audio">
-        Din webbläsare stödjer inte ljuduppspelning.
+        Your browser does not support audio playback.
       </audio>
     </div>
   }
   @case (PreviewType.OpenInBrowser) {
     <div class="file-preview file-preview--link">
       <a class="fs-sm text-primary fw-600" [href]="file().sourceUrl" target="_blank"
-        >Öppna i webbläsaren</a
+        >Open in browser</a
       >
     </div>
   }
   @default {
     <div class="file-preview file-preview--unknown">
-      <span class="fs-sm text-muted">Denna fil kan inte förhandsvisas</span>
+      <span class="fs-sm text-muted">This file cannot be previewed</span>
     </div>
   }
 }

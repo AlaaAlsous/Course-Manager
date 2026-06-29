@@ -32,9 +32,9 @@ interface OverviewFileGroup {
 }
 
 const SOURCE_TYPE_LABELS: Record<string, string> = {
-  course: 'Program',
-  'course-section': 'Kurstillfälle',
-  group: 'Grupp',
+  course: 'Course',
+  'course-section': 'Course Section',
+  group: 'Group',
   person: 'Person',
 };
 
@@ -131,10 +131,10 @@ export class ContentModule {
 
     return Array.from(groups.values()).sort((a, b) => {
       const order: Record<string, number> = {
-        Program: 0,
-        Kurstillfälle: 1,
-        Grupp: 2,
-        Deltagare: 3,
+        Course: 0,
+        'Course Section': 1,
+        Group: 2,
+        Person: 3,
       };
       return (order[a.sourceType] ?? 99) - (order[b.sourceType] ?? 99);
     });
@@ -178,7 +178,7 @@ export class ContentModule {
       segment.path.toLowerCase(),
     );
 
-    if (segments[0] === 'course' && segments[2] === 'kurstillfalle') {
+    if (segments[0] === 'course' && segments[2] === 'course-section') {
       const sectionId = Number(segments[3]);
       if (Number.isFinite(sectionId) && sectionId > 0) {
         return { entityType: 'course-section', entityId: sectionId };
@@ -355,10 +355,10 @@ export class ContentModule {
   /** Called when the user clicks the delete icon on a file. */
   async onDeleteFile(file: ContentFile): Promise<void> {
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort fil',
-      message: 'Är du säker att du vill ta bort ' + file.name + '?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete file',
+      message: 'Are you sure you want to delete ' + file.name + '?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (confirmed) {

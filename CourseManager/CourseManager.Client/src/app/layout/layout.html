@@ -1,7 +1,7 @@
 <div class="app-root-layout">
   <header class="top-nav">
     <div class="top-nav__breadish">
-      <span (click)="redirectHome()" style="cursor: pointer"> Programhanteraren </span>
+      <span (click)="redirectHome()" style="cursor: pointer"> Course Manager </span>
       @if (title.length > 0) {
         <span style="color: var(--color-text-muted)"> / </span>
         <span>{{ title }}</span>
@@ -18,14 +18,17 @@
       <span></span>
     </button>
 
+    <!-- Backdrop overlay for mobile menu -->
+    <div class="nav-overlay" [class.open]="menuOpen()" (click)="closeMenu()"></div>
+
     <nav class="top-nav__links" [class.open]="menuOpen()">
-      <a routerLink="/all-courses" (click)="closeMenu()">Program</a>
-      <a routerLink="/participants" (click)="closeMenu()">Deltagare</a>
+      <a routerLink="/all-courses" (click)="closeMenu()">Courses</a>
+      <a routerLink="/participants" (click)="closeMenu()">Participants</a>
       <button
         type="button"
         class="theme-toggle"
-        [attr.aria-label]="themeService.theme() === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema'"
-        [attr.title]="themeService.theme() === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema'"
+        [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+        [attr.title]="themeService.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
         [attr.aria-pressed]="themeService.theme() === 'dark'"
         (click)="toggleTheme()"
       >
@@ -50,7 +53,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Programhanteraren - Din styrbara utbildningsplattform</p>
+    <p>&copy; {{ currentYear }} Course Manager</p>
   </footer>
 
 </div>

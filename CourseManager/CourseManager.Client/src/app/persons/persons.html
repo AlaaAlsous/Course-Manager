@@ -3,7 +3,7 @@
     <button
       type="button"
       class="title-search__toggle"
-      aria-label="Visa sökfält"
+      aria-label="Show search"
       (click)="searchInput.focus()"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -11,11 +11,11 @@
         <circle cx="11" cy="11" r="6" />
       </svg>
     </button>
-    <input #searchInput type="search" placeholder="Sök i deltagare..." (input)="onSearchChange($event)" />
+    <input #searchInput type="search" placeholder="Search participants..." (input)="onSearchChange($event)" />
   </section>
 
   <section class="participants-overview" aria-label="Participants overview">
-    <h2 class="participants-overview__heading">Deltagare</h2>
+    <h2 class="participants-overview__heading">Participants</h2>
 
     <div class="participant-list">
       @for (person of filteredPersons(); track $index) {

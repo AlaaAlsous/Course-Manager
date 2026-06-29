@@ -87,10 +87,10 @@ export class EditGroup {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort grupp',
-      message: 'Vill du verkligen ta bort denna grupp?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Group',
+      message: 'Are you sure you want to delete this group?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -100,11 +100,11 @@ export class EditGroup {
     const deleted = await this.groupApiService.deleteGroup(selectedGroup.id);
 
     if (!deleted) {
-      this.statusMessage.set('Kunde inte ta bort gruppen.');
+      this.statusMessage.set('Could not delete group.');
       return;
     }
 
-    this.snackbarService.show(SnackbarType.Success, 'Gruppen togs bort.');
+    this.snackbarService.show(SnackbarType.Success, 'Group deleted.');
     this.router.navigate(['/home']);
   }
 

@@ -3,7 +3,7 @@
     <button
       type="button"
       class="title-search__toggle"
-      aria-label="Visa sökfält"
+      aria-label="Show search"
       (click)="searchInput.focus()"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -11,13 +11,13 @@
         <circle cx="11" cy="11" r="6" />
       </svg>
     </button>
-    <input #searchInput type="search" placeholder="Sök i program..." (input)="onSearchChange($event)" />
+    <input #searchInput type="search" placeholder="Search courses..." (input)="onSearchChange($event)" />
   </section>
 
   <section class="courses-overview" aria-label="All courses overview">
-    <h2 class="courses-overview__heading">Tillgängliga program</h2>
+    <h2 class="courses-overview__heading">Available Courses</h2>
 
-    <p *ngIf="filteredCourses().length === 0" class="empty-state">Inga program att visa.</p>
+    <p *ngIf="filteredCourses().length === 0" class="empty-state">No courses to show.</p>
 
     <div class="course-list" *ngIf="filteredCourses().length > 0">
       <article

@@ -2,12 +2,12 @@
   <div class="content-module__container">
     <div>
       <div class="content-module__toolbar mt-1 d-flex flex-row gap-1">
-        <h3 class="">Innehåll</h3>
+        <h3 class="">Content</h3>
         <button class="content-module__action-btn" (click)="triggerFileUpload()">
-          Ladda upp fil
+          Upload file
         </button>
         <button class="content-module__action-btn" (click)="triggerImageUpload()">
-          {{ hasCamera ? 'Ta bild' : 'Ladda upp bild' }}
+          {{ hasCamera ? 'Take photo' : 'Upload image' }}
         </button>
 
         @if (hasOverview()) {
@@ -16,7 +16,7 @@
             [class.content-module__toggle-overview-btn--active]="showOverview()"
             (click)="toggleOverview()"
           >
-            {{ showOverview() ? 'Dölj översikt' : 'Visa översikt' }}
+            {{ showOverview() ? 'Hide overview' : 'Show overview' }}
           </button>
         }
       </div>
@@ -48,7 +48,7 @@
           <textarea
             class="content-module__note-textarea"
             [(ngModel)]="noteContent"
-            placeholder="Skriv en anteckning..."
+            placeholder="Write a note..."
           ></textarea>
           <div class="content-module__note-actions">
             <button
@@ -56,7 +56,7 @@
               (click)="publishNote()"
               [disabled]="!noteContent.trim()"
             >
-              Spara
+              Save
             </button>
           </div>
         </div>
@@ -88,8 +88,8 @@
                           class="content-module__icon-btn content-module__icon-btn--download"
                           [attr.href]="getDownloadUrl(item)"
                           [attr.download]="item.name + '.' + item.extension"
-                          [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
-                          title="Ladda ner"
+                          [attr.aria-label]="'Download ' + item.name + '.' + item.extension"
+                          title="Download"
                         >
                           <svg viewBox="0 0 20 20" aria-hidden="true">
                             <path
@@ -107,7 +107,7 @@
               </ul>
             </div>
           } @empty {
-            <p class="empty-state">Inget innehåll hittades för deltagarens kopplingar.</p>
+            <p class="empty-state">No content found for the participant's connections.</p>
           }
         </div>
       }
@@ -132,8 +132,8 @@
                       class="content-module__icon-btn content-module__icon-btn--download"
                       [attr.href]="getDownloadUrl(item)"
                       [attr.download]="item.name + '.' + item.extension"
-                      [attr.aria-label]="'Ladda ner ' + item.name + '.' + item.extension"
-                      title="Ladda ner"
+                      [attr.aria-label]="'Download ' + item.name + '.' + item.extension"
+                      title="Download"
                     >
                       <svg viewBox="0 0 20 20" aria-hidden="true">
                         <path
@@ -145,8 +145,8 @@
                     <button
                       class="content-module__icon-btn content-module__icon-btn--remove"
                       (click)="onDeleteFile(item)"
-                      [attr.aria-label]="'Ta bort ' + item.name + '.' + item.extension"
-                      title="Ta bort"
+                      [attr.aria-label]="'Delete ' + item.name + '.' + item.extension"
+                      title="Delete"
                     >
                       <svg viewBox="0 0 20 20" aria-hidden="true">
                         <path

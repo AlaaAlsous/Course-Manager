@@ -17,7 +17,7 @@ export class PersonCreator {
   private readonly snackbarService = inject(SnackbarService);
   private readonly router = inject(Router);
 
-  title = signal('Skapa deltagare');
+  title = signal('Create Participant');
 
   goBack() {
     if (window.history.length > 1) {
@@ -30,17 +30,14 @@ export class PersonCreator {
   async createPerson(name: string) {
     const trimmedName = name.trim();
     if (!trimmedName) {
-      this.snackbarService.show(SnackbarType.Failure, 'Namn får inte vara tomt.');
+      this.snackbarService.show(SnackbarType.Failure, 'Name cannot be empty.');
       return;
     }
     const id = await this.personApiService.createPerson(trimmedName);
     if (id === null) {
-      this.snackbarService.show(
-        SnackbarType.Failure,
-        `Kunde inte skapa deltagare '${trimmedName}'`,
-      );
+      this.snackbarService.show(SnackbarType.Failure, `Could not create participant '${trimmedName}'`);
     } else {
-      this.snackbarService.show(SnackbarType.Success, `Deltagare '${trimmedName}' skapades`);
+      this.snackbarService.show(SnackbarType.Success, `Participant '${trimmedName}' created`);
       this.goBack();
     }
   }

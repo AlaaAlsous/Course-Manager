@@ -6,18 +6,18 @@
           <div class="kurstillfalle-overview__title-row">
             <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
             <div class="kurstillfalle-overview__title-actions">
-              <button type="button" class="app-back-button" (click)="saveEdit()">Spara</button>
-              <button type="button" class="app-back-button" (click)="cancelEdit()">Avbryt</button>
+              <button type="button" class="app-back-button" (click)="saveEdit()">Save</button>
+              <button type="button" class="app-back-button" (click)="cancelEdit()">Cancel</button>
             </div>
           </div>
         } @else {
           <div class="kurstillfalle-overview__title-row">
             <h2>{{ title() }}</h2>
             <div class="kurstillfalle-overview__title-actions">
-              <button type="button" class="app-back-button btn-sm" (click)="startEdit()" title="Redigera">
+              <button type="button" class="app-back-button btn-sm" (click)="startEdit()" title="Edit">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
-              <button type="button" class="delete-button btn-sm" (click)="deleteCourse()" title="Ta bort program">
+              <button type="button" class="delete-button btn-sm" (click)="deleteCourse()" title="Delete course">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
               </button>
             </div>
@@ -27,10 +27,10 @@
 
       @if (!isEditing()) {
         <div class="kurstillfalle-overview__actions">
-          <button type="button" class="app-back-button" [routerLink]="createKurstillfalleRoute()">
-            Skapa kurstillfälle
+          <button type="button" class="app-back-button" [routerLink]="createCourseSectionRoute()">
+            Create Course Section
           </button>
-          <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+          <button type="button" class="app-back-button" (click)="goBack()">Back</button>
         </div>
       }
     </header>
@@ -41,12 +41,12 @@
           <div class="kurstillfalle-card-row">
             <div class="kurstillfalle-card">
               <h3>{{ section.name }}</h3>
-              <p>{{ section.groupCount }} grupper</p>
+              <p>{{ section.groupCount }} groups</p>
             </div>
           </div>
         </li>
       } @empty {
-        <span>Inga kurstillfällen tillgängliga</span>
+        <span>No course sections available</span>
       }
     </ul>
   </section>

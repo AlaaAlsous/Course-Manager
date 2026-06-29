@@ -24,7 +24,7 @@ interface CourseSectionViewModel extends CourseSection {
 })
 export class CourseView {
   private readonly location = inject(Location);
-  title = signal('Program');
+  title = signal('Course');
   courseId = signal<number | null>(null);
 
   sections = signal<CourseSectionViewModel[]>([]);
@@ -80,19 +80,19 @@ export class CourseView {
   }
 
   sectionRoute(sectionId: number): (string | number)[] {
-    return ['/course', this.courseId() ?? 0, 'kurstillfalle', sectionId];
+    return ['/course', this.courseId() ?? 0, 'course-section', sectionId];
   }
 
-  createKurstillfalleRoute(): (string | number)[] {
-    return ['/course', this.courseId() ?? 0, 'kurstillfalle', 'new'];
+  createCourseSectionRoute(): (string | number)[] {
+    return ['/course', this.courseId() ?? 0, 'course-section', 'new'];
   }
 
   async deleteSection(sectionId: number): Promise<void> {
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort kurstillfälle',
-      message: 'Vill du verkligen ta bort detta kurstillfälle?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Course Section',
+      message: 'Are you sure you want to delete this course section?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -101,7 +101,7 @@ export class CourseView {
 
     const deleted = await this.courseSectionApiService.deleteCourseSection(sectionId);
     if (deleted) {
-      this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle borttaget.');
+      this.snackbarService.show(SnackbarType.Success, 'Course section deleted.');
     }
     await this.loadCourseData();
   }
@@ -113,10 +113,10 @@ export class CourseView {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort program',
-      message: 'Vill du verkligen ta bort detta program?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Course',
+      message: 'Are you sure you want to delete this course?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -128,7 +128,7 @@ export class CourseView {
       return;
     }
 
-    this.snackbarService.show(SnackbarType.Success, 'Program borttaget.');
+    this.snackbarService.show(SnackbarType.Success, 'Course deleted.');
     this.router.navigate(['/all-courses']);
   }
 

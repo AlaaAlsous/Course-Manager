@@ -25,7 +25,7 @@ interface CourseSectionGroup {
 })
 export class CourseSectionView {
   private readonly location = inject(Location);
-  title = signal('Kurstillfälle');
+  title = signal('Course Section');
 
   courseId = signal<number | null>(null);
   sectionId = signal<number | null>(null);
@@ -72,7 +72,7 @@ export class CourseSectionView {
     }
 
     this.sectionName.set(section.name);
-    this.title.set(`${course?.name ?? 'Program'} - ${section.name}`);
+    this.title.set(`${course?.name ?? 'Course'} - ${section.name}`);
 
     const groupsWithCounts = await Promise.all(
       groups.map(async (group) => {
@@ -124,10 +124,10 @@ export class CourseSectionView {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort grupp',
-      message: 'Vill du verkligen ta bort denna grupp från kurstillfället?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Group',
+      message: 'Are you sure you want to delete this group from the course section?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -136,7 +136,7 @@ export class CourseSectionView {
 
     const deleted = await this.groupApiService.deleteGroup(groupId);
     if (deleted) {
-      this.snackbarService.show(SnackbarType.Success, 'Grupp borttagen.');
+      this.snackbarService.show(SnackbarType.Success, 'Group deleted.');
     }
     await this.loadSectionData();
   }
@@ -163,7 +163,7 @@ export class CourseSectionView {
     if (updated) {
       this.sectionName.set(updated.name);
       const course = await this.courseApiService.getCourseById(courseId);
-      this.title.set(`${course?.name ?? 'Program'} - ${updated.name}`);
+      this.title.set(`${course?.name ?? 'Course'} - ${updated.name}`);
     }
     this.isEditing.set(false);
   }
@@ -186,7 +186,7 @@ export class CourseSectionView {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `kurstillfalle_${sectionId}.zip`;
+      a.download = `course_section_${sectionId}.zip`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -199,17 +199,17 @@ export class CourseSectionView {
     if (!sectionId) return;
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort kurstillfälle',
-      message: 'Vill du verkligen ta bort detta kurstillfälle?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Course Section',
+      message: 'Are you sure you want to delete this course section?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) return;
 
     const deleted = await this.courseSectionApiService.deleteCourseSection(sectionId);
     if (deleted) {
-      this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle borttaget.');
+      this.snackbarService.show(SnackbarType.Success, 'Course section deleted.');
     }
     this.goBack();
   }

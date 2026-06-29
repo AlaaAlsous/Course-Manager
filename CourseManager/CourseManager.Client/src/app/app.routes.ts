@@ -26,15 +26,15 @@ export const routes: Routes = [
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
   { path: 'create-course', component: CreateCourse, data: { title: 'Create Course' } },
   {
-    path: 'course/:courseId/kurstillfalle/new',
+    path: 'course/:courseId/course-section/new',
     component: CreateCourseSection,
-    data: { title: 'Skapa kurstillfälle' },
+    data: { title: 'Create Course Section' },
   },
   {
-    path: 'course/:courseId/kurstillfalle/:sectionId',
+    path: 'course/:courseId/course-section/:sectionId',
     component: CourseSectionView,
-    data: { title: 'Kurstillfälle' },
+    data: { title: 'Course Section' },
   },
   { path: 'course/:id', component: CourseView, data: { title: 'Course' } },
-  { path: '**', component: NotFound, data: { title: 'Sidan hittades inte' } },
+  { path: '**', component: NotFound, data: { title: 'Page not found' } },
 ];

@@ -12,7 +12,7 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
   templateUrl: './create-course-section.html',
 })
 export class CreateCourseSection {
-  title = signal('Skapa kurstillfälle');
+  title = signal('Create Course Section');
 
   name = '';
   description = '';
@@ -69,12 +69,12 @@ export class CreateCourseSection {
     );
 
     if (!createdSectionId) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa kurstillfälle.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not create course section.');
       return;
     }
 
     await this.courseSectionApiService.getCourseSectionById(createdSectionId);
-    this.snackbarService.show(SnackbarType.Success, 'Kurstillfälle skapat!');
+    this.snackbarService.show(SnackbarType.Success, 'Course section created!');
 
     this.router.navigate(['/course', this.courseId]);
   }

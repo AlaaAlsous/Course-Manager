@@ -15,7 +15,7 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
 export class CreateCourse {
   private readonly location = inject(Location);
 
-  title = signal('Skapa program');
+  title = signal('Create Course');
 
   name = '';
   submitted = false;
@@ -49,12 +49,12 @@ export class CreateCourse {
     const createdCourseId = await this.courseApiService.createCourse(this.name.trim(), null);
 
     if (!createdCourseId) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa program.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not create course.');
       return;
     }
 
     await this.courseApiService.getCourseById(createdCourseId);
-    this.snackbarService.show(SnackbarType.Success, 'Program skapat!');
+    this.snackbarService.show(SnackbarType.Success, 'Course created!');
     this.router.navigate(['/home']);
   }
 }

@@ -1,22 +1,22 @@
 <app-layout [title]="title()">
   <header class="app-page-header create-course-header">
     <div class="app-page-header__content">
-      <h2>Skapa program</h2>
+      <h2>Create Course</h2>
     </div>
 
-    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+    <button type="button" class="app-back-button" (click)="goBack()">Back</button>
   </header>
 
   <form (ngSubmit)="onSubmit()">
-    <label for="course-name">Namn</label>
+    <label for="course-name">Name</label>
     <input id="course-name" name="name" type="text" [(ngModel)]="name" required />
 
     @if (submitted && !isFormValid) {
-      <p class="validation">Namn är obligatoriskt.</p>
+      <p class="validation">Name is required.</p>
     }
 
     <div class="actions">
-      <button type="submit" class="primary">Skapa program</button>
+      <button type="submit" class="primary">Create Course</button>
     </div>
   </form>
 </app-layout>

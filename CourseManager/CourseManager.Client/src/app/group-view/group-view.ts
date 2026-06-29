@@ -42,7 +42,7 @@ export class GroupView {
   editName = '';
   readonly group = signal<GroupViewModel | null>(null);
 
-  readonly title = computed(() => this.group()?.name ?? 'Gruppen hittades inte');
+  readonly title = computed(() => this.group()?.name ?? 'Group not found');
 
   constructor() {
     void this.loadGroupData();
@@ -71,7 +71,7 @@ export class GroupView {
     const memberName = this.newMemberName.trim();
 
     if (!selectedGroup || !memberName) {
-      this.snackbarService.show(SnackbarType.Failure, 'Ange ett namn för medlemmen.');
+      this.snackbarService.show(SnackbarType.Failure, 'Please enter a name for the member.');
       return;
     }
 
@@ -88,7 +88,7 @@ export class GroupView {
       const createdPersonId = await this.personApiService.createPerson(memberName);
 
       if (!createdPersonId) {
-        this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa deltagare.');
+        this.snackbarService.show(SnackbarType.Failure, 'Could not create participant.');
         return;
       }
 
@@ -97,13 +97,13 @@ export class GroupView {
     }
 
     if (!relationAdded) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte lägga till medlem i gruppen.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not add member to group.');
       return;
     }
 
     await this.loadGroupData();
     this.newMemberName = '';
-    this.snackbarService.show(SnackbarType.Success, 'Medlem tillagd.');
+    this.snackbarService.show(SnackbarType.Success, 'Member added.');
   }
 
   async removeMember(memberId: number): Promise<void> {
@@ -112,10 +112,10 @@ export class GroupView {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort medlem',
-      message: 'Vill du verkligen ta bort medlemmen från gruppen?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Remove Member',
+      message: 'Are you sure you want to remove the member from the group?',
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -125,12 +125,12 @@ export class GroupView {
     const removed = await this.groupApiService.deletePerson(this.groupId, memberId);
 
     if (!removed) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte ta bort medlemmen.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not remove member.');
       return;
     }
 
     await this.loadGroupData();
-    this.snackbarService.show(SnackbarType.Success, 'Medlem borttagen.');
+    this.snackbarService.show(SnackbarType.Success, 'Member removed.');
   }
 
   async deleteGroup(): Promise<void> {
@@ -140,10 +140,10 @@ export class GroupView {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort grupp',
-      message: 'Vill du verkligen ta bort denna grupp?',
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Delete Group',
+      message: 'Are you sure you want to delete this group?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -153,11 +153,11 @@ export class GroupView {
     const deleted = await this.groupApiService.deleteGroup(selectedGroup.id);
 
     if (!deleted) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte ta bort gruppen.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not delete group.');
       return;
     }
 
-    this.snackbarService.show(SnackbarType.Success, 'Gruppen togs bort.');
+    this.snackbarService.show(SnackbarType.Success, 'Group deleted.');
     this.goBack();
   }
 
@@ -178,7 +178,7 @@ export class GroupView {
 
   goBack(): void {
     if (this.returnCourseId && this.returnSectionId) {
-      this.router.navigate(['/course', this.returnCourseId, 'kurstillfalle', this.returnSectionId]);
+      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
       return;
     }
 

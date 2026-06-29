@@ -18,6 +18,8 @@ export class Layout {
 
   menuOpen = signal(false);
 
+  readonly currentYear = new Date().getFullYear();
+
   redirectHome() {
     this.router.navigate(['/home'])
   }

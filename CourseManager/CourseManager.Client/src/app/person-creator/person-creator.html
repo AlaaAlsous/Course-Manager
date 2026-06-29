@@ -1,18 +1,19 @@
 <app-layout [title]="title()">
   <header class="app-page-header participant-creator__header">
     <div class="app-page-header__content">
-      <h2>Skapa en deltagare</h2>
+      <h2>Create a Participant</h2>
     </div>
 
-    <button type="button" class="app-back-button" (click)="goBack()">Tillbaka</button>
+    <button type="button" class="app-back-button" (click)="goBack()">Back</button>
   </header>
 
   <form (ngSubmit)="createPerson(nameInput.value)">
     <div class="form-input">
-      <label for="name">Namn</label>
-      <input #nameInput type="text" id="name" name="name" required placeholder="Namn" />
+      <label for="name">Name</label>
+      <input #nameInput type="text" id="name" name="name" required placeholder="Name" />
     </div>
 
-    <button type="submit">Skapa deltagare</button>
+    <button type="submit">Create Participant</button>
   </form>
+
 </app-layout>

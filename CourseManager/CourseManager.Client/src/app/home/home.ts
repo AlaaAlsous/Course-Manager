@@ -40,9 +40,9 @@ export class Home {
     const diffMs = now.getTime() - created.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'I dag';
-    if (diffDays === 1) return 'För 1 dag sedan';
-    return `För ${diffDays} dagar sedan`;
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return '1 day ago';
+    return `${diffDays} days ago`;
   }
 
   goToCourse(id: number) {

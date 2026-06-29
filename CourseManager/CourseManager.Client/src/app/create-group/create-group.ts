@@ -62,7 +62,7 @@ export class CreateGroup {
 
   goBack() {
     if (this.hasValidReturnSection()) {
-      this.router.navigate(['/course', this.returnCourseId, 'kurstillfalle', this.returnSectionId]);
+      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
       return;
     }
 
@@ -95,10 +95,10 @@ export class CreateGroup {
     }
 
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Ta bort person',
-      message: `Vill du verkligen ta bort ${person.name} från gruppen?`,
-      confirmText: 'Ta bort',
-      cancelText: 'Avbryt',
+      title: 'Remove person',
+      message: `Are you sure you want to remove ${person.name} from the group?`,
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
     });
 
     if (!confirmed) {
@@ -115,15 +115,15 @@ export class CreateGroup {
   async createPerson() {
     const name = this.nameInputRef.nativeElement.value.trim();
     if (!name) {
-      this.snackbarService.show(SnackbarType.Failure, 'Namn får inte vara tomt.');
+      this.snackbarService.show(SnackbarType.Failure, 'Name cannot be empty.');
       return;
     }
     const id = await this.personApiService.createPerson(name);
     if (id === null) {
-      this.snackbarService.show(SnackbarType.Failure, `Kunde inte skapa deltagare '${name}'`);
+      this.snackbarService.show(SnackbarType.Failure, `Could not create participant '${name}'`);
       return;
     }
-    this.snackbarService.show(SnackbarType.Success, `Deltagare '${name}' skapades`);
+    this.snackbarService.show(SnackbarType.Success, `Participant '${name}' created`);
 
     const person = await this.personApiService.getPersonById(id);
     if (person) {
@@ -136,19 +136,19 @@ export class CreateGroup {
     const groupName = this.name.trim();
 
     if (!groupName) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kan inte skapa grupp utan namn');
+      this.snackbarService.show(SnackbarType.Failure, 'Cannot create group without a name');
       return;
     }
 
     if (!this.hasValidReturnSection()) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kan inte skapa grupp utan kurstillfälle.');
+      this.snackbarService.show(SnackbarType.Failure, 'Cannot create group without a course section.');
       return;
     }
 
     const createdGroupId = await this.groupApiService.createGroup(groupName, this.returnSectionId);
 
     if (!createdGroupId) {
-      this.snackbarService.show(SnackbarType.Failure, 'Kunde inte skapa grupp.');
+      this.snackbarService.show(SnackbarType.Failure, 'Could not create group.');
       return;
     }
 
@@ -161,7 +161,7 @@ export class CreateGroup {
     this.snackbarService.show(SnackbarType.Success, 'Group created successfully!');
 
     if (this.hasValidReturnSection()) {
-      this.router.navigate(['/course', this.returnCourseId, 'kurstillfalle', this.returnSectionId]);
+      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
       return;
     }
 
