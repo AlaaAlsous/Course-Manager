@@ -1670,6 +1670,135 @@ label {
   .title-bar {
     padding: var(--space-md);
   }
+  .site-footer {
+    font-size: 11px;
+    padding: var(--space-sm) var(--space-md);
+  }
+  button:not(.btn-sm):not(.hamburger):not(.theme-toggle):not(.content-module__icon-btn),
+  .app-back-button:not(.btn-sm),
+  .delete-button:not(.btn-sm),
+  .primary,
+  .create-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .btn-sm {
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 36px;
+  }
+  .btn-sm svg {
+    width: 18px;
+    height: 18px;
+  }
+  .app-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .kurstillfalle-overview__actions,
+  .course-section-view__actions,
+  .course-view__actions,
+  .group-view__actions,
+  .group-view__header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .kurstillfalle-overview__title-row,
+  .course-section-view__title-row,
+  .group-view__title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .course-cards {
+    grid-template-columns: 1fr;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .course-card {
+    padding: var(--space-sm);
+  }
+  .participant-item {
+    padding: var(--space-sm);
+  }
+  .kurstillfalle-list__item {
+    padding: var(--space-sm);
+  }
+  .group-list__item {
+    padding: var(--space-sm);
+  }
+  .courses-overview,
+  .participants-overview {
+    padding: var(--space-md);
+  }
+  .home-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .detail-page {
+    padding: 0;
+    gap: var(--space-md);
+  }
+  .hero-card {
+    padding: var(--space-md);
+  }
+  .hero-info h1 {
+    font-size: var(--font-2xl);
+  }
+  .state-card,
+  .overview-card,
+  .content-card {
+    padding: var(--space-md);
+  }
+  .section {
+    margin-top: var(--space-md);
+  }
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  .group-view__member-actions {
+    flex-direction: column;
+  }
+  .group-view__member-actions input {
+    min-width: 0;
+    width: 100%;
+  }
+  form {
+    width: 100%;
+    padding: var(--space-md);
+  }
+  .create-group-container {
+    padding: var(--space-md);
+    width: 100%;
+  }
+  .personInputContainer {
+    flex-direction: column;
+  }
+  .person-section-button {
+    margin-left: 0;
+    width: 100%;
+  }
+  .person-selection,
+  .personNameInput {
+    max-width: 100%;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .edit-group__header {
+    flex-direction: column;
+  }
+  .edit-group__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .edit-group__actions button {
+    width: 100%;
+  }
+  .inline-edit-input {
+    min-width: 0;
+    width: 100%;
+  }
   .title-search__toggle {
     display: inline-flex;
   }
@@ -1680,8 +1809,8 @@ label {
   .title-search input[type='search']:not(:placeholder-shown) {
     position: absolute;
     top: calc(100% + var(--space-xs));
-    right: var(--space-md);
-    left: var(--space-md);
+    right: var(--space-sm);
+    left: var(--space-sm);
     z-index: 50;
     width: auto;
     padding: 0.45rem 0.65rem;
@@ -1692,51 +1821,25 @@ label {
     font-size: 0.85rem;
     box-shadow: var(--shadow-md);
   }
-  .course-cards {
-    grid-template-columns: 1fr;
+  .content-module {
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
   }
-  .overview-grid {
-    grid-template-columns: 1fr;
+  .content-module__toolbar {
+    flex-direction: column;
+    align-items: stretch;
   }
-  .home-actions {
+  .content-module__action-btn {
+    width: 100%;
+  }
+  .content-module__file-row {
     flex-wrap: wrap;
   }
-  .hero-card {
-    padding: var(--space-md);
-  }
-  .hero-info h1 {
-    font-size: var(--font-2xl);
-  }
-  .courses-overview,
-  .participants-overview {
-    padding: var(--space-md);
-  }
-  .course-card {
-    padding: var(--space-sm);
-  }
-  .participant-item {
-    padding: var(--space-sm);
-  }
-  .detail-page {
-    padding: 0;
-    gap: var(--space-md);
-  }
-  .state-card,
-  .overview-card,
-  .content-card {
-    padding: var(--space-md);
-  }
-  .section {
-    margin-top: var(--space-md);
-  }
-  .personInputContainer {
+  .confirm-modal__actions {
     flex-direction: column;
   }
-  .person-section-button {
-    margin-left: 0;
-  }
-  .edit-group__header {
-    flex-direction: column;
+  .confirm-modal__actions button {
+    width: 100%;
   }
 }
 @media (min-width: 768px) {
