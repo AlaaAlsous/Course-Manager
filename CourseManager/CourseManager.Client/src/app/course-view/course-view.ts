@@ -20,7 +20,6 @@ interface CourseSectionViewModel extends CourseSection {
   standalone: true,
   imports: [Layout, RouterModule, ContentModule, FormsModule],
   templateUrl: './course-view.html',
-  styleUrl: './course-view.scss',
 })
 export class CourseView {
   private readonly location = inject(Location);

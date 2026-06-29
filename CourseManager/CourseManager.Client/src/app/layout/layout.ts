@@ -7,7 +7,6 @@ import { ThemeService } from '../theme.service';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './layout.html',
-  styleUrls: ['./layout.scss'],
 })
 export class Layout {
   constructor(

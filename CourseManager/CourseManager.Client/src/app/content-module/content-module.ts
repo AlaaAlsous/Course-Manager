@@ -31,7 +31,6 @@ interface OverviewFileGroup {
   items: ContentFile[];
 }
 
-/** Maps the internal sourceType value to a user‑friendly Swedish label. */
 const SOURCE_TYPE_LABELS: Record<string, string> = {
   course: 'Program',
   'course-section': 'Kurstillfälle',
@@ -60,7 +59,6 @@ function parseFileName(fileName: string): { name: string; extension: string } {
   standalone: true,
   imports: [FilePreview, FormsModule],
   templateUrl: './content-module.html',
-  styleUrl: './content-module.scss',
 })
 export class ContentModule {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;

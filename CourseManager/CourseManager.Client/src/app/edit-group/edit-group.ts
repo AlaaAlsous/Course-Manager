@@ -10,7 +10,6 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
   selector: 'app-edit-group',
   imports: [FormsModule, Layout],
   templateUrl: './edit-group.html',
-  styleUrl: './edit-group.scss',
 })
 export class EditGroup {
   private readonly route = inject(ActivatedRoute);

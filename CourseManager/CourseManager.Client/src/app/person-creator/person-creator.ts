@@ -11,7 +11,6 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
   selector: 'app-person-creator',
   imports: [Layout, FormsModule, Snackbar],
   templateUrl: './person-creator.html',
-  styleUrl: './person-creator.scss',
 })
 export class PersonCreator {
   private readonly location = inject(Location);

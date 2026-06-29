@@ -25,7 +25,6 @@ interface GroupViewModel {
   selector: 'app-group-view',
   imports: [Layout, ContentModule, FormsModule, RouterLink, Snackbar],
   templateUrl: './group-view.html',
-  styleUrl: './group-view.scss',
 })
 export class GroupView {
   private readonly route = inject(ActivatedRoute);

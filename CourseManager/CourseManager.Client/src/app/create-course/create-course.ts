@@ -11,7 +11,6 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
   standalone: true,
   imports: [FormsModule, Layout],
   templateUrl: './create-course.html',
-  styleUrl: './create-course.scss',
 })
 export class CreateCourse {
   private readonly location = inject(Location);

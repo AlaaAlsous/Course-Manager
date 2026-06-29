@@ -21,7 +21,6 @@ interface Person {
   selector: 'app-create-group',
   imports: [FormsModule, Layout, NgFor, Snackbar],
   templateUrl: './create-group.html',
-  styleUrl: './create-group.scss',
 })
 export class CreateGroup {
   private readonly location = inject(Location);

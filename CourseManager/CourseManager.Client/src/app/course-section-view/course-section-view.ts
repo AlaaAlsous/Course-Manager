@@ -21,7 +21,6 @@ interface CourseSectionGroup {
   standalone: true,
   imports: [Layout, ContentModule, RouterModule, FormsModule],
   templateUrl: './course-section-view.html',
-  styleUrl: './course-section-view.scss',
 })
 export class CourseSectionView {
   private readonly location = inject(Location);

@@ -7,7 +7,6 @@ import { Layout } from '../layout/layout';
   standalone: true,
   imports: [Layout, RouterLink],
   templateUrl: './not-found.html',
-  styleUrls: ['./not-found.scss'],
 })
 export class NotFound {
   title = signal('Sidan hittades inte');

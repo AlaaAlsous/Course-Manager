@@ -7,7 +7,6 @@ import { ThemeService } from './theme.service';
   selector: 'app-root',
   imports: [RouterOutlet, ConfirmDialogComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
 })
 export class App {
   constructor(private readonly themeService: ThemeService) {}

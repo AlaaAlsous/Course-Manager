@@ -10,7 +10,6 @@ import { PersonApiService } from '../api-services/person-api-service';
   standalone: true,
   imports: [CommonModule, Layout, RouterModule],
   templateUrl: './persons.html',
-  styleUrls: ['./persons.scss'],
 })
 export class Persons implements OnInit {
   private readonly personApiService = inject(PersonApiService)

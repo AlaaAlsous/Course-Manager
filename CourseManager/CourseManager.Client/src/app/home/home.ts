@@ -11,7 +11,6 @@ import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
   standalone: true,
   imports: [NgFor, NgIf, Layout, Snackbar],
   templateUrl: './home.html',
-  styleUrls: ['./home.scss'],
 })
 export class Home {
   title = signal('');

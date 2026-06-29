@@ -9,7 +9,6 @@ import {
   selector: 'app-snackbar',
   imports: [],
   templateUrl: './snackbar.html',
-  styleUrl: './snackbar.scss',
 })
 export class Snackbar {
 

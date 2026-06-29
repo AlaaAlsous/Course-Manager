@@ -10,7 +10,6 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
   standalone: true,
   imports: [Layout, FormsModule],
   templateUrl: './create-course-section.html',
-  styleUrl: './create-course-section.scss',
 })
 export class CreateCourseSection {
   title = signal('Skapa kurstillfälle');

@@ -20,7 +20,6 @@ interface OverviewContentFile extends ContentFile {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, Layout, ContentModule],
   templateUrl: './participant-detail.html',
-  styleUrls: ['./participant-detail.scss'],
 })
 export class ParticipantDetail implements OnInit {
   private readonly location = inject(Location);

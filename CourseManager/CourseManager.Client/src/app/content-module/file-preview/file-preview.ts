@@ -41,7 +41,6 @@ function previewTypeFromExtension(extension: string): PreviewType {
   selector: 'app-file-preview',
   imports: [],
   templateUrl: './file-preview.html',
-  styleUrl: './file-preview.scss',
   standalone: true,
 })
 export class FilePreview {

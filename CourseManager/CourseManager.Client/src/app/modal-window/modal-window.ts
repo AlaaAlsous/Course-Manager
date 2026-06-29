@@ -12,7 +12,6 @@ import { Component, EventEmitter, Output } from '@angular/core';
       </div>
     }
   `,
-  styleUrl: './modal-window.scss',
 })
 
 /**

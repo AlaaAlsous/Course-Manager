@@ -8,7 +8,6 @@ import { ModalWindow } from '../modal-window/modal-window';
   standalone: true,
   imports: [ModalWindow],
   templateUrl: './confirm-dialog.component.html',
-  styleUrl: './confirm-dialog.component.scss',
 })
 export class ConfirmDialogComponent implements OnInit, OnDestroy {
   @ViewChild(ModalWindow) modal!: ModalWindow;

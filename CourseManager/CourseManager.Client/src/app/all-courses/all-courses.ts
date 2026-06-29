@@ -10,7 +10,6 @@ import { Course } from '../api-services/dtos';
   standalone: true,
   imports: [Layout, NgFor, NgIf, RouterModule],
   templateUrl: './all-courses.html',
-  styleUrl: './all-courses.scss',
 })
 export class AllCourses {
   title = signal('Alla program');
