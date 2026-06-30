@@ -173,7 +173,6 @@ button:hover,
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-
 button:active {
   transform: translateY(0);
 }
@@ -220,7 +219,6 @@ button:disabled {
 .person-section-button {
   min-width: 110px;
 }
-
 .create-person-btn:hover {
   background: var(--color-primary);
   color: var(--color-text-inverted);
@@ -406,7 +404,6 @@ textarea {
   margin: 0;
   font-weight: 400;
 }
-
 .hamburger {
   display: none;
   flex-direction: column;
@@ -443,7 +440,6 @@ textarea {
 .hamburger.active span:nth-child(3) {
   transform: translateY(-6px) rotate(-45deg);
 }
-
 .card {
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
@@ -451,7 +447,6 @@ textarea {
   padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
 }
-
 .app-page-header {
   display: flex;
   align-items: flex-start;
@@ -472,7 +467,6 @@ textarea {
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
 }
-
 .title-search {
   margin-left: auto;
   display: flex;
@@ -582,7 +576,6 @@ textarea {
   width: -moz-available;
   width: stretch;
 }
-
 .empty-state {
   text-align: center;
   color: var(--color-text-muted);
@@ -624,7 +617,6 @@ textarea {
   max-height: 90vh;
   overflow-y: auto;
 }
-
 .confirm-modal {
   display: flex;
   flex-direction: column;
@@ -662,7 +654,6 @@ textarea {
 .confirm-modal__btn--confirm:hover {
   background: #dc2626;
 }
-
 .snackbar {
   position: fixed;
   bottom: var(--space-xl);
@@ -686,20 +677,6 @@ textarea {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
-}
-@media (max-width: 600px) {
-  .snackbar {
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, 20px);
-    min-width: auto;
-    width: max-content;
-    max-width: calc(100% - var(--space-xl) * 2);
-    text-align: center;
-  }
-  .snackbar.show {
-    transform: translate(-50%, 0);
-  }
 }
 .snackbar.success {
   background: var(--color-success);
@@ -1006,9 +983,9 @@ textarea {
 }
 .group-view__header-info {
   width: 100%;
-  p {
-    text-align: center;
-  }
+}
+.group-view__header-info p {
+  text-align: center;
 }
 .group-view__title-row {
   display: flex;
@@ -1180,10 +1157,6 @@ label {
   display: flex;
   gap: 1rem;
   width: 100%;
-}
-.create-person-btn:hover {
-  background: var(--color-primary);
-  color: var(--color-text-inverted);
 }
 
 .create-kurstillfalle__header {
@@ -1758,29 +1731,50 @@ label {
     padding: var(--space-sm);
   }
   .page-sheet {
-    padding: var(--space-md);
+    padding: var(--space-sm);
     border-radius: var(--radius-md);
     width: 100%;
   }
   .top-nav {
-    padding: 0 var(--space-md);
+    padding: 0 var(--space-sm);
     gap: var(--space-sm);
   }
   .top-nav__logo {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   .title-bar {
-    padding: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
   }
   .site-footer {
     font-size: 11px;
     padding: var(--space-sm) var(--space-md);
   }
+  .snackbar {
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, 20px);
+    min-width: auto;
+    width: max-content;
+    max-width: calc(100% - var(--space-xl) * 2);
+    text-align: center;
+  }
+  .snackbar.show {
+    transform: translate(-50%, 0);
+  }
+
+  h2 {
+    font-size: var(--font-xl);
+  }
+  h3 {
+    font-size: var(--font-lg);
+  }
+  .hero-info h1 {
+    font-size: var(--font-2xl);
+  }
 
   .title-search__toggle {
     display: inline-flex;
   }
-
   .title-search input[type='search'] {
     display: none;
     position: absolute;
@@ -1792,7 +1786,6 @@ label {
     font-size: var(--font-sm);
     padding: 0.45rem 0.65rem;
   }
-
   .title-search:focus-within input[type='search'] {
     display: block;
   }
@@ -1808,14 +1801,15 @@ label {
     justify-content: center;
   }
   .btn-sm {
-    padding: 6px 10px;
-    min-width: 36px;
-    height: 36px;
+    padding: 5px 7px;
+    min-width: 30px;
+    height: 30px;
   }
   .btn-sm svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
   }
+
   .app-page-header {
     flex-direction: column;
     align-items: stretch;
@@ -1864,9 +1858,6 @@ label {
   }
   .hero-card {
     padding: var(--space-md);
-  }
-  .hero-info h1 {
-    font-size: var(--font-2xl);
   }
   .state-card,
   .overview-card,
@@ -1956,6 +1947,15 @@ label {
   }
   .confirm-modal__actions button {
     width: 100%;
+  }
+  .profile-placeholder {
+    width: 64px;
+    height: 64px;
+    font-size: 1.5rem;
+  }
+  .profile-image {
+    width: 100px;
+    height: 100px;
   }
 }
 @media (min-width: 768px) {
