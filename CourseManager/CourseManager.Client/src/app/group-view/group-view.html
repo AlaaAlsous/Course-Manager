@@ -2,7 +2,7 @@
   @if (group(); as selectedGroup) {
     <section class="group-view">
       <header class="group-view__header">
-        <div>
+        <div class="group-view__header-info">
           @if (isEditing()) {
             <div class="group-view__title-row">
               <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
@@ -21,6 +21,9 @@
                 <button type="button" class="delete-button btn-sm" (click)="deleteGroup()" title="Delete group">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                 </button>
+                <button type="button" class="app-back-button btn-sm" (click)="goBack()" title="Back to groups">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+                </button>
               </div>
             </div>
           }
@@ -29,14 +32,6 @@
             {{ selectedGroup.members.length === 1 ? 'member' : 'members' }}
           </p>
         </div>
-
-        @if (!isEditing()) {
-          <div class="group-view__header-actions">
-            <button type="button" class="app-back-button" (click)="goBack()">
-              Back to groups
-            </button>
-          </div>
-        }
       </header>
 
       <section class="group-view__members">

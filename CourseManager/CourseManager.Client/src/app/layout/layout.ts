@@ -16,7 +16,7 @@ export class Layout {
 
   @Input() title = '';
 
-  @Input() breadcrumbs: { label: string; route?: string }[] = [];
+  @Input() breadcrumbs: { label: string; route?: string | (string | number)[]; queryParams?: Record<string, string | number> }[] = [];
 
   menuOpen = signal(false);
 

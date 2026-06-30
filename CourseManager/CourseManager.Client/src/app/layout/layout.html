@@ -53,7 +53,7 @@
       @for (crumb of breadcrumbs; track crumb.label) {
         <span class="breadcrumb-bar__separator">/</span>
         @if (crumb.route) {
-          <a class="breadcrumb-bar__link" [routerLink]="crumb.route">{{ crumb.label }}</a>
+          <a class="breadcrumb-bar__link" [routerLink]="crumb.route" [queryParams]="crumb.queryParams || {}">{{ crumb.label }}</a>
         } @else {
           <span class="breadcrumb-bar__current">{{ crumb.label }}</span>
         }

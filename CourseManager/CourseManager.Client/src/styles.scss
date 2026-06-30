@@ -562,11 +562,20 @@ textarea {
 .mr-1 {
   margin-right: 1rem;
 }
+.fs-sm {
+  font-size: var(--font-sm);
+}
+.fs-xs {
+  font-size: var(--font-xs);
+}
 .fw-600 {
   font-weight: 600;
 }
 .text-muted {
   color: var(--color-text-muted);
+}
+.text-primary {
+  color: var(--color-primary);
 }
 .w-available {
   width: -webkit-fill-available;
@@ -995,12 +1004,19 @@ textarea {
 .group-view__header p {
   margin: 0;
 }
+.group-view__header-info {
+  width: 100%;
+  p {
+    text-align: center;
+  }
+}
 .group-view__title-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+  justify-content: space-between;
 }
 .group-view__header-actions {
   display: flex;
@@ -1246,7 +1262,7 @@ label {
 }
 .detail-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: var(--space-sm);
   flex-wrap: wrap;
 }
@@ -1262,14 +1278,14 @@ label {
 }
 .hero-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: var(--space-lg);
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border);
-  padding: var(--space-2xl);
-  text-align: center;
+  padding: var(--space-xl);
+  text-align: left;
 }
 .profile-placeholder {
   width: 88px;
@@ -1294,7 +1310,7 @@ label {
   flex-shrink: 0;
 }
 .hero-info {
-  text-align: center;
+  text-align: left;
   min-width: 0;
 }
 .hero-info h1 {
@@ -1308,7 +1324,7 @@ label {
 }
 .hero-actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
   flex-wrap: wrap;
@@ -1807,16 +1823,14 @@ label {
   .kurstillfalle-overview__actions,
   .course-section-view__actions,
   .course-view__actions,
-  .group-view__actions,
-  .group-view__header-actions {
+  .group-view__actions {
     width: 100%;
-    flex-direction: column;
   }
   .kurstillfalle-overview__title-row,
   .course-section-view__title-row,
-  .group-view__title-row {
-    flex-direction: column;
-    align-items: flex-start;
+  .group-view__title-row,
+  .group-view__header {
+    justify-content: space-between;
   }
   .course-cards {
     grid-template-columns: 1fr;
@@ -1921,6 +1935,21 @@ label {
   }
   .content-module__file-row {
     flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .content-module__file-name {
+    word-break: break-all;
+  }
+  .content-module__file-actions {
+    margin-top: var(--space-xs);
+  }
+  .file-preview {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .file-preview__image {
+    max-height: 250px;
   }
   .confirm-modal__actions {
     flex-direction: column;
@@ -1930,17 +1959,6 @@ label {
   }
 }
 @media (min-width: 768px) {
-  .hero-card {
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-  }
-  .hero-info {
-    text-align: left;
-  }
-  .hero-actions {
-    justify-content: flex-start;
-  }
   .overview-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

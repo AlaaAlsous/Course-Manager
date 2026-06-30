@@ -46,7 +46,7 @@ export class ParticipantDetail implements OnInit {
     const data = this.overview();
     if (!data) return [];
 
-    const crumbs: { label: string; route?: string }[] = [];
+    const crumbs: { label: string; route?: string | (string | number)[]; queryParams?: Record<string, string | number> }[] = [];
 
     if (data.groups.length > 0) {
       const group = data.groups[0];
@@ -61,7 +61,7 @@ export class ParticipantDetail implements OnInit {
           route: `/course/${section.courseId}/course-section/${section.id}`,
         });
       }
-      crumbs.push({ label: group.name, route: `/groups/${group.id}` });
+      crumbs.push({ label: group.name, route: ['/groups', group.id], queryParams: { courseId: section!.courseId, sectionId: section!.id } });
     } else if (data.sections.length > 0) {
       const section = data.sections[0];
       const course = data.courses.find((c) => c.id === section.courseId);

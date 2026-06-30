@@ -4,7 +4,9 @@
       <h2>Create Course</h2>
     </div>
 
-    <button type="button" class="app-back-button" (click)="goBack()">Back</button>
+    <button type="button" class="app-back-button btn-sm" (click)="goBack()" title="Back">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
   </header>
 
   <form (ngSubmit)="onSubmit()">
