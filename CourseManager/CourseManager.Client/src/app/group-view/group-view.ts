@@ -47,7 +47,7 @@ export class GroupView {
   readonly editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
   readonly group = signal<GroupViewModel | null>(null);
 
-  readonly title = computed(() => this.group()?.name ?? 'Group not found');
+  readonly title = computed(() => this.group()?.name ?? '');
 
   courseName = signal('');
   sectionName = signal('');
@@ -55,8 +55,8 @@ export class GroupView {
   breadcrumbs = computed(() => {
     if (this.returnCourseId && this.returnSectionId) {
       return [
-        { label: this.courseName() || 'Course', route: `/course/${this.returnCourseId}` },
-        { label: this.sectionName() || 'Section', route: `/course/${this.returnCourseId}/course-section/${this.returnSectionId}` },
+        { label: this.courseName(), route: `/course/${this.returnCourseId}` },
+        { label: this.sectionName(), route: `/course/${this.returnCourseId}/course-section/${this.returnSectionId}` },
         { label: this.title() },
       ];
     }

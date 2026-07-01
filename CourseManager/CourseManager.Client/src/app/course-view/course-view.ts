@@ -24,7 +24,7 @@ interface CourseSectionViewModel extends CourseSection {
 })
 export class CourseView {
   private readonly location = inject(Location);
-  title = signal('Course');
+  title = signal('');
   courseId = signal<number | null>(null);
 
   sections = signal<CourseSectionViewModel[]>([]);

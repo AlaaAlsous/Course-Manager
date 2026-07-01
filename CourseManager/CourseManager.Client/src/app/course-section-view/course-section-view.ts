@@ -25,7 +25,7 @@ interface CourseSectionGroup {
 })
 export class CourseSectionView {
   private readonly location = inject(Location);
-  title = signal('Course Section');
+  title = signal('');
 
   courseId = signal<number | null>(null);
   sectionId = signal<number | null>(null);
@@ -52,10 +52,10 @@ export class CourseSectionView {
     if (courseId && course) {
       return [
         { label: course, route: `/course/${courseId}` },
-        { label: this.sectionName() || this.title() },
+        { label: this.sectionName() },
       ];
     }
-    return [{ label: this.title() }];
+    return [{ label: this.sectionName() }];
   });
 
   constructor() {

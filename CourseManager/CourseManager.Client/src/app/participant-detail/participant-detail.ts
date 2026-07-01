@@ -30,7 +30,7 @@ export class ParticipantDetail implements OnInit {
   private readonly confirmDialogService = inject(ConfirmDialogService);
   private readonly snackbarService = inject(SnackbarService);
 
-  title = signal('Participant Details');
+  title = signal('');
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   overview = signal<PersonOverview | null>(null);
