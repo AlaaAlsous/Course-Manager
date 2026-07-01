@@ -5,7 +5,7 @@
         <div class="group-view__header-info">
           @if (isEditing()) {
             <div class="group-view__title-row">
-              <input class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
+              <input #editInput class="inline-edit-input" [(ngModel)]="editName" (keyup.enter)="saveEdit()" />
               <div class="group-view__header-actions">
                 <button type="button" class="app-back-button" (click)="saveEdit()">Save</button>
                 <button type="button" class="app-back-button" (click)="cancelEdit()">Cancel</button>

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -43,6 +43,7 @@ export class CourseView {
 
   isEditing = signal(false);
   editName = '';
+  readonly editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -139,6 +140,9 @@ export class CourseView {
   startEdit(): void {
     this.editName = this.title();
     this.isEditing.set(true);
+    setTimeout(() => {
+      this.editInput()?.nativeElement?.focus();
+    });
   }
 
   async saveEdit(): Promise<void> {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../layout/layout';
@@ -44,6 +44,7 @@ export class GroupView {
   newMemberName = '';
   isEditing = signal(false);
   editName = '';
+  readonly editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
   readonly group = signal<GroupViewModel | null>(null);
 
   readonly title = computed(() => this.group()?.name ?? 'Group not found');
@@ -194,6 +195,9 @@ export class GroupView {
   startEdit(): void {
     this.editName = this.group()?.name ?? '';
     this.isEditing.set(true);
+    setTimeout(() => {
+      this.editInput()?.nativeElement?.focus();
+    });
   }
 
   async saveEdit(): Promise<void> {

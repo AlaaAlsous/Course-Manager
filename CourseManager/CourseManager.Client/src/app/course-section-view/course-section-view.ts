@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout } from '../layout/layout';
 import { ContentModule } from '../content-module/content-module';
@@ -44,6 +44,7 @@ export class CourseSectionView {
   courseName = signal('');
   isEditing = signal(false);
   editName = '';
+  readonly editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
 
   breadcrumbs = computed(() => {
     const courseId = this.courseId();
@@ -158,6 +159,9 @@ export class CourseSectionView {
   startEdit(): void {
     this.editName = this.sectionName();
     this.isEditing.set(true);
+    setTimeout(() => {
+      this.editInput()?.nativeElement?.focus();
+    });
   }
 
   async saveEdit(): Promise<void> {

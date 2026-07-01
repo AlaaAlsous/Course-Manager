@@ -632,6 +632,8 @@ textarea {
   color: var(--color-text-secondary);
   font-size: var(--font-sm);
   line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .confirm-modal__actions {
   display: flex;
@@ -861,7 +863,7 @@ textarea {
 }
 .kurstillfalle-overview__title-actions {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
   align-items: center;
   gap: 0.5rem;
 }
@@ -920,7 +922,7 @@ textarea {
 }
 .course-section-view__title-actions {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
   align-items: center;
   gap: 0.5rem;
 }
@@ -989,7 +991,7 @@ textarea {
 }
 .group-view__title-row {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
@@ -997,7 +999,7 @@ textarea {
 }
 .group-view__header-actions {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1300,7 +1302,6 @@ label {
   justify-content: flex-start;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
-  flex-wrap: wrap;
 }
 .section {
   margin-top: var(--space-xl);

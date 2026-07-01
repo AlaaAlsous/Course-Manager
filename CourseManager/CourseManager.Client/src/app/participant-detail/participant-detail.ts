@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,6 +37,7 @@ export class ParticipantDetail implements OnInit {
   personId = signal<number | null>(null);
   isEditing = signal(false);
   editName = '';
+  readonly editInput = viewChild<ElementRef<HTMLInputElement>>('editInput');
 
   overviewFiles = computed(
     () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
@@ -144,6 +145,9 @@ export class ParticipantDetail implements OnInit {
   startEdit(): void {
     this.editName = this.overview()?.person.fullName ?? '';
     this.isEditing.set(true);
+    setTimeout(() => {
+      this.editInput()?.nativeElement?.focus();
+    });
   }
 
   async saveEdit(): Promise<void> {
