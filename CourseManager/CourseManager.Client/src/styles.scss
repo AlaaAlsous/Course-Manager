@@ -863,7 +863,7 @@ textarea {
 }
 .kurstillfalle-overview__title-actions {
   display: flex;
-  width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -922,7 +922,7 @@ textarea {
 }
 .course-section-view__title-actions {
   display: flex;
-  width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -970,7 +970,7 @@ textarea {
 
 .group-view {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 .group-view__header {
   display: flex;
@@ -999,7 +999,7 @@ textarea {
 }
 .group-view__header-actions {
   display: flex;
-  width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1455,10 +1455,17 @@ label {
 }
 .content-module__toolbar {
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: var(--space-md);
+}
+.content-module__toolbar-spacer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
 }
 .content-module__toolbar h3 {
   margin: 0;
@@ -1550,6 +1557,7 @@ label {
 .content-module__file-actions {
   display: flex;
   align-items: center;
+  align-self: flex-end;
   gap: 0.5rem;
 }
 .content-module__icon-btn {
@@ -1812,14 +1820,60 @@ label {
   }
 
   .app-page-header {
-    flex-direction: column;
     align-items: stretch;
   }
-  .kurstillfalle-overview__actions,
-  .course-section-view__actions,
   .course-view__actions,
   .group-view__actions {
     width: 100%;
+  }
+
+  .kurstillfalle-overview__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kurstillfalle-overview__header .app-page-header__content {
+    width: 100%;
+  }
+
+  .kurstillfalle-overview__title-row {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .kurstillfalle-overview__actions {
+    width: 100%;
+    margin-top: var(--space-sm);
+  }
+
+  .kurstillfalle-overview__actions button {
+    width: 100%;
+  }
+
+  .course-section-view__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-section-view__header .app-page-header__content {
+    width: 100%;
+  }
+
+  .course-section-view__title-row {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .course-section-view__actions {
+    width: 100%;
+    margin-top: var(--space-sm);
+  }
+
+  .course-section-view__actions button {
+    width: 100%;
+  }
+  .group-view__header h2 {
+    padding: 1rem 0;
   }
   .kurstillfalle-overview__title-row,
   .course-section-view__title-row,
@@ -1942,9 +1996,6 @@ label {
   }
   .file-preview__image {
     max-height: 250px;
-  }
-  .confirm-modal__actions {
-    flex-direction: column;
   }
   .confirm-modal__actions button {
     width: 100%;

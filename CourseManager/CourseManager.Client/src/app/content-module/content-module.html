@@ -3,22 +3,23 @@
     <div>
       <div class="content-module__toolbar mt-1 d-flex flex-row gap-1">
         <h3 class="">Content</h3>
-        <button class="content-module__action-btn" (click)="triggerFileUpload()">
-          Upload file
-        </button>
-        <button class="content-module__action-btn" (click)="triggerImageUpload()">
-          {{ hasCamera ? 'Take photo' : 'Upload image' }}
-        </button>
-
-        @if (hasOverview()) {
-          <button
-            class="content-module__action-btn content-module__toggle-overview-btn"
-            [class.content-module__toggle-overview-btn--active]="showOverview()"
-            (click)="toggleOverview()"
-          >
-            {{ showOverview() ? 'Hide overview' : 'Show overview' }}
+        <div class="content-module__toolbar-spacer">
+          <button class="content-module__action-btn" (click)="triggerFileUpload()">
+            Upload file
           </button>
-        }
+          <button class="content-module__action-btn" (click)="triggerImageUpload()">
+            {{ hasCamera ? 'Take photo' : 'Upload image' }}
+          </button>
+          @if (hasOverview()) {
+            <button
+              class="content-module__action-btn content-module__toggle-overview-btn"
+              [class.content-module__toggle-overview-btn--active]="showOverview()"
+              (click)="toggleOverview()"
+            >
+              {{ showOverview() ? 'Hide overview' : 'Show overview' }}
+            </button>
+          }
+        </div>
       </div>
 
       <!-- File actions toolbar -->
@@ -143,15 +144,27 @@
                     </a>
 
                     <button
-                      class="content-module__icon-btn content-module__icon-btn--remove"
+                      class="delete-button btn-sm"
                       (click)="onDeleteFile(item)"
                       [attr.aria-label]="'Delete ' + item.name + '.' + item.extension"
                       title="Delete"
                     >
-                      <svg viewBox="0 0 20 20" aria-hidden="true">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6" />
                         <path
-                          d="M6.4 5a1 1 0 0 1 .7.3L10 8.17l2.9-2.88a1 1 0 1 1 1.4 1.42L11.4 9.6l2.88 2.9a1 1 0 1 1-1.42 1.4L10 11.01l-2.9 2.88a1 1 0 0 1-1.4-1.42l2.88-2.9-2.88-2.88A1 1 0 0 1 6.4 5Z"
+                          d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
                         />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
                       </svg>
                     </button>
                   </div>
