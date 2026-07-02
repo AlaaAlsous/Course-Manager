@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CourseManager.Server.Models
 {
-    [Index(nameof(FullName))]
+    [Index(nameof(FullName), IsUnique = true)]
     public class Person
     {
         public int PersonId { get; set; }

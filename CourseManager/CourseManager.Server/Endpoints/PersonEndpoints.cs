@@ -24,6 +24,12 @@ public static class PersonEndpoints
 
         group.MapPost("/", async (CreatePersonRequest req, IPersonRepository repo) =>
         {
+            var existing = await repo.GetByNameAsync(req.FullName);
+            if (existing is not null)
+            {
+                return Results.Ok(new PersonDto(existing.PersonId, existing.FullName));
+            }
+
             var person = new Person
             {
                 FullName = req.FullName

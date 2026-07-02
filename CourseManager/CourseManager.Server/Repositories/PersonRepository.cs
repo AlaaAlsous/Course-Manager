@@ -23,6 +23,13 @@ public class PersonRepository : IPersonRepository
         return await _db.People.FindAsync(personId);
     }
 
+    public async Task<Person?> GetByNameAsync(string name)
+    {
+        var trimmed = name.Trim();
+        return await _db.People
+            .FirstOrDefaultAsync(p => p.FullName.Trim() == trimmed);
+    }
+
     public async Task<Person> CreateAsync(Person person)
     {
         _db.People.Add(person);
