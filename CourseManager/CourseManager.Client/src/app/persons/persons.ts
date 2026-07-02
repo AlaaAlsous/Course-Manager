@@ -12,7 +12,7 @@ import { PersonApiService } from '../api-services/person-api-service';
   templateUrl: './persons.html',
 })
 export class Persons implements OnInit {
-  private readonly personApiService = inject(PersonApiService)
+  private readonly personApiService = inject(PersonApiService);
 
   title = signal('Participants');
   searchTerm = signal('');
@@ -20,7 +20,7 @@ export class Persons implements OnInit {
 
   async ngOnInit() {
     const res = await this.personApiService.getAllPersons();
-    if(res != null) {
+    if (res != null) {
       this.persons.set(res);
     }
   }
@@ -34,8 +34,6 @@ export class Persons implements OnInit {
     const term = this.searchTerm().toLowerCase().trim();
     if (!term) return this.persons();
 
-    return this.persons().filter(
-      (p) => p.fullName.toLowerCase().includes(term) || p.fullName.toLowerCase().includes(term),
-    );
+    return this.persons().filter((p) => p.fullName.toLowerCase().includes(term));
   });
 }

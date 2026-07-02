@@ -31,11 +31,11 @@
     }
 
     <div class="participant-list">
-      @for (person of filteredPersons(); track $index) {
+      @for (person of filteredPersons(); track person.id) {
         <article
           class="participant-item"
           [routerLink]="['/participant']"
-          [queryParams]="{ id: person.id }"
+          [queryParams]="{ id: person.id, from: 'list' }"
         >
           <span class="participant-item__name">{{ person.fullName }}</span>
           <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

@@ -25,6 +25,7 @@ interface OverviewContentFile extends ContentFile {
 export class ParticipantDetail implements OnInit {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly personApiService = inject(PersonApiService);
   private readonly fileApiService = inject(FileApiService);
   private readonly confirmDialogService = inject(ConfirmDialogService);
@@ -43,11 +44,21 @@ export class ParticipantDetail implements OnInit {
     () => this.overview()?.files.map((file) => this.mapOverviewFile(file)) ?? [],
   );
 
+  private readonly fromList = this.route.snapshot.queryParamMap.get('from') === 'list';
+
   breadcrumbs = computed(() => {
     const data = this.overview();
     if (!data) return [];
 
-    const crumbs: { label: string; route?: string | (string | number)[]; queryParams?: Record<string, string | number> }[] = [];
+    if (this.fromList) {
+      return [{ label: data.person.fullName }];
+    }
+
+    const crumbs: {
+      label: string;
+      route?: string | (string | number)[];
+      queryParams?: Record<string, string | number>;
+    }[] = [];
 
     if (data.groups.length > 0) {
       const group = data.groups[0];
@@ -62,7 +73,11 @@ export class ParticipantDetail implements OnInit {
           route: `/course/${section.courseId}/course-section/${section.id}`,
         });
       }
-      crumbs.push({ label: group.name, route: ['/groups', group.id], queryParams: { courseId: section!.courseId, sectionId: section!.id } });
+      crumbs.push({
+        label: group.name,
+        route: ['/groups', group.id],
+        queryParams: { courseId: section!.courseId, sectionId: section!.id },
+      });
     } else if (data.sections.length > 0) {
       const section = data.sections[0];
       const course = data.courses.find((c) => c.id === section.courseId);
@@ -83,13 +98,13 @@ export class ParticipantDetail implements OnInit {
     return crumbs;
   });
 
-  constructor(private route: ActivatedRoute) { }
-
   async ngOnInit(): Promise<void> {
     const id = Number(this.route.snapshot.queryParamMap.get('id'));
     if (!Number.isFinite(id) || id <= 0) {
       this.loading.set(false);
-      this.errorMessage.set('Participant could not be found because the link is missing a valid id.');
+      this.errorMessage.set(
+        'Participant could not be found because the link is missing a valid id.',
+      );
       return;
     }
 
