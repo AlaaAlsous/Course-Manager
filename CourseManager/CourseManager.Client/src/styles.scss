@@ -317,6 +317,7 @@ textarea {
   display: flex;
   gap: 2px;
   align-items: center;
+  gap: var(--space-sm);
 }
 .top-nav__links a {
   color: rgba(255, 255, 255, 0.8);
@@ -1677,7 +1678,7 @@ label {
     flex-direction: column;
     background: var(--color-nav-bg);
     padding: var(--space-md);
-    gap: var(--space-sm);
+    gap: 0;
     z-index: 10;
     transition: right 0.3s ease;
     overflow-y: auto;
