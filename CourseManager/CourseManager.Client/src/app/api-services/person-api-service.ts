@@ -70,7 +70,6 @@ export class PersonApiService {
         return [];
       }
       const data = await response.json();
-      console.log('Persons data:', data);
       return (data as any[]).map((person) => this.mapPerson(person));
     } catch (error) {
       console.error('Error fetching persons:', error);
@@ -86,7 +85,6 @@ export class PersonApiService {
         return null;
       }
       const data = await response.json();
-      console.log('Person data:', data);
       return this.mapPerson(data);
     } catch (error) {
       console.error('Error fetching person:', error);
@@ -131,7 +129,6 @@ export class PersonApiService {
       }
       const data = await response.json();
       const personId = data.id ?? data.personId;
-      console.log('Person created with ID:', personId);
       return personId;
     } catch (error) {
       console.error('Error creating person:', error);
@@ -152,7 +149,6 @@ export class PersonApiService {
         console.error('Error updating person:', response.statusText);
         return false;
       }
-      console.log('Person updated successfully');
       return true;
     } catch (error) {
       console.error('Error updating person:', error);
@@ -169,7 +165,6 @@ export class PersonApiService {
         console.error('Error deleting person:', response.statusText);
         return false;
       }
-      console.log('Person deleted successfully');
       return true;
     } catch (error) {
       console.error('Error deleting person:', error);

@@ -1,23 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Person, Course, CourseSection, Group, PersonRelations } from './dtos';
 
-
 @Injectable({
   providedIn: 'root',
 })
 export class RelationsApiService {
-
   baseUrl = 'http://localhost:5053/api/relations';
 
-  constructor() { }
-
-  // ===== Course <-> Person =====
+  constructor() {}
 
   async getPeopleInCourse(courseId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/course/${courseId}/people`
-      );
+      const response = await fetch(`${this.baseUrl}/course/${courseId}/people`);
 
       if (!response.ok) {
         console.error('Error fetching course people:', response.statusText);
@@ -32,17 +26,11 @@ export class RelationsApiService {
     }
   }
 
-  async addPersonToCourse(
-    courseId: number,
-    personId: number
-  ): Promise<boolean> {
+  async addPersonToCourse(courseId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/course/${courseId}/people/${personId}`,
-        {
-          method: 'POST',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/course/${courseId}/people/${personId}`, {
+        method: 'POST',
+      });
 
       if (!response.ok) {
         console.error('Error adding person to course:', response.statusText);
@@ -56,17 +44,11 @@ export class RelationsApiService {
     }
   }
 
-  async removePersonFromCourse(
-    courseId: number,
-    personId: number
-  ): Promise<boolean> {
+  async removePersonFromCourse(courseId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/course/${courseId}/people/${personId}`,
-        {
-          method: 'DELETE',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/course/${courseId}/people/${personId}`, {
+        method: 'DELETE',
+      });
 
       if (!response.ok) {
         console.error('Error removing person from course:', response.statusText);
@@ -80,13 +62,9 @@ export class RelationsApiService {
     }
   }
 
-  // ===== Section <-> Person =====
-
   async getPeopleInSection(sectionId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/section/${sectionId}/people`
-      );
+      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people`);
 
       if (!response.ok) {
         console.error('Error fetching section people:', response.statusText);
@@ -101,17 +79,11 @@ export class RelationsApiService {
     }
   }
 
-  async addPersonToSection(
-    sectionId: number,
-    personId: number
-  ): Promise<boolean> {
+  async addPersonToSection(sectionId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/section/${sectionId}/people/${personId}`,
-        {
-          method: 'POST',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people/${personId}`, {
+        method: 'POST',
+      });
 
       if (!response.ok) {
         console.error('Error adding person to section:', response.statusText);
@@ -125,23 +97,14 @@ export class RelationsApiService {
     }
   }
 
-  async removePersonFromSection(
-    sectionId: number,
-    personId: number
-  ): Promise<boolean> {
+  async removePersonFromSection(sectionId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/section/${sectionId}/people/${personId}`,
-        {
-          method: 'DELETE',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people/${personId}`, {
+        method: 'DELETE',
+      });
 
       if (!response.ok) {
-        console.error(
-          'Error removing person from section:',
-          response.statusText
-        );
+        console.error('Error removing person from section:', response.statusText);
         return false;
       }
 
@@ -152,13 +115,9 @@ export class RelationsApiService {
     }
   }
 
-  // ===== Group <-> Person =====
-
   async getPeopleInGroup(groupId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/group/${groupId}/people`
-      );
+      const response = await fetch(`${this.baseUrl}/group/${groupId}/people`);
 
       if (!response.ok) {
         console.error('Error fetching group people:', response.statusText);
@@ -173,17 +132,11 @@ export class RelationsApiService {
     }
   }
 
-  async addPersonToGroup(
-    groupId: number,
-    personId: number
-  ): Promise<boolean> {
+  async addPersonToGroup(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/group/${groupId}/people/${personId}`,
-        {
-          method: 'POST',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/group/${groupId}/people/${personId}`, {
+        method: 'POST',
+      });
 
       if (!response.ok) {
         console.error('Error adding person to group:', response.statusText);
@@ -197,17 +150,11 @@ export class RelationsApiService {
     }
   }
 
-  async removePersonFromGroup(
-    groupId: number,
-    personId: number
-  ): Promise<boolean> {
+  async removePersonFromGroup(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/group/${groupId}/people/${personId}`,
-        {
-          method: 'DELETE',
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/group/${groupId}/people/${personId}`, {
+        method: 'DELETE',
+      });
 
       if (!response.ok) {
         console.error('Error removing person from group:', response.statusText);
@@ -221,21 +168,12 @@ export class RelationsApiService {
     }
   }
 
-  // ===== Person Relations =====
-
-  async getPersonRelations(
-    personId: number
-  ): Promise<PersonRelations | null> {
+  async getPersonRelations(personId: number): Promise<PersonRelations | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/person/${personId}`
-      );
+      const response = await fetch(`${this.baseUrl}/person/${personId}`);
 
       if (!response.ok) {
-        console.error(
-          'Error fetching person relations:',
-          response.statusText
-        );
+        console.error('Error fetching person relations:', response.statusText);
         return null;
       }
 

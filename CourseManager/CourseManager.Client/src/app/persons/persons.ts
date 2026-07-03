@@ -16,7 +16,7 @@ export class Persons implements OnInit {
 
   title = signal('Participants');
   searchTerm = signal('');
-  persons = signal<any[]>([]);
+  persons = signal<Person[]>([]);
 
   async ngOnInit() {
     const res = await this.personApiService.getAllPersons();

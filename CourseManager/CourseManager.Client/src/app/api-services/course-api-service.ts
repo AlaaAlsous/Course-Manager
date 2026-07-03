@@ -27,7 +27,6 @@ export class CourseApiService {
         return [];
       }
       const data = await response.json();
-      console.log('Courses data:', data);
       return (data as any[]).map((course) => this.mapCourse(course));
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -43,7 +42,6 @@ export class CourseApiService {
         return null;
       }
       const data = await response.json();
-      console.log('Course data:', data);
       return this.mapCourse(data);
     } catch (error) {
       console.error('Error fetching course:', error);

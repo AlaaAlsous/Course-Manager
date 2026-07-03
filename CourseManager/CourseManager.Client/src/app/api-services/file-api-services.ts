@@ -21,11 +21,11 @@ export class FileApiService {
   async getFileById(fileAssetId: number): Promise<FileAsset | null> {
     try {
       const response = await fetch(`${this.baseUrl}/${fileAssetId}`);
-      const data = await response.json();
-
-      console.log('File data:', data);
-
-      return data as FileAsset;
+      if (!response.ok) {
+        console.error(`Error fetching file: ${response.status}`);
+        return null;
+      }
+      return (await response.json()) as FileAsset;
     } catch (error) {
       console.error('Error fetching file:', error);
       return null;
@@ -35,11 +35,11 @@ export class FileApiService {
   async getCourseFiles(courseId: number): Promise<FileAsset[]> {
     try {
       const response = await fetch(`${this.baseUrl}/course/${courseId}`);
-
-      const data = await response.json();
-
-      console.log('Course files data:', data);
-      return data as FileAsset[];
+      if (!response.ok) {
+        console.error(`Error fetching course files: ${response.status}`);
+        return [];
+      }
+      return (await response.json()) as FileAsset[];
     } catch (error) {
       console.error('Error fetching course files:', error);
       return [];
@@ -48,11 +48,11 @@ export class FileApiService {
   async getCourseSectionFiles(courseSectionId: number): Promise<FileAsset[]> {
     try {
       const response = await fetch(`${this.baseUrl}/course-section/${courseSectionId}`);
-
-      const data = await response.json();
-
-      console.log('Course section files data:', data);
-      return data as FileAsset[];
+      if (!response.ok) {
+        console.error(`Error fetching course section files: ${response.status}`);
+        return [];
+      }
+      return (await response.json()) as FileAsset[];
     } catch (error) {
       console.error('Error fetching course section files:', error);
       return [];
@@ -61,11 +61,11 @@ export class FileApiService {
   async getGroupFiles(groupId: number): Promise<FileAsset[]> {
     try {
       const response = await fetch(`${this.baseUrl}/group/${groupId}`);
-
-      const data = await response.json();
-
-      console.log('Group files data:', data);
-      return data as FileAsset[];
+      if (!response.ok) {
+        console.error(`Error fetching group files: ${response.status}`);
+        return [];
+      }
+      return (await response.json()) as FileAsset[];
     } catch (error) {
       console.error('Error fetching group files:', error);
       return [];
@@ -74,11 +74,11 @@ export class FileApiService {
   async getPersonFiles(personId: number): Promise<FileAsset[]> {
     try {
       const response = await fetch(`${this.baseUrl}/person/${personId}`);
-
-      const data = await response.json();
-
-      console.log('Person files data:', data);
-      return data as FileAsset[];
+      if (!response.ok) {
+        console.error(`Error fetching person files: ${response.status}`);
+        return [];
+      }
+      return (await response.json()) as FileAsset[];
     } catch (error) {
       console.error('Error fetching person files:', error);
       return [];
@@ -93,8 +93,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error deleting file: ${response.status}`);
       }
-
-      console.log('File deleted successfully');
     } catch (error) {
       console.error('Error deleting file:', error);
     }
@@ -108,7 +106,6 @@ export class FileApiService {
       }
 
       const data = await response.text();
-      console.log('File content:', data);
       return data;
     } catch (error) {
       console.error('Error fetching file content:', error);
@@ -128,8 +125,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error updating file content: ${response.status}`);
       }
-
-      console.log('File content updated successfully');
     } catch (error) {
       console.error('Error updating file content:', error);
     }
@@ -143,9 +138,6 @@ export class FileApiService {
       }
 
       const blob = await response.blob();
-
-      console.log('File downloaded successfully');
-
       return blob;
     } catch (error) {
       console.error('Error downloading file:', error);
@@ -168,9 +160,6 @@ export class FileApiService {
       }
 
       const data = await response.json();
-
-      console.log('Uploaded file:', data);
-
       return data as FileAsset;
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -186,8 +175,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error removing file from course: ${response.status}`);
       }
-
-      console.log('File removed from course successfully');
     } catch (error) {
       console.error('Error removing file from course:', error);
     }
@@ -202,8 +189,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error removing file from course section: ${response.status}`);
       }
-
-      console.log('File removed from course section successfully');
     } catch (error) {
       console.error('Error removing file from course section:', error);
     }
@@ -217,8 +202,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error removing file from group: ${response.status}`);
       }
-
-      console.log('File removed from group');
     } catch (error) {
       console.error('Error removing file from group:', error);
     }
@@ -232,8 +215,6 @@ export class FileApiService {
       if (!response.ok) {
         throw new Error(`Error removing file from person: ${response.status}`);
       }
-
-      console.log('File removed from person');
     } catch (error) {
       console.error('Error removing file from person:', error);
     }

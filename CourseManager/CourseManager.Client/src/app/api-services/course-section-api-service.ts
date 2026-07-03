@@ -87,7 +87,6 @@ export class CourseSectionApiService {
         return null;
       }
       const data = await response.json();
-      console.log('Course section created with ID:', data.courseSectionId);
       return data.courseSectionId;
     } catch (error) {
       console.error('Error creating course section:', error);
@@ -115,7 +114,6 @@ export class CourseSectionApiService {
         console.error('Error updating course section:', response.statusText);
         return false;
       }
-      console.log('Course section updated successfully');
       return true;
     } catch (error) {
       console.error('Error updating course section:', error);
@@ -132,7 +130,6 @@ export class CourseSectionApiService {
         console.error('Error deleting course section:', response.statusText);
         return false;
       }
-      console.log('Course section deleted successfully');
       return true;
     } catch (error) {
       console.error('Error deleting course section:', error);

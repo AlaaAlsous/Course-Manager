@@ -89,7 +89,6 @@ export class GroupApiService {
         return null;
       }
       const data = await response.json();
-      console.log('Group created with ID:', data.groupId);
       return data.groupId;
     } catch (error) {
       console.error('Error creating group:', error);
@@ -110,7 +109,6 @@ export class GroupApiService {
         console.error('Error updating group:', response.statusText);
         return false;
       }
-      console.log('Group updated successfully');
       return true;
     } catch (error) {
       console.error('Error updating group:', error);
@@ -127,7 +125,6 @@ export class GroupApiService {
         console.error('Error deleting group:', response.statusText);
         return false;
       }
-      console.log('Group deleted successfully');
       return true;
     } catch (error) {
       console.error('Error deleting group:', error);
@@ -159,7 +156,6 @@ export class GroupApiService {
         console.error('Error adding person to group:', response.statusText);
         return false;
       }
-      console.log('Person added to group successfully');
       return true;
     } catch (error) {
       console.error('Error adding person to group:', error);
@@ -176,7 +172,6 @@ export class GroupApiService {
         console.error('Error removing person from group:', response.statusText);
         return false;
       }
-      console.log('Person removed from group successfully');
       return true;
     } catch (error) {
       console.error('Error removing person from group:', error);
