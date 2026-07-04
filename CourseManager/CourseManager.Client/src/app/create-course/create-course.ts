@@ -53,7 +53,6 @@ export class CreateCourse {
       return;
     }
 
-    await this.courseApiService.getCourseById(createdCourseId);
     this.snackbarService.show(SnackbarType.Success, 'Course created!');
     this.router.navigate(['/home']);
   }

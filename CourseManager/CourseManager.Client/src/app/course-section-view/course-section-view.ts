@@ -171,7 +171,6 @@ export class CourseSectionView {
 
     await this.courseSectionApiService.updateCourseSection(
       sectionId,
-      courseId,
       this.editName,
       null,
       null,

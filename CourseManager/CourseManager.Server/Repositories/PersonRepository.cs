@@ -27,7 +27,7 @@ public class PersonRepository : IPersonRepository
     {
         var trimmed = name.Trim();
         return await _db.People
-            .FirstOrDefaultAsync(p => p.FullName.Trim() == trimmed);
+            .FirstOrDefaultAsync(p => p.FullName == trimmed);
     }
 
     public async Task<Person> CreateAsync(Person person)

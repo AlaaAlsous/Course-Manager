@@ -156,8 +156,6 @@ export class CreateGroup {
       await this.groupApiService.addPerson(createdGroupId, person.id);
     }
 
-    await this.groupApiService.getGroupById(createdGroupId);
-    await this.courseSectionApiService.getCourseSectionById(this.returnSectionId);
     this.snackbarService.show(SnackbarType.Success, 'Group created successfully!');
 
     if (this.hasValidReturnSection()) {

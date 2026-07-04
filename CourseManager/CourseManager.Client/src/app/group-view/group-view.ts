@@ -124,7 +124,6 @@ export class GroupView {
       }
 
       relationAdded = await this.groupApiService.addPerson(this.groupId, createdPersonId);
-      await this.personApiService.getPersonById(createdPersonId);
     }
 
     if (!relationAdded) {

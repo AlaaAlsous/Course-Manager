@@ -96,7 +96,6 @@ export class CourseSectionApiService {
 
   async updateCourseSection(
     id: number,
-    courseId: number,
     name: string,
     description: string | null,
     startDate: string | null,
@@ -108,7 +107,7 @@ export class CourseSectionApiService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseId, name, description, startDate, endDate }),
+        body: JSON.stringify({ name, description, startDate, endDate }),
       });
       if (!response.ok) {
         console.error('Error updating course section:', response.statusText);
