@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Person, Course, CourseSection, Group, PersonRelations } from './dtos';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RelationsApiService {
-  baseUrl = 'http://localhost:5053/api/relations';
+  private baseUrl = `${environment.apiUrl}/relations`;
 
   constructor() {}
 
