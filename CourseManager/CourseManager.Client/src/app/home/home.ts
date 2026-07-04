@@ -1,5 +1,4 @@
 import { Component, signal, computed, inject } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
@@ -17,7 +16,7 @@ interface CourseWithMeta extends Course {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule, Layout],
+  imports: [FormsModule, Layout],
   templateUrl: './home.html',
 })
 export class Home {

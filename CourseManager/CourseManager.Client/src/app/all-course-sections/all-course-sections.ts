@@ -1,5 +1,4 @@
 import { Component, signal, computed, inject } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
@@ -12,7 +11,7 @@ interface CourseSectionWithCourseName extends CourseSection {
 @Component({
   selector: 'app-all-course-sections',
   standalone: true,
-  imports: [Layout, NgFor, NgIf, RouterModule],
+  imports: [Layout, RouterModule],
   templateUrl: './all-course-sections.html',
 })
 export class AllCourseSections {
