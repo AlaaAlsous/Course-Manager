@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Home } from './home/home';
 import { Persons } from './persons/persons';
 import { AllCourses } from './all-courses/all-courses';
+import { AllCourseSections } from './all-course-sections/all-course-sections';
 import { GroupView } from './group-view/group-view';
 import { CourseView } from './course-view/course-view';
 import { CourseSectionView } from './course-section-view/course-section-view';
@@ -19,12 +20,13 @@ export const routes: Routes = [
   { path: 'participants', component: Persons, data: { title: 'Participants' } },
   { path: 'participants/create', component: PersonCreator, data: { title: 'Create Participant' } },
   { path: 'participant', component: ParticipantDetail, data: { title: 'Participant Detail' } },
-  { path: 'all-courses', component: AllCourses, data: { title: 'All Courses' } },
+  { path: 'all-courses', component: AllCourses, data: { title: 'Programs' } },
+  { path: 'all-course-sections', component: AllCourseSections, data: { title: 'Course Sections' } },
   { path: 'groups/:id', component: GroupView, data: { title: 'Group Detail' } },
   { path: 'groups/:id/edit', component: EditGroup, data: { title: 'Edit Group' } },
   { path: 'group', pathMatch: 'full', redirectTo: 'home' },
   { path: 'create-group', component: CreateGroup, data: { title: 'Create Group' } },
-  { path: 'create-course', component: CreateCourse, data: { title: 'Create Course' } },
+  { path: 'create-course', component: CreateCourse, data: { title: 'Create Program' } },
   {
     path: 'course/:courseId/course-section/new',
     component: CreateCourseSection,
@@ -35,6 +37,6 @@ export const routes: Routes = [
     component: CourseSectionView,
     data: { title: 'Course Section' },
   },
-  { path: 'course/:id', component: CourseView, data: { title: 'Course' } },
+  { path: 'course/:id', component: CourseView, data: { title: 'Program' } },
   { path: '**', component: NotFound, data: { title: 'Page not found' } },
 ];

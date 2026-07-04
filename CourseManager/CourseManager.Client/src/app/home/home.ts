@@ -139,6 +139,10 @@ export class Home {
     this.router.navigate(['/participants']);
   }
 
+  viewAllSections() {
+    this.router.navigate(['/all-course-sections']);
+  }
+
   async deleteCourse(courseId: number, courseName: string, event: Event): Promise<void> {
     event.stopPropagation();
 
