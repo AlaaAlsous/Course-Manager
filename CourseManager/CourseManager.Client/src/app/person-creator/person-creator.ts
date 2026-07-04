@@ -19,6 +19,13 @@ export class PersonCreator {
 
   title = signal('Create Participant');
 
+  name = '';
+  submitted = false;
+
+  get isFormValid(): boolean {
+    return this.name.trim().length > 0;
+  }
+
   goBack() {
     if (window.history.length > 1) {
       this.location.back();
@@ -27,18 +34,20 @@ export class PersonCreator {
     this.router.navigate(['/participants']);
   }
 
-  async createPerson(name: string) {
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      this.snackbarService.show(SnackbarType.Failure, 'Name cannot be empty.');
+  async onSubmit(): Promise<void> {
+    this.submitted = true;
+
+    if (!this.isFormValid) {
       return;
     }
-    const id = await this.personApiService.createPerson(trimmedName);
+
+    const id = await this.personApiService.createPerson(this.name.trim());
     if (id === null) {
-      this.snackbarService.show(SnackbarType.Failure, `Could not create participant '${trimmedName}'`);
-    } else {
-      this.snackbarService.show(SnackbarType.Success, `Participant '${trimmedName}' created`);
-      this.goBack();
+      this.snackbarService.show(SnackbarType.Failure, 'Could not create participant.');
+      return;
     }
+
+    this.snackbarService.show(SnackbarType.Success, 'Participant created!');
+    this.router.navigate(['/participants']);
   }
 }

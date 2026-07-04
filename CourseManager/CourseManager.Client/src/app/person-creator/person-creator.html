@@ -1,19 +1,33 @@
 <app-layout [title]="title()">
-  <header class="app-page-header participant-creator__header">
+  <header class="app-page-header create-course-header">
     <div class="app-page-header__content">
-      <h2>Create a Participant</h2>
+      <h2>Create Participant</h2>
     </div>
 
     <button type="button" class="app-back-button btn-sm" (click)="goBack()" title="Back">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 12H5" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
     </button>
   </header>
 
-  <form (ngSubmit)="createPerson(nameInput.value)">
-    <div class="form-input">
-      <label for="name">Name</label>
-      <input #nameInput type="text" id="name" name="name" required placeholder="Enter name" />
-    </div>
+  <form (ngSubmit)="onSubmit()">
+    <label for="person-name">Name</label>
+    <input id="person-name" name="name" type="text" [(ngModel)]="name" required />
+
+    @if (submitted && !isFormValid) {
+      <p class="validation">Name is required.</p>
+    }
 
     <div class="actions">
       <button type="submit" class="primary">Create Participant</button>
