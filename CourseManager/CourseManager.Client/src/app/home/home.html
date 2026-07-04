@@ -1,28 +1,98 @@
 <app-layout [title]="title()">
   <div class="home-actions">
-    <button (click)="createCourse()">Create Course</button>
+    <button class="primary" (click)="createCourse()">+ Create Course</button>
+    <button class="secondary" (click)="createPerson()">+ Create Participant</button>
   </div>
 
+  <section class="dashboard-stats">
+    <article class="stat-card" (click)="viewAllCourses()">
+      <div class="stat-card__number">{{ totalCourses() }}</div>
+      <div class="stat-card__label">Courses</div>
+    </article>
+    <article class="stat-card" (click)="viewAllCourses()">
+      <div class="stat-card__number">{{ totalSections() }}</div>
+      <div class="stat-card__label">Course Sections</div>
+    </article>
+    <article class="stat-card" (click)="viewAllParticipants()">
+      <div class="stat-card__number">{{ totalParticipants() }}</div>
+      <div class="stat-card__label">Participants</div>
+    </article>
+  </section>
+
   <div class="course-grid">
-    <h2>Existing Courses</h2>
-
-    <p *ngIf="courses().length === 0" class="empty-state">No courses to show.</p>
-
-    <div class="course-cards" *ngIf="courses().length > 0">
-      <article *ngFor="let c of courses()" class="course-card clickable" (click)="goToCourse(c.id)">
-        <div class="item-row">
-          <span>{{ c.name }}</span>
-          <small>Created {{ getRelativeDate(c.createdAt) }}</small>
-        </div>
-
-        <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path
-            fill-rule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </article>
+    <div class="course-grid__header">
+      <h2>Latest 5 Courses</h2>
     </div>
+
+    @if (recentCourses().length === 0) {
+      <div class="empty-state">
+        <div class="empty-state__icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 6v6l4 2" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+        </div>
+        <h3>No programs yet</h3>
+        <p>Create your first program to get started.</p>
+        <button class="primary" (click)="createCourse()">+ Create Course</button>
+      </div>
+    } @else {
+      <div class="course-cards">
+        @for (course of recentCourses(); track course.id) {
+          <article class="course-card" (click)="goToCourse(course.id)">
+            <div class="course-card__body">
+              <div class="course-card__meta">
+                <span class="course-card__sections"
+                  >{{ course.sectionCount }}
+                  {{ course.sectionCount === 1 ? 'section' : 'sections' }}</span
+                >
+                <span class="course-card__date"
+                  >Created {{ getRelativeDate(course.createdAt) }}</span
+                >
+              </div>
+              <div class="course-card__title">{{ course.name }}</div>
+
+              @if (course.description) {
+                <p class="course-card__desc">{{ getDescriptionSnippet(course.description) }}</p>
+              }
+
+              <div class="course-card__footer">
+                <span class="course-card__link">View details →</span>
+
+                <button
+                  class="course-card__delete"
+                  (click)="deleteCourse(course.id, course.name, $event)"
+                  title="Delete course"
+                >
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (hasMoreCourses()) {
+        <div class="home-view-all">
+          <button class="secondary" (click)="viewAllCourses()">
+            View all {{ totalCourses() }} courses →
+          </button>
+        </div>
+      }
+    }
   </div>
 </app-layout>

@@ -12,7 +12,7 @@ import { Course } from '../api-services/dtos';
   templateUrl: './all-courses.html',
 })
 export class AllCourses {
-  title = signal('Alla program');
+  title = signal('All Courses');
 
   private readonly courseApiService = inject(CourseApiService);
   private readonly courseList = signal<Course[]>([]);
