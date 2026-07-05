@@ -2,6 +2,7 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
+import { SpinnerComponent } from '../shared/spinner/spinner.component';
 import { CourseApiService } from '../api-services/course-api-service';
 import { CourseSectionApiService } from '../api-services/course-section-api-service';
 import { PersonApiService } from '../api-services/person-api-service';
@@ -16,12 +17,13 @@ interface CourseWithMeta extends Course {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, Layout],
+  imports: [FormsModule, Layout, SpinnerComponent],
   templateUrl: './home.html',
 })
 export class Home {
   title = signal('');
   searchTerm = signal('');
+  loading = signal(true);
   private readonly courseList = signal<Course[]>([]);
   private readonly courseSections = signal<CourseSection[]>([]);
 
@@ -41,6 +43,7 @@ export class Home {
   }
 
   private async loadDashboardData(): Promise<void> {
+    this.loading.set(true);
     const [courses, sections, persons] = await Promise.all([
       this.courseApiService.getAllCourses(),
       this.courseSectionApiService.getAllCourseSections(),
@@ -51,6 +54,7 @@ export class Home {
     this.courseSections.set(sections);
     this.totalSections.set(sections.length);
     this.totalParticipants.set(persons.length);
+    this.loading.set(false);
   }
 
   coursesWithMeta = computed<CourseWithMeta[]>(() => {
