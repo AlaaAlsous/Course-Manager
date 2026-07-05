@@ -287,121 +287,123 @@ public static class FileEndpoints
             BlobService blob) =>
         {
             using var memoryStream = new MemoryStream();
-            using var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, true);
 
             entityType = entityType.ToLower();
 
-            switch (entityType)
+            using (var zip = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
-                case "course":
-                    {
-                        var course = await db.Courses
-                            .Include(c => c.CourseFiles)
-                            .Include(c => c.CourseSections)
-                                .ThenInclude(cs => cs.CourseSectionFiles)
-                            .Include(c => c.CourseSections)
-                                .ThenInclude(cs => cs.Groups)
+                switch (entityType)
+                {
+                    case "course":
+                        {
+                            var course = await db.Courses
+                                .Include(c => c.CourseFiles)
+                                .Include(c => c.CourseSections)
+                                    .ThenInclude(cs => cs.CourseSectionFiles)
+                                .Include(c => c.CourseSections)
+                                    .ThenInclude(cs => cs.Groups)
+                                        .ThenInclude(g => g.GroupFiles)
+                                .Include(c => c.CoursePeople)
+                                    .ThenInclude(cp => cp.Person)
+                                .FirstOrDefaultAsync(c => c.CourseId == entityId);
+
+                            if (course is null)
+                                return Results.NotFound("Course not found");
+
+                            foreach (var cf in course.CourseFiles)
+                                await AddFileToZip(zip, repo, blob, cf.FileAssetId, "Course/");
+
+                            foreach (var section in course.CourseSections)
+                                foreach (var sf in section.CourseSectionFiles)
+                                    await AddFileToZip(zip, repo, blob, sf.FileAssetId, "Course/CourseSections/");
+
+                            foreach (var section in course.CourseSections)
+                                foreach (var groupEntity in section.Groups)
+                                    foreach (var gf in groupEntity.GroupFiles)
+                                        await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Course/Groups/");
+
+                            foreach (var cp in course.CoursePeople)
+                            {
+                                var personFiles = await repo.GetFilesForPersonAsync(cp.PersonId);
+                                foreach (var file in personFiles)
+                                    await AddFileToZip(zip, repo, blob, file.FileAssetId, "Course/People/");
+                            }
+
+                            break;
+                        }
+
+                    case "course-section":
+                        {
+                            var section = await db.CourseSections
+                                .Include(s => s.CourseSectionFiles)
+                                .Include(s => s.Groups)
                                     .ThenInclude(g => g.GroupFiles)
-                            .Include(c => c.CoursePeople)
-                                .ThenInclude(cp => cp.Person)
-                            .FirstOrDefaultAsync(c => c.CourseId == entityId);
+                                .Include(s => s.CourseSectionPeople)
+                                    .ThenInclude(sp => sp.Person)
+                                .FirstOrDefaultAsync(s => s.CourseSectionId == entityId);
 
-                        if (course is null)
-                            return Results.NotFound("Course not found");
+                            if (section is null)
+                                return Results.NotFound("CourseSection not found");
 
-                        foreach (var cf in course.CourseFiles)
-                            await AddFileToZip(zip, repo, blob, cf.FileAssetId, "Course/");
-
-                        foreach (var section in course.CourseSections)
                             foreach (var sf in section.CourseSectionFiles)
-                                await AddFileToZip(zip, repo, blob, sf.FileAssetId, "Course/CourseSections/");
+                                await AddFileToZip(zip, repo, blob, sf.FileAssetId, "CourseSection/");
 
-                        foreach (var section in course.CourseSections)
                             foreach (var groupEntity in section.Groups)
                                 foreach (var gf in groupEntity.GroupFiles)
-                                    await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Course/Groups/");
+                                    await AddFileToZip(zip, repo, blob, gf.FileAssetId, "CourseSection/Groups/");
 
-                        foreach (var cp in course.CoursePeople)
-                        {
-                            var personFiles = await repo.GetFilesForPersonAsync(cp.PersonId);
-                            foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "Course/People/");
+                            foreach (var sp in section.CourseSectionPeople)
+                            {
+                                var personFiles = await repo.GetFilesForPersonAsync(sp.PersonId);
+                                foreach (var file in personFiles)
+                                    await AddFileToZip(zip, repo, blob, file.FileAssetId, "CourseSection/People/");
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
+                    case "group":
+                        {
+                            var groupEntity = await db.Groups
+                                .Include(g => g.GroupFiles)
+                                .Include(g => g.GroupPeople)
+                                    .ThenInclude(gp => gp.Person)
+                                .FirstOrDefaultAsync(g => g.GroupId == entityId);
 
-                case "course-section":
-                    {
-                        var section = await db.CourseSections
-                            .Include(s => s.CourseSectionFiles)
-                            .Include(s => s.Groups)
-                                .ThenInclude(g => g.GroupFiles)
-                            .Include(s => s.CourseSectionPeople)
-                                .ThenInclude(sp => sp.Person)
-                            .FirstOrDefaultAsync(s => s.CourseSectionId == entityId);
+                            if (groupEntity is null)
+                                return Results.NotFound("Group not found");
 
-                        if (section is null)
-                            return Results.NotFound("CourseSection not found");
-
-                        foreach (var sf in section.CourseSectionFiles)
-                            await AddFileToZip(zip, repo, blob, sf.FileAssetId, "CourseSection/");
-
-                        foreach (var groupEntity in section.Groups)
                             foreach (var gf in groupEntity.GroupFiles)
-                                await AddFileToZip(zip, repo, blob, gf.FileAssetId, "CourseSection/Groups/");
+                                await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Group/");
 
-                        foreach (var sp in section.CourseSectionPeople)
-                        {
-                            var personFiles = await repo.GetFilesForPersonAsync(sp.PersonId);
-                            foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "CourseSection/People/");
+                            foreach (var gp in groupEntity.GroupPeople)
+                            {
+                                var personFiles = await repo.GetFilesForPersonAsync(gp.PersonId);
+                                foreach (var file in personFiles)
+                                    await AddFileToZip(zip, repo, blob, file.FileAssetId, "Group/People/");
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
-
-                case "group":
-                    {
-                        var groupEntity = await db.Groups
-                            .Include(g => g.GroupFiles)
-                            .Include(g => g.GroupPeople)
-                                .ThenInclude(gp => gp.Person)
-                            .FirstOrDefaultAsync(g => g.GroupId == entityId);
-
-                        if (groupEntity is null)
-                            return Results.NotFound("Group not found");
-
-                        foreach (var gf in groupEntity.GroupFiles)
-                            await AddFileToZip(zip, repo, blob, gf.FileAssetId, "Group/");
-
-                        foreach (var gp in groupEntity.GroupPeople)
+                    case "person":
                         {
-                            var personFiles = await repo.GetFilesForPersonAsync(gp.PersonId);
-                            foreach (var file in personFiles)
-                                await AddFileToZip(zip, repo, blob, file.FileAssetId, "Group/People/");
+                            var person = await db.People
+                                .Include(p => p.PersonFiles)
+                                .FirstOrDefaultAsync(p => p.PersonId == entityId);
+
+                            if (person is null)
+                                return Results.NotFound("Person not found");
+
+                            foreach (var pf in person.PersonFiles)
+                                await AddFileToZip(zip, repo, blob, pf.FileAssetId, "Person/");
+
+                            break;
                         }
 
-                        break;
-                    }
-
-                case "person":
-                    {
-                        var person = await db.People
-                            .Include(p => p.PersonFiles)
-                            .FirstOrDefaultAsync(p => p.PersonId == entityId);
-
-                        if (person is null)
-                            return Results.NotFound("Person not found");
-
-                        foreach (var pf in person.PersonFiles)
-                            await AddFileToZip(zip, repo, blob, pf.FileAssetId, "Person/");
-
-                        break;
-                    }
-
-                default:
-                    return Results.BadRequest("Invalid entity type. Use: course, course-section, group, person.");
+                    default:
+                        return Results.BadRequest("Invalid entity type. Use: course, course-section, group, person.");
+                }
             }
 
             return Results.File(
