@@ -1,5 +1,4 @@
 import { Component, signal, computed, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Layout } from '../layout/layout';
 import { SpinnerComponent } from '../shared/spinner/spinner.component';
@@ -17,12 +16,11 @@ interface CourseWithMeta extends Course {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, Layout, SpinnerComponent],
+  imports: [Layout, SpinnerComponent],
   templateUrl: './home.html',
 })
 export class Home {
   title = signal('');
-  searchTerm = signal('');
   loading = signal(true);
   private readonly courseList = signal<Course[]>([]);
   private readonly courseSections = signal<CourseSection[]>([]);
@@ -79,21 +77,6 @@ export class Home {
   recentCourses = computed(() => this.coursesWithMeta().slice(0, 5));
 
   hasMoreCourses = computed(() => this.coursesWithMeta().length > 5);
-
-  filteredCourses = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return this.coursesWithMeta();
-
-    return this.coursesWithMeta().filter(
-      (c) =>
-        c.name.toLowerCase().includes(term) || (c.description ?? '').toLowerCase().includes(term),
-    );
-  });
-
-  onSearchChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchTerm.set(input.value);
-  }
 
   getRelativeDate(dateString: string): string {
     const created = new Date(dateString);
