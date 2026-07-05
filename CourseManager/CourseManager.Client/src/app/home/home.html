@@ -20,9 +20,11 @@
   </section>
 
   <div class="course-grid">
-    <div class="course-grid__header">
-      <h2>Latest 5 Courses</h2>
-    </div>
+    @if (recentCourses().length > 0) {
+      <div class="course-grid__header">
+        <h2>Latest 5 Courses</h2>
+      </div>
+    }
 
     @if (recentCourses().length === 0) {
       <div class="empty-state">
