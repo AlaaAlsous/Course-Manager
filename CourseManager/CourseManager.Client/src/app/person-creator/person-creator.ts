@@ -43,10 +43,20 @@ export class PersonCreator {
     }
 
     this.submitting = true;
-    const id = await this.personApiService.createPerson(this.name.trim());
-    if (id === null) {
+    const result = await this.personApiService.createPerson(this.name.trim());
+
+    if (result === null) {
       this.submitting = false;
       this.snackbarService.show(SnackbarType.Failure, 'Could not create participant.');
+      return;
+    }
+
+    if (result.alreadyExists) {
+      this.submitting = false;
+      this.snackbarService.show(
+        SnackbarType.Failure,
+        `Participant "${this.name.trim()}" already exists.`,
+      );
       return;
     }
 

@@ -62,7 +62,12 @@ export class CreateGroup {
 
   goBack() {
     if (this.hasValidReturnSection()) {
-      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
+      this.router.navigate([
+        '/course',
+        this.returnCourseId,
+        'course-section',
+        this.returnSectionId,
+      ]);
       return;
     }
 
@@ -118,16 +123,21 @@ export class CreateGroup {
       this.snackbarService.show(SnackbarType.Failure, 'Name cannot be empty.');
       return;
     }
-    const id = await this.personApiService.createPerson(name);
-    if (id === null) {
-      this.snackbarService.show(SnackbarType.Failure, `Could not create participant '${name}'`);
+    const result = await this.personApiService.createPerson(name);
+    if (result === null || result.alreadyExists) {
+      this.snackbarService.show(
+        SnackbarType.Failure,
+        result?.alreadyExists
+          ? `Participant '${name}' already exists.`
+          : `Could not create participant '${name}'`,
+      );
       return;
     }
     this.snackbarService.show(SnackbarType.Success, `Participant '${name}' created`);
 
-    const person = await this.personApiService.getPersonById(id);
+    const person = await this.personApiService.getPersonById(result.id);
     if (person) {
-      this.groupPeople.update((people) => [...people, { id, name }]);
+      this.groupPeople.update((people) => [...people, { id: result.id, name }]);
       this.nameInputRef.nativeElement.value = '';
     }
   }
@@ -141,7 +151,10 @@ export class CreateGroup {
     }
 
     if (!this.hasValidReturnSection()) {
-      this.snackbarService.show(SnackbarType.Failure, 'Cannot create group without a course section.');
+      this.snackbarService.show(
+        SnackbarType.Failure,
+        'Cannot create group without a course section.',
+      );
       return;
     }
 
@@ -159,7 +172,12 @@ export class CreateGroup {
     this.snackbarService.show(SnackbarType.Success, 'Group created successfully!');
 
     if (this.hasValidReturnSection()) {
-      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
+      this.router.navigate([
+        '/course',
+        this.returnCourseId,
+        'course-section',
+        this.returnSectionId,
+      ]);
       return;
     }
 

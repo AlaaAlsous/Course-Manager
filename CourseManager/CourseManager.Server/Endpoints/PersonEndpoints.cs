@@ -27,7 +27,7 @@ public static class PersonEndpoints
             var existing = await repo.GetByNameAsync(req.FullName);
             if (existing is not null)
             {
-                return Results.Ok(new PersonDto(existing.PersonId, existing.FullName));
+                return Results.Conflict(new PersonDto(existing.PersonId, existing.FullName));
             }
 
             var person = new Person

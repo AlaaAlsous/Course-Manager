@@ -1,6 +1,5 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { Layout } from '../layout/layout';
-import { NgFor, NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CourseApiService } from '../api-services/course-api-service';
 import { Course } from '../api-services/dtos';
@@ -10,7 +9,7 @@ import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.servi
 @Component({
   selector: 'app-all-courses',
   standalone: true,
-  imports: [Layout, NgFor, NgIf, RouterModule],
+  imports: [Layout, RouterModule],
   templateUrl: './all-courses.html',
 })
 export class AllCourses {

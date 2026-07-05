@@ -56,7 +56,10 @@ export class GroupView {
     if (this.returnCourseId && this.returnSectionId) {
       return [
         { label: this.courseName(), route: `/course/${this.returnCourseId}` },
-        { label: this.sectionName(), route: `/course/${this.returnCourseId}/course-section/${this.returnSectionId}` },
+        {
+          label: this.sectionName(),
+          route: `/course/${this.returnCourseId}/course-section/${this.returnSectionId}`,
+        },
         { label: this.title() },
       ];
     }
@@ -116,14 +119,22 @@ export class GroupView {
     if (existingPerson) {
       relationAdded = await this.groupApiService.addPerson(this.groupId, existingPerson.id);
     } else {
-      const createdPersonId = await this.personApiService.createPerson(memberName);
+      const createdResult = await this.personApiService.createPerson(memberName);
 
-      if (!createdPersonId) {
+      if (createdResult === null) {
         this.snackbarService.show(SnackbarType.Failure, 'Could not create participant.');
         return;
       }
 
-      relationAdded = await this.groupApiService.addPerson(this.groupId, createdPersonId);
+      if (createdResult.alreadyExists) {
+        this.snackbarService.show(
+          SnackbarType.Failure,
+          `Participant "${memberName}" already exists.`,
+        );
+        return;
+      }
+
+      relationAdded = await this.groupApiService.addPerson(this.groupId, createdResult.id);
     }
 
     if (!relationAdded) {
@@ -211,7 +222,12 @@ export class GroupView {
 
   goBack(): void {
     if (this.returnCourseId && this.returnSectionId) {
-      this.router.navigate(['/course', this.returnCourseId, 'course-section', this.returnSectionId]);
+      this.router.navigate([
+        '/course',
+        this.returnCourseId,
+        'course-section',
+        this.returnSectionId,
+      ]);
       return;
     }
 

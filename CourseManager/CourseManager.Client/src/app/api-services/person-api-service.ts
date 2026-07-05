@@ -114,7 +114,7 @@ export class PersonApiService {
     }
   }
 
-  async createPerson(fullName: string): Promise<number | null> {
+  async createPerson(fullName: string): Promise<{ id: number; alreadyExists: boolean } | null> {
     try {
       const response = await fetch(`${this.baseUrl}`, {
         method: 'POST',
@@ -123,13 +123,16 @@ export class PersonApiService {
         },
         body: JSON.stringify({ fullName }),
       });
+      if (response.status === 409) {
+        const data = await response.json();
+        return { id: data.id ?? data.personId, alreadyExists: true };
+      }
       if (!response.ok) {
         console.error('Error creating person:', response.statusText);
         return null;
       }
       const data = await response.json();
-      const personId = data.id ?? data.personId;
-      return personId;
+      return { id: data.id ?? data.personId, alreadyExists: false };
     } catch (error) {
       console.error('Error creating person:', error);
       return null;
