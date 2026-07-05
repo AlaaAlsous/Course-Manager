@@ -19,6 +19,7 @@ export class CreateCourse {
 
   name = '';
   submitted = false;
+  submitting = false;
 
   constructor(
     private router: Router,
@@ -42,10 +43,11 @@ export class CreateCourse {
   async onSubmit(): Promise<void> {
     this.submitted = true;
 
-    if (!this.isFormValid) {
+    if (!this.isFormValid || this.submitting) {
       return;
     }
 
+    this.submitting = true;
     const createdCourseId = await this.courseApiService.createCourse(this.name.trim(), null);
 
     if (!createdCourseId) {
@@ -53,6 +55,7 @@ export class CreateCourse {
       return;
     }
 
+    this.submitting = false;
     this.snackbarService.show(SnackbarType.Success, 'Course created!');
     this.router.navigate(['/home']);
   }

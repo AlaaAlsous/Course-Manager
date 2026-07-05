@@ -18,7 +18,9 @@
     }
 
     <div class="actions">
-      <button type="submit" class="primary">Create Course</button>
+      <button type="submit" class="primary" [disabled]="submitting">
+        {{ submitting ? 'Creating...' : 'Create Course' }}
+      </button>
     </div>
   </form>
 </app-layout>

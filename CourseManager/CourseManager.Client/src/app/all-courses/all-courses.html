@@ -11,22 +11,38 @@
         <circle cx="11" cy="11" r="6" />
       </svg>
     </button>
-    <input #searchInput type="search" placeholder="Search courses..." (input)="onSearchChange($event)" />
+    <input
+      #searchInput
+      type="search"
+      placeholder="Search programs..."
+      (input)="onSearchChange($event)"
+    />
   </section>
 
-  <section class="courses-overview" aria-label="All courses overview">
-    <h2 class="courses-overview__heading">Available Courses</h2>
+  <section class="courses-overview" aria-label="All programs overview">
+    <h2 class="courses-overview__heading">All Programs</h2>
 
-    <p *ngIf="filteredCourses().length === 0" class="empty-state">No courses to show.</p>
+    @if (courses().length === 0) {
+      <p class="empty-state">No programs yet. Create one to get started.</p>
+    } @else if (filteredCourses().length === 0 && searchTerm().trim().length > 0) {
+      <p class="empty-state">No programs match "{{ searchTerm() }}".</p>
+    }
 
-    <div class="course-list" *ngIf="filteredCourses().length > 0">
-      <article
-        class="course-card"
-        *ngFor="let c of filteredCourses()"
-        [routerLink]="['/course', c.id]"
-      >
-        {{ c.name }}
-      </article>
-    </div>
+    @if (filteredCourses().length > 0) {
+      <div class="course-list">
+        @for (c of filteredCourses(); track c.id) {
+          <article class="course-card" [routerLink]="['/course', c.id]">
+            <span>{{ c.name }}</span>
+            <svg class="icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </article>
+        }
+      </div>
+    }
   </section>
 </app-layout>

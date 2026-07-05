@@ -21,6 +21,7 @@ export class PersonCreator {
 
   name = '';
   submitted = false;
+  submitting = false;
 
   get isFormValid(): boolean {
     return this.name.trim().length > 0;
@@ -37,16 +38,19 @@ export class PersonCreator {
   async onSubmit(): Promise<void> {
     this.submitted = true;
 
-    if (!this.isFormValid) {
+    if (!this.isFormValid || this.submitting) {
       return;
     }
 
+    this.submitting = true;
     const id = await this.personApiService.createPerson(this.name.trim());
     if (id === null) {
+      this.submitting = false;
       this.snackbarService.show(SnackbarType.Failure, 'Could not create participant.');
       return;
     }
 
+    this.submitting = false;
     this.snackbarService.show(SnackbarType.Success, 'Participant created!');
     this.router.navigate(['/participants']);
   }
