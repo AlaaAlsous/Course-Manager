@@ -1,15 +1,27 @@
 <app-layout [title]="title()">
-  <header class="app-page-header create-kurstillfalle__header">
+  <header class="app-page-header create-course-header">
     <div class="app-page-header__content">
-      <h2>Create New Course Section</h2>
+      <h2>Create Course Section</h2>
     </div>
 
     <button type="button" class="app-back-button btn-sm" (click)="goBack()" title="Back">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      <svg
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 12H5" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
     </button>
   </header>
 
-  <form (ngSubmit)="createKurstillfalle()" class="create-kurstillfalle__form">
+  <form (ngSubmit)="onSubmit()">
     <label for="name">Name</label>
     <input id="name" name="name" type="text" [(ngModel)]="name" required />
 
@@ -17,30 +29,21 @@
     <textarea id="description" name="description" rows="4" [(ngModel)]="description"></textarea>
 
     <label for="startDate">Start Date (optional)</label>
-    <input
-      id="startDate"
-      name="startDate"
-      type="date"
-      [(ngModel)]="startDate"
-      onclick="this.showPicker()"
-    />
+    <input id="startDate" name="startDate" type="date" [(ngModel)]="startDate" />
 
     <label for="endDate">End Date (optional)</label>
-    <input
-      id="endDate"
-      name="endDate"
-      type="date"
-      [(ngModel)]="endDate"
-      onclick="this.showPicker()"
-    />
+    <input id="endDate" name="endDate" type="date" [(ngModel)]="endDate" />
 
     @if (submitted && !isFormValid) {
-      <p class="validation">Please fill in the name and make sure the end date is not before the start date.</p>
+      <p class="validation">
+        Please fill in the name and make sure the end date is not before the start date.
+      </p>
     }
 
-    <div class="create-kurstillfalle__actions">
-      <button type="button" class="secondary" (click)="goBack()">Cancel</button>
-      <button type="submit" class="primary">Create Course Section</button>
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="submitting">
+        {{ submitting ? 'Creating...' : 'Create Course Section' }}
+      </button>
     </div>
   </form>
 </app-layout>

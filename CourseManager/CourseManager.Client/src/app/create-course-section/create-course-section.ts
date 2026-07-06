@@ -19,6 +19,7 @@ export class CreateCourseSection {
   startDate = '';
   endDate = '';
   submitted = false;
+  submitting = false;
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -28,14 +29,8 @@ export class CreateCourseSection {
   readonly courseId = Number(this.route.snapshot.paramMap.get('courseId'));
 
   get isFormValid(): boolean {
-    if (!this.name.trim()) {
-      return false;
-    }
-
-    if (this.startDate && this.endDate) {
-      return this.startDate <= this.endDate;
-    }
-
+    if (!this.name.trim()) return false;
+    if (this.startDate && this.endDate) return this.startDate <= this.endDate;
     return true;
   }
 
@@ -44,22 +39,20 @@ export class CreateCourseSection {
       this.router.navigate(['/course', this.courseId]);
       return;
     }
-
     this.router.navigate(['/home']);
   }
 
-  async createKurstillfalle(): Promise<void> {
+  async onSubmit(): Promise<void> {
     this.submitted = true;
 
-    if (!this.isFormValid) {
-      return;
-    }
+    if (!this.isFormValid || this.submitting) return;
 
     if (!Number.isFinite(this.courseId) || this.courseId <= 0) {
       this.router.navigate(['/home']);
       return;
     }
 
+    this.submitting = true;
     const createdSectionId = await this.courseSectionApiService.createCourseSection(
       this.courseId,
       this.name.trim(),
@@ -69,13 +62,13 @@ export class CreateCourseSection {
     );
 
     if (!createdSectionId) {
+      this.submitting = false;
       this.snackbarService.show(SnackbarType.Failure, 'Could not create course section.');
       return;
     }
 
-    await this.courseSectionApiService.getCourseSectionById(createdSectionId);
+    this.submitting = false;
     this.snackbarService.show(SnackbarType.Success, 'Course section created!');
-
     this.router.navigate(['/course', this.courseId]);
   }
 }
