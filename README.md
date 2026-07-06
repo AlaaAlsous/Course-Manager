@@ -15,6 +15,22 @@
 ![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?logo=powershell&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+<p align="center">
+	<img src="Assets/Course-manager-Home-L.png" alt="Course Manager Home" width="600"/>
+</p>
+
+<p align="center">
+	<img src="Assets/Course-manager-Home-D.png" alt="Course Manager Home§" width="600"/>
+</p>
+
+<p align="center">
+	<img src="Assets/Course-manager-Create-Couese-Section.png" alt="Course Manager Create Course Section" width="600"/>
+</p>
+
+<p align="center">
+	<img src="Assets/Course-manager-Person-View.png" alt="Course Manager Person View" width="600"/>
+</p>
+
 ## Beskrivning
 
 Course Manager är en webbapplikation för att hantera kurser, kurssektioner, grupper och deltagare. Systemet låter dig organisera utbildningsinnehåll med stöd för filuppladdning och förhandsgranskning av dokument direkt i webbläsaren.
