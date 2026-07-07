@@ -156,7 +156,12 @@ export class FileApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error uploading file: ${response.status}`);
+        let message = `File upload failed (${response.status})`;
+        try {
+          const errorData = await response.json();
+          if (errorData?.detail) message = errorData.detail;
+        } catch {}
+        throw new Error(message);
       }
 
       const data = await response.json();

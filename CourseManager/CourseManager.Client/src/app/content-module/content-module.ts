@@ -16,6 +16,7 @@ import { File as ContentFile, FilePreview, TextSaveEvent } from './file-preview/
 import { FileApiService } from '../api-services/file-api-services';
 import { FileAsset, PersonOverviewFile } from '../api-services/dtos';
 import { ConfirmDialogService } from '../confirm-dialog/confirm-dialog.service';
+import { SnackbarService, SnackbarType } from '../shared/snackbar/snackbar.service';
 
 type ContentTargetType = 'course' | 'course-section' | 'group' | 'person';
 
@@ -67,6 +68,7 @@ export class ContentModule {
   private readonly router = inject(Router);
   private readonly fileApiService = inject(FileApiService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly snackbarService = inject(SnackbarService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   // ---- Inputs & Outputs ----
@@ -271,11 +273,15 @@ export class ContentModule {
     }
 
     for (const file of Array.from(files)) {
-      await this.fileApiService.uploadFile(
+      const result = await this.fileApiService.uploadFile(
         this.uploadEntityType(target.entityType),
         target.entityId,
         file,
       );
+
+      if (!result) {
+        this.snackbarService.show(SnackbarType.Failure, `"${file.name}" could not be uploaded.`);
+      }
     }
 
     await this.loadFiles();
