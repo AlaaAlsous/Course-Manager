@@ -1169,13 +1169,11 @@ textarea {
 }
 .kurstillfalle-overview__title-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
 .kurstillfalle-overview__title-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1228,13 +1226,11 @@ textarea {
 }
 .course-section-view__title-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
 .course-section-view__title-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1303,7 +1299,6 @@ textarea {
 }
 .group-view__title-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
@@ -1311,7 +1306,6 @@ textarea {
 }
 .group-view__header-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1964,6 +1958,42 @@ label {
   color: var(--color-text-muted);
 }
 
+.breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+.breadcrumb-bar__home {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.breadcrumb-bar__home:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+.breadcrumb-bar__separator {
+  color: var(--color-text-muted);
+}
+.breadcrumb-bar__link {
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: none;
+}
+.breadcrumb-bar__link:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+.breadcrumb-bar__current {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
 @media (max-width: 800px) {
   .hamburger {
     display: flex;
@@ -2010,41 +2040,6 @@ label {
     margin-top: auto;
     align-self: center;
   }
-}
-.breadcrumb-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm);
-  background: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
-  font-size: var(--font-sm);
-  color: var(--color-text-muted);
-  flex-wrap: wrap;
-}
-.breadcrumb-bar__home {
-  color: var(--color-primary);
-  cursor: pointer;
-}
-.breadcrumb-bar__home:hover {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
-}
-.breadcrumb-bar__separator {
-  color: var(--color-text-muted);
-}
-.breadcrumb-bar__link {
-  color: var(--color-primary);
-  cursor: pointer;
-  text-decoration: none;
-}
-.breadcrumb-bar__link:hover {
-  color: var(--color-primary-hover);
-  text-decoration: underline;
-}
-.breadcrumb-bar__current {
-  color: var(--color-text);
-  font-weight: 500;
 }
 
 @media (max-width: 600px) {
