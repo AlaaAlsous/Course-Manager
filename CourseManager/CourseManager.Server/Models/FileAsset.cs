@@ -28,6 +28,9 @@ namespace CourseManager.Server.Models
 
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
+        public int UserId { get; set; }
+        public AppUser User { get; set; } = null!;
+
         public ICollection<CourseFile> CourseFiles { get; set; } = new List<CourseFile>();
         public ICollection<CourseSectionFile> CourseSectionFiles { get; set; } = new List<CourseSectionFile>();
         public ICollection<GroupFile> GroupFiles { get; set; } = new List<GroupFile>();
