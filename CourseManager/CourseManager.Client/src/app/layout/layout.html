@@ -6,12 +6,6 @@
 
     <div class="top-nav__actions">
       <ng-content select="[title-actions]"></ng-content>
-      @if (authService.currentUser()) {
-        <div class="nav-user">
-          <span class="nav-user__name">{{ authService.currentUser()?.displayName }}</span>
-          <button type="button" class="nav-user__logout" (click)="logout()">Logout</button>
-        </div>
-      }
     </div>
 
     <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
@@ -25,6 +19,29 @@
     <nav class="top-nav__links" [class.open]="menuOpen()">
       <a routerLink="/all-courses" (click)="closeMenu()">Courses</a>
       <a routerLink="/participants" (click)="closeMenu()">Participants</a>
+      @if (authService.currentUser()) {
+        <div class="nav-user">
+          <span class="nav-user__name">{{ authService.currentUser()?.displayName }}</span>
+          <button
+            type="button"
+            class="nav-user__logout"
+            (click)="logout()"
+            aria-label="Logout"
+            title="Logout"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                d="M15 17l5-5-5-5M20 12H9M9 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      }
       <button
         type="button"
         class="theme-toggle"
@@ -50,6 +67,27 @@
           </svg>
         }
       </button>
+      @if (authService.currentUser()) {
+        <button
+          type="button"
+          class="nav-user__logout nav-user__logout--mobile"
+          (click)="logout()"
+          aria-label="Logout"
+          title="Logout"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M15 17l5-5-5-5M20 12H9M9 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>Logout</span>
+        </button>
+      }
     </nav>
   </header>
 

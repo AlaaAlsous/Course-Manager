@@ -37,15 +37,6 @@ namespace CourseManager.Server.Migrations
                 type: "int",
                 nullable: true);
 
-            // Seed a default admin user if no users exist (needed when migrating from scratch with existing data)
-            migrationBuilder.Sql(@"
-                IF NOT EXISTS (SELECT 1 FROM AppUsers)
-                BEGIN
-                    INSERT INTO AppUsers (Username, PasswordHash, DisplayName, CreatedAt)
-                    VALUES ('admin', '$2a$11$aorx42GZxMyUaVBFqOPCXu/IBnEN5PscUwm0W.PkfdsaKKel0j.A.', 'Administrator', GETUTCDATE())
-                END
-            ");
-
             // Assign existing data to the first user
             migrationBuilder.Sql("UPDATE Courses SET UserId = (SELECT TOP 1 UserId FROM AppUsers ORDER BY UserId) WHERE UserId IS NULL");
             migrationBuilder.Sql("UPDATE People SET UserId = (SELECT TOP 1 UserId FROM AppUsers ORDER BY UserId) WHERE UserId IS NULL");

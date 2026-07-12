@@ -69,21 +69,4 @@ public static class AuthEndpoints
 
         return routes;
     }
-
-    public static async Task SeedDefaultUserAsync(AppDbContext db)
-    {
-        if (await db.AppUsers.AnyAsync())
-            return;
-
-        var admin = new AppUser
-        {
-            Username = "admin",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-            DisplayName = "Administrator",
-            CreatedAt = DateTime.UtcNow
-        };
-
-        db.AppUsers.Add(admin);
-        await db.SaveChangesAsync();
-    }
 }
