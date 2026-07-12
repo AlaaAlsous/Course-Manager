@@ -4,6 +4,7 @@ using CourseManager.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseManager.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260712134750_AddAppUser")]
+    partial class AddAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,14 +78,10 @@ namespace CourseManager.Server.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("CourseId");
 
-                    b.HasIndex("Name");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Courses");
                 });
@@ -218,14 +217,9 @@ namespace CourseManager.Server.Migrations
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("FileAssetId");
 
                     b.HasIndex("FileName");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("FileAssets");
                 });
@@ -296,14 +290,10 @@ namespace CourseManager.Server.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("PersonId");
 
-                    b.HasIndex("FullName");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("FullName")
+                        .IsUnique();
 
                     b.ToTable("People");
                 });
@@ -321,17 +311,6 @@ namespace CourseManager.Server.Migrations
                     b.HasIndex("FileAssetId");
 
                     b.ToTable("PersonFiles");
-                });
-
-            modelBuilder.Entity("CourseManager.Server.Models.Course", b =>
-                {
-                    b.HasOne("CourseManager.Server.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CourseManager.Server.Models.CourseFile", b =>
@@ -421,17 +400,6 @@ namespace CourseManager.Server.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("CourseManager.Server.Models.FileAsset", b =>
-                {
-                    b.HasOne("CourseManager.Server.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CourseManager.Server.Models.Group", b =>
                 {
                     b.HasOne("CourseManager.Server.Models.CourseSection", "CourseSection")
@@ -479,17 +447,6 @@ namespace CourseManager.Server.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("CourseManager.Server.Models.Person", b =>
-                {
-                    b.HasOne("CourseManager.Server.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CourseManager.Server.Models.PersonFile", b =>
