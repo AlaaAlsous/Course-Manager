@@ -12,6 +12,7 @@ namespace CourseManager.Server.Data
         public DbSet<CourseSection> CourseSections { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Person> People { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<FileAsset> FileAssets { get; set; }
         public DbSet<CourseFile> CourseFiles { get; set; }
         public DbSet<CourseSectionFile> CourseSectionFiles { get; set; }
@@ -141,6 +142,28 @@ namespace CourseManager.Server.Data
                 .HasOne(g => g.CourseSection)
                 .WithMany(cs => cs.Groups)
                 .HasForeignKey(g => g.CourseSectionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AppUser>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Person>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FileAsset>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
