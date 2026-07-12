@@ -1,30 +1,35 @@
 using CourseManager.Server.DTOs;
 using CourseManager.Server.Models;
 using CourseManager.Server.Repositories;
+using CourseManager.Server.Services;
+using System.Security.Claims;
 
 public static class PersonEndpoints
 {
     public static IEndpointRouteBuilder MapPersonEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/person");
+        var group = routes.MapGroup("/api/person").RequireAuthorization();
 
-        group.MapGet("/", async (IPersonRepository repo) =>
+        group.MapGet("/", async (IPersonRepository repo, ClaimsPrincipal user) =>
         {
-            var people = await repo.GetAllAsync();
+            var userId = CurrentUserHelper.GetUserId(user);
+            var people = await repo.GetAllAsync(userId);
             return people.Select(p => new PersonDto(p.PersonId, p.FullName));
         });
 
-        group.MapGet("/{personId:int}", async (int personId, IPersonRepository repo) =>
+        group.MapGet("/{personId:int}", async (int personId, IPersonRepository repo, ClaimsPrincipal user) =>
         {
-            var person = await repo.GetByIdAsync(personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var person = await repo.GetByIdAsync(personId, userId);
             return person is null
                 ? Results.NotFound()
                 : Results.Ok(new PersonDto(person.PersonId, person.FullName));
         });
 
-        group.MapPost("/", async (CreatePersonRequest req, IPersonRepository repo) =>
+        group.MapPost("/", async (CreatePersonRequest req, IPersonRepository repo, ClaimsPrincipal user) =>
         {
-            var existing = await repo.GetByNameAsync(req.FullName);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var existing = await repo.GetByNameAsync(req.FullName, userId);
             if (existing is not null)
             {
                 return Results.Conflict(new PersonDto(existing.PersonId, existing.FullName));
@@ -32,7 +37,8 @@ public static class PersonEndpoints
 
             var person = new Person
             {
-                FullName = req.FullName
+                FullName = req.FullName,
+                UserId = userId
             };
 
             var created = await repo.CreateAsync(person);
@@ -41,21 +47,23 @@ public static class PersonEndpoints
                 new PersonDto(created.PersonId, created.FullName));
         });
 
-        group.MapPut("/{personId:int}", async (int personId, UpdatePersonRequest req, IPersonRepository repo) =>
+        group.MapPut("/{personId:int}", async (int personId, UpdatePersonRequest req, IPersonRepository repo, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var updated = await repo.UpdateAsync(personId, new Person
             {
                 FullName = req.FullName
-            });
+            }, userId);
 
             return updated is null
                 ? Results.NotFound()
                 : Results.Ok(new PersonDto(updated.PersonId, updated.FullName));
         });
 
-        group.MapDelete("/{personId:int}", async (int personId, IPersonRepository repo) =>
+        group.MapDelete("/{personId:int}", async (int personId, IPersonRepository repo, ClaimsPrincipal user) =>
         {
-            var deleted = await repo.DeleteAsync(personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var deleted = await repo.DeleteAsync(personId, userId);
             return deleted ? Results.NoContent() : Results.NotFound();
         });
 

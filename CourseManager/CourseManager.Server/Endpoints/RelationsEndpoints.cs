@@ -1,18 +1,21 @@
 using CourseManager.Server.Data;
 using CourseManager.Server.DTOs;
 using CourseManager.Server.Models;
+using CourseManager.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 public static class RelationsEndpoints
 {
     public static IEndpointRouteBuilder MapRelationsEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/relations");
+        var group = routes.MapGroup("/api/relations").RequireAuthorization();
 
-        group.MapGet("/course/{courseId:int}/people", async (int courseId, AppDbContext db) =>
+        group.MapGet("/course/{courseId:int}/people", async (int courseId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var people = await db.CoursePeople
-                .Where(cp => cp.CourseId == courseId)
+                .Where(cp => cp.CourseId == courseId && cp.Course.UserId == userId && cp.Person.UserId == userId)
                 .Select(cp => new PersonDto(
                     cp.Person.PersonId,
                     cp.Person.FullName
@@ -22,8 +25,16 @@ public static class RelationsEndpoints
             return Results.Ok(people);
         });
 
-        group.MapPost("/course/{courseId:int}/people/{personId:int}", async (int courseId, int personId, AppDbContext db) =>
+        group.MapPost("/course/{courseId:int}/people/{personId:int}", async (int courseId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var course = await db.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId && c.UserId == userId);
+            if (course is null) return Results.NotFound("Course not found.");
+
+            var person = await db.People.FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
+            if (person is null) return Results.NotFound("Person not found.");
+
             var exists = await db.CoursePeople.FindAsync(courseId, personId);
             if (exists is not null)
                 return Results.Conflict("Person already in course");
@@ -38,9 +49,11 @@ public static class RelationsEndpoints
             return Results.Ok();
         });
 
-        group.MapDelete("/course/{courseId:int}/people/{personId:int}", async (int courseId, int personId, AppDbContext db) =>
+        group.MapDelete("/course/{courseId:int}/people/{personId:int}", async (int courseId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
-            var link = await db.CoursePeople.FindAsync(courseId, personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var link = await db.CoursePeople
+                .FirstOrDefaultAsync(cp => cp.CourseId == courseId && cp.PersonId == personId && cp.Course.UserId == userId);
             if (link is null)
                 return Results.NotFound();
 
@@ -49,10 +62,11 @@ public static class RelationsEndpoints
             return Results.NoContent();
         });
 
-        group.MapGet("/section/{sectionId:int}/people", async (int sectionId, AppDbContext db) =>
+        group.MapGet("/section/{sectionId:int}/people", async (int sectionId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var people = await db.CourseSectionPeople
-                .Where(sp => sp.CourseSectionId == sectionId)
+                .Where(sp => sp.CourseSectionId == sectionId && sp.CourseSection.Course.UserId == userId && sp.Person.UserId == userId)
                 .Select(sp => new PersonDto(
                     sp.Person.PersonId,
                     sp.Person.FullName
@@ -62,8 +76,16 @@ public static class RelationsEndpoints
             return Results.Ok(people);
         });
 
-        group.MapPost("/section/{sectionId:int}/people/{personId:int}", async (int sectionId, int personId, AppDbContext db) =>
+        group.MapPost("/section/{sectionId:int}/people/{personId:int}", async (int sectionId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var section = await db.CourseSections.FirstOrDefaultAsync(s => s.CourseSectionId == sectionId && s.Course.UserId == userId);
+            if (section is null) return Results.NotFound("Course section not found.");
+
+            var person = await db.People.FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
+            if (person is null) return Results.NotFound("Person not found.");
+
             var exists = await db.CourseSectionPeople.FindAsync(sectionId, personId);
             if (exists is not null)
                 return Results.Conflict("Person already in section");
@@ -78,9 +100,11 @@ public static class RelationsEndpoints
             return Results.Ok();
         });
 
-        group.MapDelete("/section/{sectionId:int}/people/{personId:int}", async (int sectionId, int personId, AppDbContext db) =>
+        group.MapDelete("/section/{sectionId:int}/people/{personId:int}", async (int sectionId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
-            var link = await db.CourseSectionPeople.FindAsync(sectionId, personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var link = await db.CourseSectionPeople
+                .FirstOrDefaultAsync(sp => sp.CourseSectionId == sectionId && sp.PersonId == personId && sp.CourseSection.Course.UserId == userId);
             if (link is null)
                 return Results.NotFound();
 
@@ -89,10 +113,11 @@ public static class RelationsEndpoints
             return Results.NoContent();
         });
 
-        group.MapGet("/group/{groupId:int}/people", async (int groupId, AppDbContext db) =>
+        group.MapGet("/group/{groupId:int}/people", async (int groupId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var people = await db.GroupPeople
-                .Where(gp => gp.GroupId == groupId)
+                .Where(gp => gp.GroupId == groupId && gp.Group.CourseSection.Course.UserId == userId && gp.Person.UserId == userId)
                 .Select(gp => new PersonDto(
                     gp.Person.PersonId,
                     gp.Person.FullName
@@ -102,8 +127,16 @@ public static class RelationsEndpoints
             return Results.Ok(people);
         });
 
-        group.MapPost("/group/{groupId:int}/people/{personId:int}", async (int groupId, int personId, AppDbContext db) =>
+        group.MapPost("/group/{groupId:int}/people/{personId:int}", async (int groupId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var grp = await db.Groups.FirstOrDefaultAsync(g => g.GroupId == groupId && g.CourseSection.Course.UserId == userId);
+            if (grp is null) return Results.NotFound("Group not found.");
+
+            var person = await db.People.FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
+            if (person is null) return Results.NotFound("Person not found.");
+
             var exists = await db.GroupPeople.FindAsync(groupId, personId);
             if (exists is not null)
                 return Results.Conflict("Person already in group");
@@ -118,9 +151,11 @@ public static class RelationsEndpoints
             return Results.Ok();
         });
 
-        group.MapDelete("/group/{groupId:int}/people/{personId:int}", async (int groupId, int personId, AppDbContext db) =>
+        group.MapDelete("/group/{groupId:int}/people/{personId:int}", async (int groupId, int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
-            var link = await db.GroupPeople.FindAsync(groupId, personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var link = await db.GroupPeople
+                .FirstOrDefaultAsync(gp => gp.GroupId == groupId && gp.PersonId == personId && gp.Group.CourseSection.Course.UserId == userId);
             if (link is null)
                 return Results.NotFound();
 
@@ -129,10 +164,15 @@ public static class RelationsEndpoints
             return Results.NoContent();
         });
 
-        group.MapGet("/person/{personId:int}", async (int personId, AppDbContext db) =>
+        group.MapGet("/person/{personId:int}", async (int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var personExists = await db.People.AnyAsync(p => p.PersonId == personId && p.UserId == userId);
+            if (!personExists) return Results.NotFound();
+
             var courses = await db.CoursePeople
-                .Where(cp => cp.PersonId == personId)
+                .Where(cp => cp.PersonId == personId && cp.Course.UserId == userId)
                 .Select(cp => new CourseDto(
                     cp.Course.CourseId,
                     cp.Course.Name,
@@ -142,7 +182,7 @@ public static class RelationsEndpoints
                 .ToListAsync();
 
             var sections = await db.CourseSectionPeople
-                .Where(sp => sp.PersonId == personId)
+                .Where(sp => sp.PersonId == personId && sp.CourseSection.Course.UserId == userId)
                 .Select(sp => new CourseSectionDto(
                     sp.CourseSection.CourseSectionId,
                     sp.CourseSection.Name,
@@ -155,7 +195,7 @@ public static class RelationsEndpoints
                 .ToListAsync();
 
             var groups = await db.GroupPeople
-                .Where(gp => gp.PersonId == personId)
+                .Where(gp => gp.PersonId == personId && gp.Group.CourseSection.Course.UserId == userId)
                 .Select(gp => new GroupDto(
                     gp.Group.GroupId,
                     gp.Group.Name,
@@ -171,26 +211,28 @@ public static class RelationsEndpoints
             });
         });
 
-        group.MapGet("/person/{personId:int}/overview", async (int personId, AppDbContext db) =>
+        group.MapGet("/person/{personId:int}/overview", async (int personId, AppDbContext db, ClaimsPrincipal user) =>
         {
-            var person = await db.People.FindAsync(personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var person = await db.People.FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
             if (person is null)
                 return Results.NotFound();
 
             var directCourses = await db.CoursePeople
-                .Where(cp => cp.PersonId == personId)
+                .Where(cp => cp.PersonId == personId && cp.Course.UserId == userId)
                 .Select(cp => cp.Course)
                 .ToListAsync();
 
             var directSections = await db.CourseSectionPeople
-                .Where(sp => sp.PersonId == personId)
+                .Where(sp => sp.PersonId == personId && sp.CourseSection.Course.UserId == userId)
                 .Include(sp => sp.CourseSection)
                     .ThenInclude(cs => cs.Course)
                 .Select(sp => sp.CourseSection)
                 .ToListAsync();
 
             var groups = await db.GroupPeople
-                .Where(gp => gp.PersonId == personId)
+                .Where(gp => gp.PersonId == personId && gp.Group.CourseSection.Course.UserId == userId)
                 .Include(gp => gp.Group)
                     .ThenInclude(g => g.CourseSection)
                         .ThenInclude(cs => cs.Course)
@@ -212,7 +254,7 @@ public static class RelationsEndpoints
             var groupIds = groups.Select(g => g.GroupId).ToList();
 
             var courseFiles = await db.CourseFiles
-                .Where(cf => courseIds.Contains(cf.CourseId))
+                .Where(cf => courseIds.Contains(cf.CourseId) && cf.FileAsset.UserId == userId)
                 .Select(cf => new
                 {
                     File = cf.FileAsset,
@@ -223,7 +265,7 @@ public static class RelationsEndpoints
                 .ToListAsync();
 
             var sectionFiles = await db.CourseSectionFiles
-                .Where(sf => sectionIds.Contains(sf.CourseSectionId))
+                .Where(sf => sectionIds.Contains(sf.CourseSectionId) && sf.FileAsset.UserId == userId)
                 .Select(sf => new
                 {
                     File = sf.FileAsset,
@@ -234,7 +276,7 @@ public static class RelationsEndpoints
                 .ToListAsync();
 
             var groupFiles = await db.GroupFiles
-                .Where(gf => groupIds.Contains(gf.GroupId))
+                .Where(gf => groupIds.Contains(gf.GroupId) && gf.FileAsset.UserId == userId)
                 .Select(gf => new
                 {
                     File = gf.FileAsset,
@@ -245,7 +287,7 @@ public static class RelationsEndpoints
                 .ToListAsync();
 
             var personFiles = await db.PersonFiles
-                .Where(pf => pf.PersonId == personId)
+                .Where(pf => pf.PersonId == personId && pf.FileAsset.UserId == userId)
                 .Select(pf => new
                 {
                     File = pf.FileAsset,

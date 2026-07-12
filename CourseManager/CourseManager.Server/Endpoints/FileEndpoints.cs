@@ -2,18 +2,21 @@ using CourseManager.Server.Data;
 using CourseManager.Server.DTOs;
 using CourseManager.Server.Models;
 using CourseManager.Server.Repositories;
+using CourseManager.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using System.IO.Compression;
+using System.Security.Claims;
 
 public static class FileEndpoints
 {
     public static IEndpointRouteBuilder MapFileEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/files");
+        var group = routes.MapGroup("/api/files").RequireAuthorization();
 
-        group.MapGet("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo) =>
+        group.MapGet("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var file = await repo.GetByIdAsync(fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var file = await repo.GetByIdAsync(fileAssetId, userId);
             return file is null
                 ? Results.NotFound()
                 : Results.Ok(new FileAssetDto(
@@ -23,18 +26,19 @@ public static class FileEndpoints
 
         group.MapPost("/upload/{entityType}/{entityId:int}", async (
             string entityType, int entityId, HttpRequest request, AppDbContext db,
-            IFileRepository repo, BlobService blobService, IConfiguration config) =>
+            IFileRepository repo, BlobService blobService, IConfiguration config, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var type = entityType.ToLower();
             if (type is not ("course" or "section" or "coursesection" or "group" or "person"))
                 return Results.BadRequest("Invalid entity type. Use: course, section, group, person.");
 
             var entityExists = type switch
             {
-                "course" => await db.Courses.AnyAsync(c => c.CourseId == entityId),
-                "section" or "coursesection" => await db.CourseSections.AnyAsync(s => s.CourseSectionId == entityId),
-                "group" => await db.Groups.AnyAsync(g => g.GroupId == entityId),
-                "person" => await db.People.AnyAsync(p => p.PersonId == entityId),
+                "course" => await db.Courses.AnyAsync(c => c.CourseId == entityId && c.UserId == userId),
+                "section" or "coursesection" => await db.CourseSections.AnyAsync(s => s.CourseSectionId == entityId && s.Course.UserId == userId),
+                "group" => await db.Groups.AnyAsync(g => g.GroupId == entityId && g.CourseSection.Course.UserId == userId),
+                "person" => await db.People.AnyAsync(p => p.PersonId == entityId && p.UserId == userId),
                 _ => false
             };
 
@@ -86,7 +90,8 @@ public static class FileEndpoints
                         CloudPath = blobUrl,
                         StorageProvider = "azure",
                         FileType = uploadedFile.ContentType,
-                        FileSize = uploadedFile.Length
+                        FileSize = uploadedFile.Length,
+                        UserId = userId
                     };
                 }
                 else
@@ -103,7 +108,8 @@ public static class FileEndpoints
                         CloudPath = null,
                         StorageProvider = "local",
                         FileType = uploadedFile.ContentType,
-                        FileSize = uploadedFile.Length
+                        FileSize = uploadedFile.Length,
+                        UserId = userId
                     };
                 }
 
@@ -129,27 +135,31 @@ public static class FileEndpoints
             }
         });
 
-        group.MapDelete("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo) =>
+        group.MapDelete("/{fileAssetId:int}", async (int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var deleted = await repo.DeleteAsync(fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var deleted = await repo.DeleteAsync(fileAssetId, userId);
             return deleted ? Results.NoContent() : Results.NotFound();
         });
 
-        group.MapGet("/{fileAssetId:int}/content", async (int fileAssetId, IFileRepository repo) =>
+        group.MapGet("/{fileAssetId:int}/content", async (int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var content = await repo.ReadFileContentAsync(fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var content = await repo.ReadFileContentAsync(fileAssetId, userId);
             return content is null ? Results.NotFound() : Results.Ok(content);
         });
 
-        group.MapPut("/{fileAssetId:int}/content", async (int fileAssetId, UpdateFileContentRequest req, IFileRepository repo) =>
+        group.MapPut("/{fileAssetId:int}/content", async (int fileAssetId, UpdateFileContentRequest req, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var ok = await repo.WriteFileContentAsync(fileAssetId, req.Content);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var ok = await repo.WriteFileContentAsync(fileAssetId, req.Content, userId);
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
-        group.MapGet("/{fileAssetId:int}/download", async (int fileAssetId, IFileRepository repo, BlobService blobService) =>
+        group.MapGet("/{fileAssetId:int}/download", async (int fileAssetId, IFileRepository repo, BlobService blobService, ClaimsPrincipal user) =>
         {
-            var file = await repo.GetByIdAsync(fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var file = await repo.GetByIdAsync(fileAssetId, userId);
             if (file is null) return Results.NotFound("File not found");
 
             if (file.StorageProvider == "azure")
@@ -165,9 +175,10 @@ public static class FileEndpoints
             return Results.NotFound("File not found");
         });
 
-        group.MapGet("/{fileAssetId:int}/inline", async (int fileAssetId, IFileRepository repo, BlobService blobService) =>
+        group.MapGet("/{fileAssetId:int}/inline", async (int fileAssetId, IFileRepository repo, BlobService blobService, ClaimsPrincipal user) =>
         {
-            var file = await repo.GetByIdAsync(fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var file = await repo.GetByIdAsync(fileAssetId, userId);
             if (file is null) return Results.NotFound("File not found");
 
             if (file.StorageProvider == "azure")
@@ -183,33 +194,37 @@ public static class FileEndpoints
             return Results.NotFound("File not found");
         });
 
-        group.MapGet("/course/{courseId:int}", async (int courseId, IFileRepository repo) =>
+        group.MapGet("/course/{courseId:int}", async (int courseId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var files = await repo.GetFilesForCourseAsync(courseId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var files = await repo.GetFilesForCourseAsync(courseId, userId);
             return files.Select(f => new FileAssetDto(
                 f.FileAssetId, f.FileName, f.LocalPath, f.CloudPath,
                 f.StorageProvider, f.FileType, f.FileSize, f.UploadedAt));
         });
 
-        group.MapGet("/course-section/{courseSectionId:int}", async (int courseSectionId, IFileRepository repo) =>
+        group.MapGet("/course-section/{courseSectionId:int}", async (int courseSectionId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var files = await repo.GetFilesForCourseSectionAsync(courseSectionId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var files = await repo.GetFilesForCourseSectionAsync(courseSectionId, userId);
             return files.Select(f => new FileAssetDto(
                 f.FileAssetId, f.FileName, f.LocalPath, f.CloudPath,
                 f.StorageProvider, f.FileType, f.FileSize, f.UploadedAt));
         });
 
-        group.MapGet("/group/{groupId:int}", async (int groupId, IFileRepository repo) =>
+        group.MapGet("/group/{groupId:int}", async (int groupId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var files = await repo.GetFilesForGroupAsync(groupId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var files = await repo.GetFilesForGroupAsync(groupId, userId);
             return files.Select(f => new FileAssetDto(
                 f.FileAssetId, f.FileName, f.LocalPath, f.CloudPath,
                 f.StorageProvider, f.FileType, f.FileSize, f.UploadedAt));
         });
 
-        group.MapGet("/person/{personId:int}", async (int personId, IFileRepository repo) =>
+        group.MapGet("/person/{personId:int}", async (int personId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var files = await repo.GetFilesForPersonAsync(personId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var files = await repo.GetFilesForPersonAsync(personId, userId);
             return files.Select(f => new FileAssetDto(
                 f.FileAssetId, f.FileName, f.LocalPath, f.CloudPath,
                 f.StorageProvider, f.FileType, f.FileSize, f.UploadedAt));
@@ -217,8 +232,9 @@ public static class FileEndpoints
 
         group.MapGet("/download/{entityType}/{entityId:int}", async (
             string entityType, int entityId, AppDbContext db,
-            IFileRepository repo, BlobService blob) =>
+            IFileRepository repo, BlobService blob, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             using var memoryStream = new MemoryStream();
             entityType = entityType.ToLower();
 
@@ -227,16 +243,16 @@ public static class FileEndpoints
                 switch (entityType)
                 {
                     case "course":
-                        await AddCourseToZip(zip, entityId, db, repo, blob);
+                        await AddCourseToZip(zip, entityId, db, repo, blob, userId);
                         break;
                     case "course-section":
-                        await AddCourseSectionToZip(zip, entityId, db, repo, blob);
+                        await AddCourseSectionToZip(zip, entityId, db, repo, blob, userId);
                         break;
                     case "group":
-                        await AddGroupToZip(zip, entityId, db, repo, blob);
+                        await AddGroupToZip(zip, entityId, db, repo, blob, userId);
                         break;
                     case "person":
-                        await AddPersonToZip(zip, entityId, db, repo, blob);
+                        await AddPersonToZip(zip, entityId, db, repo, blob, userId);
                         break;
                     default:
                         return Results.BadRequest("Invalid entity type. Use: course, course-section, group, person.");
@@ -246,27 +262,31 @@ public static class FileEndpoints
             return Results.File(memoryStream.ToArray(), "application/zip", $"{entityType}-{entityId}.zip");
         });
 
-        group.MapDelete("/course/{courseId:int}/{fileAssetId:int}", async (int courseId, int fileAssetId, IFileRepository repo) =>
+        group.MapDelete("/course/{courseId:int}/{fileAssetId:int}", async (int courseId, int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var ok = await repo.RemoveFileFromCourseAsync(courseId, fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var ok = await repo.RemoveFileFromCourseAsync(courseId, fileAssetId, userId);
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
-        group.MapDelete("/course-section/{sectionId:int}/{fileAssetId:int}", async (int sectionId, int fileAssetId, IFileRepository repo) =>
+        group.MapDelete("/course-section/{sectionId:int}/{fileAssetId:int}", async (int sectionId, int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var ok = await repo.RemoveFileFromCourseSectionAsync(sectionId, fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var ok = await repo.RemoveFileFromCourseSectionAsync(sectionId, fileAssetId, userId);
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
-        group.MapDelete("/group/{groupId:int}/{fileAssetId:int}", async (int groupId, int fileAssetId, IFileRepository repo) =>
+        group.MapDelete("/group/{groupId:int}/{fileAssetId:int}", async (int groupId, int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var ok = await repo.RemoveFileFromGroupAsync(groupId, fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var ok = await repo.RemoveFileFromGroupAsync(groupId, fileAssetId, userId);
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
-        group.MapDelete("/person/{personId:int}/{fileAssetId:int}", async (int personId, int fileAssetId, IFileRepository repo) =>
+        group.MapDelete("/person/{personId:int}/{fileAssetId:int}", async (int personId, int fileAssetId, IFileRepository repo, ClaimsPrincipal user) =>
         {
-            var ok = await repo.RemoveFileFromPersonAsync(personId, fileAssetId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var ok = await repo.RemoveFileFromPersonAsync(personId, fileAssetId, userId);
             return ok ? Results.NoContent() : Results.NotFound();
         });
 
@@ -284,11 +304,11 @@ public static class FileEndpoints
         return string.IsNullOrWhiteSpace(sanitized) ? "Unknown" : sanitized;
     }
 
-    static async Task WriteFileToZip(ZipArchive zip, IFileRepository repo, BlobService blob, int fileId, string folder)
+    static async Task WriteFileToZip(ZipArchive zip, IFileRepository repo, BlobService blob, int fileId, string folder, int userId)
     {
         try
         {
-            var file = await repo.GetByIdAsync(fileId);
+            var file = await repo.GetByIdAsync(fileId, userId);
             if (file is null) return;
             var entry = zip.CreateEntry($"{folder}{file.FileName}");
             await using var entryStream = entry.Open();
@@ -309,44 +329,45 @@ public static class FileEndpoints
         }
     }
 
-    static async Task AddCourseToZip(ZipArchive zip, int courseId, AppDbContext db, IFileRepository repo, BlobService blob)
+    static async Task AddCourseToZip(ZipArchive zip, int courseId, AppDbContext db, IFileRepository repo, BlobService blob, int userId)
     {
         var course = await db.Courses
+            .Where(c => c.CourseId == courseId && c.UserId == userId)
             .Include(c => c.CourseFiles)
             .Include(c => c.CourseSections).ThenInclude(cs => cs.CourseSectionFiles)
             .Include(c => c.CourseSections).ThenInclude(cs => cs.Groups).ThenInclude(g => g.GroupFiles)
             .Include(c => c.CourseSections).ThenInclude(cs => cs.Groups).ThenInclude(g => g.GroupPeople).ThenInclude(gp => gp.Person)
             .Include(c => c.CoursePeople).ThenInclude(cp => cp.Person)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(c => c.CourseId == courseId);
+            .FirstOrDefaultAsync();
         if (course is null) return;
 
         var coursePath = SanitizeFolderName(course.Name) + "/";
 
         foreach (var cf in course.CourseFiles)
-            await WriteFileToZip(zip, repo, blob, cf.FileAssetId, coursePath);
+            await WriteFileToZip(zip, repo, blob, cf.FileAssetId, coursePath, userId);
 
         foreach (var section in course.CourseSections)
         {
             var sectionPath = $"{coursePath}Sections/{SanitizeFolderName(section.Name)}/";
             foreach (var sf in section.CourseSectionFiles)
-                await WriteFileToZip(zip, repo, blob, sf.FileAssetId, sectionPath);
+                await WriteFileToZip(zip, repo, blob, sf.FileAssetId, sectionPath, userId);
 
             foreach (var group in section.Groups)
             {
                 var groupPath = $"{sectionPath}{SanitizeFolderName(group.Name)}/";
                 foreach (var gf in group.GroupFiles)
-                    await WriteFileToZip(zip, repo, blob, gf.FileAssetId, groupPath);
+                    await WriteFileToZip(zip, repo, blob, gf.FileAssetId, groupPath, userId);
             }
         }
 
         var personIds = new HashSet<int>();
         foreach (var cp in course.CoursePeople)
-            if (cp.Person is not null) personIds.Add(cp.PersonId);
+            if (cp.Person is not null && cp.Person.UserId == userId) personIds.Add(cp.PersonId);
         foreach (var section in course.CourseSections)
             foreach (var group in section.Groups)
                 foreach (var gp in group.GroupPeople)
-                    if (gp.Person is not null) personIds.Add(gp.PersonId);
+                    if (gp.Person is not null && gp.Person.UserId == userId) personIds.Add(gp.PersonId);
 
         if (personIds.Count > 0)
         {
@@ -354,47 +375,48 @@ public static class FileEndpoints
             zip.CreateEntry(peopleRoot);
             foreach (var personId in personIds)
             {
-                var person = await db.People.FindAsync(personId);
+                var person = await db.People.FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
                 if (person is null) continue;
                 var personPath = $"{peopleRoot}{SanitizeFolderName(person.FullName)}/";
                 zip.CreateEntry(personPath);
-                var files = await repo.GetFilesForPersonAsync(personId);
+                var files = await repo.GetFilesForPersonAsync(personId, userId);
                 foreach (var file in files)
-                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath);
+                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath, userId);
             }
         }
     }
 
-    static async Task AddCourseSectionToZip(ZipArchive zip, int sectionId, AppDbContext db, IFileRepository repo, BlobService blob)
+    static async Task AddCourseSectionToZip(ZipArchive zip, int sectionId, AppDbContext db, IFileRepository repo, BlobService blob, int userId)
     {
         var section = await db.CourseSections
+            .Where(s => s.CourseSectionId == sectionId && s.Course.UserId == userId)
             .Include(s => s.CourseSectionFiles)
             .Include(s => s.Groups).ThenInclude(g => g.GroupFiles)
             .Include(s => s.CourseSectionPeople).ThenInclude(sp => sp.Person)
             .Include(s => s.Groups).ThenInclude(g => g.GroupPeople).ThenInclude(gp => gp.Person)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(s => s.CourseSectionId == sectionId);
+            .FirstOrDefaultAsync();
         if (section is null) return;
 
         var sectionPath = SanitizeFolderName(section.Name) + "/";
 
         foreach (var sf in section.CourseSectionFiles)
-            await WriteFileToZip(zip, repo, blob, sf.FileAssetId, sectionPath);
+            await WriteFileToZip(zip, repo, blob, sf.FileAssetId, sectionPath, userId);
 
         foreach (var group in section.Groups)
         {
             var groupPath = $"{sectionPath}{SanitizeFolderName(group.Name)}/";
             foreach (var gf in group.GroupFiles)
-                await WriteFileToZip(zip, repo, blob, gf.FileAssetId, groupPath);
+                await WriteFileToZip(zip, repo, blob, gf.FileAssetId, groupPath, userId);
 
             foreach (var gp in group.GroupPeople)
             {
-                if (gp.Person is null) continue;
+                if (gp.Person is null || gp.Person.UserId != userId) continue;
                 var personPath = $"{groupPath}{SanitizeFolderName(gp.Person.FullName)}/";
                 zip.CreateEntry(personPath);
-                var files = await repo.GetFilesForPersonAsync(gp.PersonId);
+                var files = await repo.GetFilesForPersonAsync(gp.PersonId, userId);
                 foreach (var file in files)
-                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath);
+                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath, userId);
             }
         }
 
@@ -403,44 +425,48 @@ public static class FileEndpoints
             var peopleRoot = $"{sectionPath}People/";
             foreach (var sp in section.CourseSectionPeople)
             {
-                if (sp.Person is null) continue;
+                if (sp.Person is null || sp.Person.UserId != userId) continue;
                 var personPath = $"{peopleRoot}{SanitizeFolderName(sp.Person.FullName)}/";
-                var files = await repo.GetFilesForPersonAsync(sp.PersonId);
+                var files = await repo.GetFilesForPersonAsync(sp.PersonId, userId);
                 foreach (var file in files)
-                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath);
+                    await WriteFileToZip(zip, repo, blob, file.FileAssetId, personPath, userId);
             }
         }
     }
 
-    static async Task AddGroupToZip(ZipArchive zip, int groupId, AppDbContext db, IFileRepository repo, BlobService blob)
+    static async Task AddGroupToZip(ZipArchive zip, int groupId, AppDbContext db, IFileRepository repo, BlobService blob, int userId)
     {
         var group = await db.Groups
+            .Where(g => g.GroupId == groupId && g.CourseSection.Course.UserId == userId)
             .Include(g => g.GroupFiles)
             .Include(g => g.GroupPeople).ThenInclude(gp => gp.Person)
-            .FirstOrDefaultAsync(g => g.GroupId == groupId);
+            .FirstOrDefaultAsync();
         if (group is null) return;
 
         foreach (var gf in group.GroupFiles)
-            await WriteFileToZip(zip, repo, blob, gf.FileAssetId, SanitizeFolderName(group.Name) + "/");
+            await WriteFileToZip(zip, repo, blob, gf.FileAssetId, SanitizeFolderName(group.Name) + "/", userId);
 
         foreach (var gp in group.GroupPeople)
         {
-            if (gp.Person is null) continue;
-            var files = await repo.GetFilesForPersonAsync(gp.PersonId);
+            if (gp.Person is null || gp.Person.UserId != userId) continue;
+            var files = await repo.GetFilesForPersonAsync(gp.PersonId, userId);
             if (files.Count == 0) continue;
             foreach (var file in files)
-                await WriteFileToZip(zip, repo, blob, file.FileAssetId, SanitizeFolderName(gp.Person.FullName) + "/");
+                await WriteFileToZip(zip, repo, blob, file.FileAssetId, SanitizeFolderName(gp.Person.FullName) + "/", userId);
         }
     }
 
-    static async Task AddPersonToZip(ZipArchive zip, int personId, AppDbContext db, IFileRepository repo, BlobService blob)
+    static async Task AddPersonToZip(ZipArchive zip, int personId, AppDbContext db, IFileRepository repo, BlobService blob, int userId)
     {
-        var person = await db.People.Include(p => p.PersonFiles).FirstOrDefaultAsync(p => p.PersonId == personId);
+        var person = await db.People
+            .Where(p => p.PersonId == personId && p.UserId == userId)
+            .Include(p => p.PersonFiles)
+            .FirstOrDefaultAsync();
         if (person is null) return;
 
         var personPath = SanitizeFolderName(person.FullName) + "/";
         zip.CreateEntry(personPath);
         foreach (var pf in person.PersonFiles)
-            await WriteFileToZip(zip, repo, blob, pf.FileAssetId, personPath);
+            await WriteFileToZip(zip, repo, blob, pf.FileAssetId, personPath, userId);
     }
 }

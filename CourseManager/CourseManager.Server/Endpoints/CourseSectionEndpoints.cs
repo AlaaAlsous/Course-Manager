@@ -1,16 +1,19 @@
 using CourseManager.Server.DTOs;
 using CourseManager.Server.Models;
 using CourseManager.Server.Repositories;
+using CourseManager.Server.Services;
+using System.Security.Claims;
 
 public static class CourseSectionEndpoints
 {
     public static IEndpointRouteBuilder MapCourseSectionEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/course-section");
+        var group = routes.MapGroup("/api/course-section").RequireAuthorization();
 
-        group.MapGet("/", async (ICourseSectionRepository repo) =>
+        group.MapGet("/", async (ICourseSectionRepository repo, ClaimsPrincipal user) =>
         {
-            var sections = await repo.GetAllAsync();
+            var userId = CurrentUserHelper.GetUserId(user);
+            var sections = await repo.GetAllAsync(userId);
             return sections.Select(s =>
                 new CourseSectionDto(
                     s.CourseSectionId,
@@ -24,9 +27,10 @@ public static class CourseSectionEndpoints
             );
         });
 
-        group.MapGet("/{courseSectionId:int}", async (int courseSectionId, ICourseSectionRepository repo) =>
+        group.MapGet("/{courseSectionId:int}", async (int courseSectionId, ICourseSectionRepository repo, ClaimsPrincipal user) =>
         {
-            var section = await repo.GetByIdAsync(courseSectionId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var section = await repo.GetByIdAsync(courseSectionId, userId);
             return section is null
                 ? Results.NotFound()
                 : Results.Ok(new CourseSectionDto(
@@ -40,9 +44,10 @@ public static class CourseSectionEndpoints
                 ));
         });
 
-        group.MapGet("/course/{courseId:int}", async (int courseId, ICourseSectionRepository repo) =>
+        group.MapGet("/course/{courseId:int}", async (int courseId, ICourseSectionRepository repo, ClaimsPrincipal user) =>
         {
-            var sections = await repo.GetByCourseIdAsync(courseId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var sections = await repo.GetByCourseIdAsync(courseId, userId);
             return sections.Select(s =>
                 new CourseSectionDto(
                     s.CourseSectionId,
@@ -56,8 +61,14 @@ public static class CourseSectionEndpoints
             );
         });
 
-        group.MapPost("/", async (CreateCourseSectionRequest req, ICourseSectionRepository repo) =>
+        group.MapPost("/", async (CreateCourseSectionRequest req, ICourseSectionRepository repo, ICourseRepository courseRepo, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
+
+            var course = await courseRepo.GetByIdAsync(req.CourseId, userId);
+            if (course is null)
+                return Results.NotFound("Course not found.");
+
             var section = new CourseSection
             {
                 Name = req.Name,
@@ -81,15 +92,16 @@ public static class CourseSectionEndpoints
                 ));
         });
 
-        group.MapPut("/{courseSectionId:int}", async (int courseSectionId, UpdateCourseSectionRequest req, ICourseSectionRepository repo) =>
+        group.MapPut("/{courseSectionId:int}", async (int courseSectionId, UpdateCourseSectionRequest req, ICourseSectionRepository repo, ClaimsPrincipal user) =>
         {
+            var userId = CurrentUserHelper.GetUserId(user);
             var updated = await repo.UpdateAsync(courseSectionId, new CourseSection
             {
                 Name = req.Name,
                 Description = req.Description,
                 StartDate = req.StartDate,
                 EndDate = req.EndDate
-            });
+            }, userId);
 
             return updated is null
                 ? Results.NotFound()
@@ -104,9 +116,10 @@ public static class CourseSectionEndpoints
                 ));
         });
 
-        group.MapDelete("/{courseSectionId:int}", async (int courseSectionId, ICourseSectionRepository repo) =>
+        group.MapDelete("/{courseSectionId:int}", async (int courseSectionId, ICourseSectionRepository repo, ClaimsPrincipal user) =>
         {
-            var deleted = await repo.DeleteAsync(courseSectionId);
+            var userId = CurrentUserHelper.GetUserId(user);
+            var deleted = await repo.DeleteAsync(courseSectionId, userId);
             return deleted ? Results.NoContent() : Results.NotFound();
         });
 
