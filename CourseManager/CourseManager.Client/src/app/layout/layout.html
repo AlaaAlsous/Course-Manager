@@ -6,6 +6,12 @@
 
     <div class="top-nav__actions">
       <ng-content select="[title-actions]"></ng-content>
+      @if (authService.currentUser()) {
+        <div class="nav-user">
+          <span class="nav-user__name">{{ authService.currentUser()?.displayName }}</span>
+          <button type="button" class="nav-user__logout" (click)="logout()">Logout</button>
+        </div>
+      }
     </div>
 
     <button class="hamburger" [class.active]="menuOpen()" (click)="toggleMenu()">
