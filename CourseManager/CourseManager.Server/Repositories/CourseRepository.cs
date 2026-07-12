@@ -13,14 +13,17 @@ public class CourseRepository : ICourseRepository
         _db = db;
     }
 
-    public async Task<List<Course>> GetAllAsync()
+    public async Task<List<Course>> GetAllAsync(int userId)
     {
-        return await _db.Courses.ToListAsync();
+        return await _db.Courses
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
     }
 
-    public async Task<Course?> GetByIdAsync(int courseId)
+    public async Task<Course?> GetByIdAsync(int courseId, int userId)
     {
-        return await _db.Courses.FindAsync(courseId);
+        return await _db.Courses
+            .FirstOrDefaultAsync(c => c.CourseId == courseId && c.UserId == userId);
     }
 
     public async Task<Course> CreateAsync(Course course)
@@ -30,9 +33,10 @@ public class CourseRepository : ICourseRepository
         return course;
     }
 
-    public async Task<Course?> UpdateAsync(int courseId, Course updated)
+    public async Task<Course?> UpdateAsync(int courseId, Course updated, int userId)
     {
-        var existing = await _db.Courses.FindAsync(courseId);
+        var existing = await _db.Courses
+            .FirstOrDefaultAsync(c => c.CourseId == courseId && c.UserId == userId);
         if (existing is null)
             return null;
 
@@ -43,9 +47,10 @@ public class CourseRepository : ICourseRepository
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int courseId)
+    public async Task<bool> DeleteAsync(int courseId, int userId)
     {
-        var course = await _db.Courses.FindAsync(courseId);
+        var course = await _db.Courses
+            .FirstOrDefaultAsync(c => c.CourseId == courseId && c.UserId == userId);
         if (course is null)
             return false;
 

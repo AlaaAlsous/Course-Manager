@@ -22,19 +22,20 @@ public class FileRepository : IFileRepository
         return file;
     }
 
-    public async Task<FileAsset?> GetByIdAsync(int fileAssetId)
+    public async Task<FileAsset?> GetByIdAsync(int fileAssetId, int userId)
     {
-        return await _db.FileAssets.FindAsync(fileAssetId);
+        return await _db.FileAssets
+            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId && f.UserId == userId);
     }
 
-    public async Task<bool> DeleteAsync(int fileAssetId)
+    public async Task<bool> DeleteAsync(int fileAssetId, int userId)
     {
         var file = await _db.FileAssets
             .Include(f => f.CourseFiles)
             .Include(f => f.CourseSectionFiles)
             .Include(f => f.GroupFiles)
             .Include(f => f.PersonFiles)
-            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId);
+            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId && f.UserId == userId);
 
         if (file == null)
             return false;
@@ -67,9 +68,10 @@ public class FileRepository : IFileRepository
         return true;
     }
 
-    public async Task<string?> ReadFileContentAsync(int fileAssetId)
+    public async Task<string?> ReadFileContentAsync(int fileAssetId, int userId)
     {
-        var file = await _db.FileAssets.FindAsync(fileAssetId);
+        var file = await _db.FileAssets
+            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId && f.UserId == userId);
         if (file is null)
             return null;
 
@@ -86,9 +88,10 @@ public class FileRepository : IFileRepository
         return null;
     }
 
-    public async Task<bool> WriteFileContentAsync(int fileAssetId, string content)
+    public async Task<bool> WriteFileContentAsync(int fileAssetId, string content, int userId)
     {
-        var file = await _db.FileAssets.FindAsync(fileAssetId);
+        var file = await _db.FileAssets
+            .FirstOrDefaultAsync(f => f.FileAssetId == fileAssetId && f.UserId == userId);
         if (file is null)
             return false;
 
@@ -115,34 +118,34 @@ public class FileRepository : IFileRepository
         return false;
     }
 
-    public async Task<List<FileAsset>> GetFilesForCourseAsync(int courseId)
+    public async Task<List<FileAsset>> GetFilesForCourseAsync(int courseId, int userId)
     {
         return await _db.CourseFiles
-            .Where(cf => cf.CourseId == courseId)
+            .Where(cf => cf.CourseId == courseId && cf.Course.UserId == userId)
             .Select(cf => cf.FileAsset)
             .ToListAsync();
     }
 
-    public async Task<List<FileAsset>> GetFilesForCourseSectionAsync(int courseSectionId)
+    public async Task<List<FileAsset>> GetFilesForCourseSectionAsync(int courseSectionId, int userId)
     {
         return await _db.CourseSectionFiles
-            .Where(cf => cf.CourseSectionId == courseSectionId)
+            .Where(cf => cf.CourseSectionId == courseSectionId && cf.CourseSection.Course.UserId == userId)
             .Select(cf => cf.FileAsset)
             .ToListAsync();
     }
 
-    public async Task<List<FileAsset>> GetFilesForGroupAsync(int groupId)
+    public async Task<List<FileAsset>> GetFilesForGroupAsync(int groupId, int userId)
     {
         return await _db.GroupFiles
-            .Where(gf => gf.GroupId == groupId)
+            .Where(gf => gf.GroupId == groupId && gf.Group.CourseSection.Course.UserId == userId)
             .Select(gf => gf.FileAsset)
             .ToListAsync();
     }
 
-    public async Task<List<FileAsset>> GetFilesForPersonAsync(int personId)
+    public async Task<List<FileAsset>> GetFilesForPersonAsync(int personId, int userId)
     {
         return await _db.PersonFiles
-            .Where(pf => pf.PersonId == personId)
+            .Where(pf => pf.PersonId == personId && pf.Person.UserId == userId)
             .Select(pf => pf.FileAsset)
             .ToListAsync();
     }
@@ -171,10 +174,10 @@ public class FileRepository : IFileRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> RemoveFileFromCourseAsync(int courseId, int fileAssetId)
+    public async Task<bool> RemoveFileFromCourseAsync(int courseId, int fileAssetId, int userId)
     {
         var relation = await _db.CourseFiles
-            .FirstOrDefaultAsync(cf => cf.CourseId == courseId && cf.FileAssetId == fileAssetId);
+            .FirstOrDefaultAsync(cf => cf.CourseId == courseId && cf.FileAssetId == fileAssetId && cf.Course.UserId == userId);
 
         if (relation == null)
             return false;
@@ -184,10 +187,10 @@ public class FileRepository : IFileRepository
         return true;
     }
 
-    public async Task<bool> RemoveFileFromCourseSectionAsync(int sectionId, int fileAssetId)
+    public async Task<bool> RemoveFileFromCourseSectionAsync(int sectionId, int fileAssetId, int userId)
     {
         var relation = await _db.CourseSectionFiles
-            .FirstOrDefaultAsync(sf => sf.CourseSectionId == sectionId && sf.FileAssetId == fileAssetId);
+            .FirstOrDefaultAsync(sf => sf.CourseSectionId == sectionId && sf.FileAssetId == fileAssetId && sf.CourseSection.Course.UserId == userId);
 
         if (relation == null)
             return false;
@@ -197,10 +200,10 @@ public class FileRepository : IFileRepository
         return true;
     }
 
-    public async Task<bool> RemoveFileFromGroupAsync(int groupId, int fileAssetId)
+    public async Task<bool> RemoveFileFromGroupAsync(int groupId, int fileAssetId, int userId)
     {
         var relation = await _db.GroupFiles
-            .FirstOrDefaultAsync(gf => gf.GroupId == groupId && gf.FileAssetId == fileAssetId);
+            .FirstOrDefaultAsync(gf => gf.GroupId == groupId && gf.FileAssetId == fileAssetId && gf.Group.CourseSection.Course.UserId == userId);
 
         if (relation == null)
             return false;
@@ -210,10 +213,10 @@ public class FileRepository : IFileRepository
         return true;
     }
 
-    public async Task<bool> RemoveFileFromPersonAsync(int personId, int fileAssetId)
+    public async Task<bool> RemoveFileFromPersonAsync(int personId, int fileAssetId, int userId)
     {
         var relation = await _db.PersonFiles
-            .FirstOrDefaultAsync(pf => pf.PersonId == personId && pf.FileAssetId == fileAssetId);
+            .FirstOrDefaultAsync(pf => pf.PersonId == personId && pf.FileAssetId == fileAssetId && pf.Person.UserId == userId);
 
         if (relation == null)
             return false;

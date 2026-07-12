@@ -13,20 +13,23 @@ public class CourseSectionRepository : ICourseSectionRepository
         _db = db;
     }
 
-    public async Task<List<CourseSection>> GetAllAsync()
-    {
-        return await _db.CourseSections.ToListAsync();
-    }
-
-    public async Task<CourseSection?> GetByIdAsync(int courseSectionId)
-    {
-        return await _db.CourseSections.FindAsync(courseSectionId);
-    }
-
-    public async Task<List<CourseSection>> GetByCourseIdAsync(int courseId)
+    public async Task<List<CourseSection>> GetAllAsync(int userId)
     {
         return await _db.CourseSections
-            .Where(s => s.CourseId == courseId)
+            .Where(s => s.Course.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<CourseSection?> GetByIdAsync(int courseSectionId, int userId)
+    {
+        return await _db.CourseSections
+            .FirstOrDefaultAsync(s => s.CourseSectionId == courseSectionId && s.Course.UserId == userId);
+    }
+
+    public async Task<List<CourseSection>> GetByCourseIdAsync(int courseId, int userId)
+    {
+        return await _db.CourseSections
+            .Where(s => s.CourseId == courseId && s.Course.UserId == userId)
             .ToListAsync();
     }
 
@@ -37,9 +40,10 @@ public class CourseSectionRepository : ICourseSectionRepository
         return section;
     }
 
-    public async Task<CourseSection?> UpdateAsync(int courseSectionId, CourseSection updated)
+    public async Task<CourseSection?> UpdateAsync(int courseSectionId, CourseSection updated, int userId)
     {
-        var existing = await _db.CourseSections.FindAsync(courseSectionId);
+        var existing = await _db.CourseSections
+            .FirstOrDefaultAsync(s => s.CourseSectionId == courseSectionId && s.Course.UserId == userId);
         if (existing is null)
             return null;
 
@@ -52,9 +56,10 @@ public class CourseSectionRepository : ICourseSectionRepository
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int courseSectionId)
+    public async Task<bool> DeleteAsync(int courseSectionId, int userId)
     {
-        var section = await _db.CourseSections.FindAsync(courseSectionId);
+        var section = await _db.CourseSections
+            .FirstOrDefaultAsync(s => s.CourseSectionId == courseSectionId && s.Course.UserId == userId);
         if (section is null)
             return false;
 

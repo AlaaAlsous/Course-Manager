@@ -13,21 +13,24 @@ public class PersonRepository : IPersonRepository
         _db = db;
     }
 
-    public async Task<List<Person>> GetAllAsync()
+    public async Task<List<Person>> GetAllAsync(int userId)
     {
-        return await _db.People.ToListAsync();
+        return await _db.People
+            .Where(p => p.UserId == userId)
+            .ToListAsync();
     }
 
-    public async Task<Person?> GetByIdAsync(int personId)
+    public async Task<Person?> GetByIdAsync(int personId, int userId)
     {
-        return await _db.People.FindAsync(personId);
+        return await _db.People
+            .FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
     }
 
-    public async Task<Person?> GetByNameAsync(string name)
+    public async Task<Person?> GetByNameAsync(string name, int userId)
     {
         var trimmed = name.Trim();
         return await _db.People
-            .FirstOrDefaultAsync(p => p.FullName == trimmed);
+            .FirstOrDefaultAsync(p => p.FullName == trimmed && p.UserId == userId);
     }
 
     public async Task<Person> CreateAsync(Person person)
@@ -37,9 +40,10 @@ public class PersonRepository : IPersonRepository
         return person;
     }
 
-    public async Task<Person?> UpdateAsync(int personId, Person updated)
+    public async Task<Person?> UpdateAsync(int personId, Person updated, int userId)
     {
-        var existing = await _db.People.FindAsync(personId);
+        var existing = await _db.People
+            .FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
         if (existing is null)
             return null;
 
@@ -49,9 +53,10 @@ public class PersonRepository : IPersonRepository
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int personId)
+    public async Task<bool> DeleteAsync(int personId, int userId)
     {
-        var person = await _db.People.FindAsync(personId);
+        var person = await _db.People
+            .FirstOrDefaultAsync(p => p.PersonId == personId && p.UserId == userId);
         if (person is null)
             return false;
 

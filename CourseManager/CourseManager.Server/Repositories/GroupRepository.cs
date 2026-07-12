@@ -13,20 +13,23 @@ public class GroupRepository : IGroupRepository
         _db = db;
     }
 
-    public async Task<List<Group>> GetAllAsync()
-    {
-        return await _db.Groups.ToListAsync();
-    }
-
-    public async Task<Group?> GetByIdAsync(int groupId)
-    {
-        return await _db.Groups.FindAsync(groupId);
-    }
-
-    public async Task<List<Group>> GetByCourseSectionIdAsync(int courseSectionId)
+    public async Task<List<Group>> GetAllAsync(int userId)
     {
         return await _db.Groups
-            .Where(g => g.CourseSectionId == courseSectionId)
+            .Where(g => g.CourseSection.Course.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<Group?> GetByIdAsync(int groupId, int userId)
+    {
+        return await _db.Groups
+            .FirstOrDefaultAsync(g => g.GroupId == groupId && g.CourseSection.Course.UserId == userId);
+    }
+
+    public async Task<List<Group>> GetByCourseSectionIdAsync(int courseSectionId, int userId)
+    {
+        return await _db.Groups
+            .Where(g => g.CourseSectionId == courseSectionId && g.CourseSection.Course.UserId == userId)
             .ToListAsync();
     }
 
@@ -37,9 +40,10 @@ public class GroupRepository : IGroupRepository
         return group;
     }
 
-    public async Task<Group?> UpdateAsync(int groupId, Group updated)
+    public async Task<Group?> UpdateAsync(int groupId, Group updated, int userId)
     {
-        var existing = await _db.Groups.FindAsync(groupId);
+        var existing = await _db.Groups
+            .FirstOrDefaultAsync(g => g.GroupId == groupId && g.CourseSection.Course.UserId == userId);
         if (existing is null)
             return null;
 
@@ -49,9 +53,10 @@ public class GroupRepository : IGroupRepository
         return existing;
     }
 
-    public async Task<bool> DeleteAsync(int groupId)
+    public async Task<bool> DeleteAsync(int groupId, int userId)
     {
-        var group = await _db.Groups.FindAsync(groupId);
+        var group = await _db.Groups
+            .FirstOrDefaultAsync(g => g.GroupId == groupId && g.CourseSection.Course.UserId == userId);
         if (group is null)
             return false;
 
