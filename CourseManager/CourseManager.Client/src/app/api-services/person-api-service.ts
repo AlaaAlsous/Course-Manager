@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Course, CourseSection, Group, Person, PersonOverview, PersonOverviewFile } from './dtos';
 import { environment } from '../../environments/environment';
 
@@ -8,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class PersonApiService {
   private baseUrl = `${environment.apiUrl}/person`;
   private relationsBaseUrl = `${environment.apiUrl}/relations`;
-  constructor() {}
+  private readonly http = inject(HttpClient);
 
   private mapPerson(data: any): Person {
     return {
@@ -64,13 +65,8 @@ export class PersonApiService {
 
   async getAllPersons(): Promise<Person[]> {
     try {
-      const response = await fetch(`${this.baseUrl}`);
-      if (!response.ok) {
-        console.error('Error fetching persons:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((person) => this.mapPerson(person));
+      const data = await this.http.get<any[]>(`${this.baseUrl}`).toPromise();
+      return (data ?? []).map((person) => this.mapPerson(person));
     } catch (error) {
       console.error('Error fetching persons:', error);
       return [];
@@ -79,12 +75,7 @@ export class PersonApiService {
 
   async getPersonById(id: number): Promise<Person | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`);
-      if (!response.ok) {
-        console.error('Error fetching person:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http.get<any>(`${this.baseUrl}/${id}`).toPromise();
       return this.mapPerson(data);
     } catch (error) {
       console.error('Error fetching person:', error);
@@ -94,13 +85,10 @@ export class PersonApiService {
 
   async getPersonOverview(id: number): Promise<PersonOverview | null> {
     try {
-      const response = await fetch(`${this.relationsBaseUrl}/person/${id}/overview`);
-      if (!response.ok) {
-        console.error('Error fetching person overview:', response.statusText);
-        return null;
-      }
+      const data = await this.http
+        .get<any>(`${this.relationsBaseUrl}/person/${id}/overview`)
+        .toPromise();
 
-      const data = await response.json();
       return {
         person: this.mapPerson(data.person),
         courses: (data.courses as any[]).map((course) => this.mapCourse(course)),
@@ -116,24 +104,12 @@ export class PersonApiService {
 
   async createPerson(fullName: string): Promise<{ id: number; alreadyExists: boolean } | null> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fullName }),
-      });
-      if (response.status === 409) {
-        const data = await response.json();
-        return { id: data.id ?? data.personId, alreadyExists: true };
-      }
-      if (!response.ok) {
-        console.error('Error creating person:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http.post<any>(`${this.baseUrl}`, { fullName }).toPromise();
       return { id: data.id ?? data.personId, alreadyExists: false };
-    } catch (error) {
+    } catch (error: any) {
+      if (error.status === 409) {
+        return { id: error.error?.id ?? error.error?.personId, alreadyExists: true };
+      }
       console.error('Error creating person:', error);
       return null;
     }
@@ -141,17 +117,7 @@ export class PersonApiService {
 
   async updatePerson(id: number, fullName: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fullName }),
-      });
-      if (!response.ok) {
-        console.error('Error updating person:', response.statusText);
-        return false;
-      }
+      await this.http.put(`${this.baseUrl}/${id}`, { fullName }).toPromise();
       return true;
     } catch (error) {
       console.error('Error updating person:', error);
@@ -161,13 +127,7 @@ export class PersonApiService {
 
   async deletePerson(id: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        console.error('Error deleting person:', response.statusText);
-        return false;
-      }
+      await this.http.delete(`${this.baseUrl}/${id}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error deleting person:', error);

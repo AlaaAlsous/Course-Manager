@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CourseSection } from './dtos';
 import { environment } from '../../environments/environment';
 
@@ -7,8 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class CourseSectionApiService {
   private baseUrl = `${environment.apiUrl}/course-section`;
-
-  constructor() {}
+  private readonly http = inject(HttpClient);
 
   private mapCourseSection(data: any): CourseSection {
     return {
@@ -24,13 +24,8 @@ export class CourseSectionApiService {
 
   async getAllCourseSections(): Promise<CourseSection[]> {
     try {
-      const response = await fetch(`${this.baseUrl}`);
-      if (!response.ok) {
-        console.error('Error fetching course sections:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((section) => this.mapCourseSection(section));
+      const data = await this.http.get<any[]>(`${this.baseUrl}`).toPromise();
+      return (data ?? []).map((section) => this.mapCourseSection(section));
     } catch (error) {
       console.error('Error fetching course sections:', error);
       return [];
@@ -39,13 +34,8 @@ export class CourseSectionApiService {
 
   async getCourseSectionsByCourseId(courseId: number): Promise<CourseSection[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/course/${courseId}`);
-      if (!response.ok) {
-        console.error('Error fetching course sections:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((section) => this.mapCourseSection(section));
+      const data = await this.http.get<any[]>(`${this.baseUrl}/course/${courseId}`).toPromise();
+      return (data ?? []).map((section) => this.mapCourseSection(section));
     } catch (error) {
       console.error('Error fetching course sections:', error);
       return [];
@@ -54,12 +44,7 @@ export class CourseSectionApiService {
 
   async getCourseSectionById(id: number): Promise<CourseSection | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`);
-      if (!response.ok) {
-        console.error('Error fetching course section:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http.get<any>(`${this.baseUrl}/${id}`).toPromise();
       return this.mapCourseSection(data);
     } catch (error) {
       console.error('Error fetching course section:', error);
@@ -75,18 +60,9 @@ export class CourseSectionApiService {
     endDate: string | null,
   ): Promise<number | null> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ courseId, name, description, startDate, endDate }),
-      });
-      if (!response.ok) {
-        console.error('Error creating course section:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http
+        .post<any>(`${this.baseUrl}`, { courseId, name, description, startDate, endDate })
+        .toPromise();
       return data.courseSectionId;
     } catch (error) {
       console.error('Error creating course section:', error);
@@ -102,17 +78,9 @@ export class CourseSectionApiService {
     endDate: string | null,
   ): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, description, startDate, endDate }),
-      });
-      if (!response.ok) {
-        console.error('Error updating course section:', response.statusText);
-        return false;
-      }
+      await this.http
+        .put(`${this.baseUrl}/${id}`, { name, description, startDate, endDate })
+        .toPromise();
       return true;
     } catch (error) {
       console.error('Error updating course section:', error);
@@ -122,13 +90,7 @@ export class CourseSectionApiService {
 
   async deleteCourseSection(id: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        console.error('Error deleting course section:', response.statusText);
-        return false;
-      }
+      await this.http.delete(`${this.baseUrl}/${id}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error deleting course section:', error);

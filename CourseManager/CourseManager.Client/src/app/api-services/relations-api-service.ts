@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Person, Course, CourseSection, Group, PersonRelations } from './dtos';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Person, PersonRelations } from './dtos';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -7,20 +8,14 @@ import { environment } from '../../environments/environment';
 })
 export class RelationsApiService {
   private baseUrl = `${environment.apiUrl}/relations`;
-
-  constructor() {}
+  private readonly http = inject(HttpClient);
 
   async getPeopleInCourse(courseId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/course/${courseId}/people`);
-
-      if (!response.ok) {
-        console.error('Error fetching course people:', response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
-      return data as Person[];
+      const data = await this.http
+        .get<Person[]>(`${this.baseUrl}/course/${courseId}/people`)
+        .toPromise();
+      return data ?? [];
     } catch (error) {
       console.error('Error fetching course people:', error);
       return null;
@@ -29,15 +24,9 @@ export class RelationsApiService {
 
   async addPersonToCourse(courseId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/course/${courseId}/people/${personId}`, {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        console.error('Error adding person to course:', response.statusText);
-        return false;
-      }
-
+      await this.http
+        .post(`${this.baseUrl}/course/${courseId}/people/${personId}`, null)
+        .toPromise();
       return true;
     } catch (error) {
       console.error('Error adding person to course:', error);
@@ -47,15 +36,7 @@ export class RelationsApiService {
 
   async removePersonFromCourse(courseId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/course/${courseId}/people/${personId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        console.error('Error removing person from course:', response.statusText);
-        return false;
-      }
-
+      await this.http.delete(`${this.baseUrl}/course/${courseId}/people/${personId}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error removing person from course:', error);
@@ -65,15 +46,10 @@ export class RelationsApiService {
 
   async getPeopleInSection(sectionId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people`);
-
-      if (!response.ok) {
-        console.error('Error fetching section people:', response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
-      return data as Person[];
+      const data = await this.http
+        .get<Person[]>(`${this.baseUrl}/section/${sectionId}/people`)
+        .toPromise();
+      return data ?? [];
     } catch (error) {
       console.error('Error fetching section people:', error);
       return null;
@@ -82,15 +58,9 @@ export class RelationsApiService {
 
   async addPersonToSection(sectionId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people/${personId}`, {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        console.error('Error adding person to section:', response.statusText);
-        return false;
-      }
-
+      await this.http
+        .post(`${this.baseUrl}/section/${sectionId}/people/${personId}`, null)
+        .toPromise();
       return true;
     } catch (error) {
       console.error('Error adding person to section:', error);
@@ -100,15 +70,7 @@ export class RelationsApiService {
 
   async removePersonFromSection(sectionId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/section/${sectionId}/people/${personId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        console.error('Error removing person from section:', response.statusText);
-        return false;
-      }
-
+      await this.http.delete(`${this.baseUrl}/section/${sectionId}/people/${personId}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error removing person from section:', error);
@@ -118,15 +80,10 @@ export class RelationsApiService {
 
   async getPeopleInGroup(groupId: number): Promise<Person[] | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/group/${groupId}/people`);
-
-      if (!response.ok) {
-        console.error('Error fetching group people:', response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
-      return data as Person[];
+      const data = await this.http
+        .get<Person[]>(`${this.baseUrl}/group/${groupId}/people`)
+        .toPromise();
+      return data ?? [];
     } catch (error) {
       console.error('Error fetching group people:', error);
       return null;
@@ -135,15 +92,7 @@ export class RelationsApiService {
 
   async addPersonToGroup(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/group/${groupId}/people/${personId}`, {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        console.error('Error adding person to group:', response.statusText);
-        return false;
-      }
-
+      await this.http.post(`${this.baseUrl}/group/${groupId}/people/${personId}`, null).toPromise();
       return true;
     } catch (error) {
       console.error('Error adding person to group:', error);
@@ -153,15 +102,7 @@ export class RelationsApiService {
 
   async removePersonFromGroup(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/group/${groupId}/people/${personId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        console.error('Error removing person from group:', response.statusText);
-        return false;
-      }
-
+      await this.http.delete(`${this.baseUrl}/group/${groupId}/people/${personId}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error removing person from group:', error);
@@ -171,14 +112,7 @@ export class RelationsApiService {
 
   async getPersonRelations(personId: number): Promise<PersonRelations | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/person/${personId}`);
-
-      if (!response.ok) {
-        console.error('Error fetching person relations:', response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
+      const data = await this.http.get<any>(`${this.baseUrl}/person/${personId}`).toPromise();
 
       return {
         courses: data.courses ?? [],

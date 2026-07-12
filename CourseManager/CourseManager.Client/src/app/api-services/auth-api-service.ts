@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 export interface AuthUser {
@@ -13,6 +14,7 @@ export interface AuthUser {
 })
 export class AuthApiService {
   private baseUrl = `${environment.apiUrl}/auth`;
+  private readonly http = inject(HttpClient);
 
   private readonly STORAGE_KEY = 'course_manager_auth';
 
@@ -42,30 +44,17 @@ export class AuthApiService {
     return this.currentUser()?.token ?? null;
   }
 
-  getAuthHeaders(): Record<string, string> {
-    const token = this.getToken();
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }
-
   async login(username: string, password: string): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${this.baseUrl}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
+      const data = await this.http
+        .post<AuthUser>(`${this.baseUrl}/login`, { username, password })
+        .toPromise();
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        return { success: false, message: data.message ?? 'Login failed.' };
-      }
-
-      const data = await response.json();
       const user: AuthUser = {
-        token: data.token,
-        userId: data.userId,
-        username: data.username,
-        displayName: data.displayName,
+        token: data!.token,
+        userId: data!.userId,
+        username: data!.username,
+        displayName: data!.displayName,
       };
 
       this.saveToStorage(user);
@@ -73,9 +62,9 @@ export class AuthApiService {
       this.isAuthenticated.set(true);
 
       return { success: true };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      return { success: false, message: 'Network error. Please try again.' };
+      return { success: false, message: error.error?.message ?? 'Login failed.' };
     }
   }
 
@@ -85,23 +74,15 @@ export class AuthApiService {
     displayName: string,
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${this.baseUrl}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, displayName }),
-      });
+      const data = await this.http
+        .post<AuthUser>(`${this.baseUrl}/register`, { username, password, displayName })
+        .toPromise();
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        return { success: false, message: data.message ?? 'Registration failed.' };
-      }
-
-      const data = await response.json();
       const user: AuthUser = {
-        token: data.token,
-        userId: data.userId,
-        username: data.username,
-        displayName: data.displayName,
+        token: data!.token,
+        userId: data!.userId,
+        username: data!.username,
+        displayName: data!.displayName,
       };
 
       this.saveToStorage(user);
@@ -109,9 +90,9 @@ export class AuthApiService {
       this.isAuthenticated.set(true);
 
       return { success: true };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      return { success: false, message: 'Network error. Please try again.' };
+      return { success: false, message: error.error?.message ?? 'Registration failed.' };
     }
   }
 

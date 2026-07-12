@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Group } from './dtos';
 import { environment } from '../../environments/environment';
 
@@ -13,7 +14,7 @@ interface PersonDto {
 export class GroupApiService {
   private baseUrl = `${environment.apiUrl}/group`;
   private relationsBaseUrl = `${environment.apiUrl}/relations`;
-  constructor() {}
+  private readonly http = inject(HttpClient);
 
   private mapGroup(data: any): Group {
     return {
@@ -32,13 +33,8 @@ export class GroupApiService {
 
   async getAllGroups(): Promise<Group[]> {
     try {
-      const response = await fetch(`${this.baseUrl}`);
-      if (!response.ok) {
-        console.error('Error fetching groups:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((group) => this.mapGroup(group));
+      const data = await this.http.get<any[]>(`${this.baseUrl}`).toPromise();
+      return (data ?? []).map((group) => this.mapGroup(group));
     } catch (error) {
       console.error('Error fetching groups:', error);
       return [];
@@ -47,12 +43,7 @@ export class GroupApiService {
 
   async getGroupById(id: number): Promise<Group | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`);
-      if (!response.ok) {
-        console.error('Error fetching group:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http.get<any>(`${this.baseUrl}/${id}`).toPromise();
       return this.mapGroup(data);
     } catch (error) {
       console.error('Error fetching group:', error);
@@ -62,13 +53,10 @@ export class GroupApiService {
 
   async getGroupByCourseSectionId(courseSectionId: number): Promise<Group[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/course-section/${courseSectionId}`);
-      if (!response.ok) {
-        console.error('Error fetching group by course section ID:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((group) => this.mapGroup(group));
+      const data = await this.http
+        .get<any[]>(`${this.baseUrl}/course-section/${courseSectionId}`)
+        .toPromise();
+      return (data ?? []).map((group) => this.mapGroup(group));
     } catch (error) {
       console.error('Error fetching group:', error);
       return [];
@@ -77,18 +65,9 @@ export class GroupApiService {
 
   async createGroup(name: string, courseSectionId: number): Promise<number | null> {
     try {
-      const response = await fetch(`${this.baseUrl}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, courseSectionId }),
-      });
-      if (!response.ok) {
-        console.error('Error creating group:', response.statusText);
-        return null;
-      }
-      const data = await response.json();
+      const data = await this.http
+        .post<any>(`${this.baseUrl}`, { name, courseSectionId })
+        .toPromise();
       return data.groupId;
     } catch (error) {
       console.error('Error creating group:', error);
@@ -98,17 +77,7 @@ export class GroupApiService {
 
   async updateGroup(id: number, name: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name }),
-      });
-      if (!response.ok) {
-        console.error('Error updating group:', response.statusText);
-        return false;
-      }
+      await this.http.put(`${this.baseUrl}/${id}`, { name }).toPromise();
       return true;
     } catch (error) {
       console.error('Error updating group:', error);
@@ -118,13 +87,7 @@ export class GroupApiService {
 
   async deleteGroup(id: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        console.error('Error deleting group:', response.statusText);
-        return false;
-      }
+      await this.http.delete(`${this.baseUrl}/${id}`).toPromise();
       return true;
     } catch (error) {
       console.error('Error deleting group:', error);
@@ -134,13 +97,10 @@ export class GroupApiService {
 
   async getAllPeople(groupId: number): Promise<PersonDto[]> {
     try {
-      const response = await fetch(`${this.relationsBaseUrl}/group/${groupId}/people`);
-      if (!response.ok) {
-        console.error('Error fetching people in group:', response.statusText);
-        return [];
-      }
-      const data = await response.json();
-      return (data as any[]).map((person) => this.mapPerson(person));
+      const data = await this.http
+        .get<any[]>(`${this.relationsBaseUrl}/group/${groupId}/people`)
+        .toPromise();
+      return (data ?? []).map((person) => this.mapPerson(person));
     } catch (error) {
       console.error('Error fetching people in group:', error);
       return [];
@@ -149,13 +109,9 @@ export class GroupApiService {
 
   async addPerson(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.relationsBaseUrl}/group/${groupId}/people/${personId}`, {
-        method: 'POST',
-      });
-      if (!response.ok) {
-        console.error('Error adding person to group:', response.statusText);
-        return false;
-      }
+      await this.http
+        .post(`${this.relationsBaseUrl}/group/${groupId}/people/${personId}`, null)
+        .toPromise();
       return true;
     } catch (error) {
       console.error('Error adding person to group:', error);
@@ -165,13 +121,9 @@ export class GroupApiService {
 
   async deletePerson(groupId: number, personId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.relationsBaseUrl}/group/${groupId}/people/${personId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        console.error('Error removing person from group:', response.statusText);
-        return false;
-      }
+      await this.http
+        .delete(`${this.relationsBaseUrl}/group/${groupId}/people/${personId}`)
+        .toPromise();
       return true;
     } catch (error) {
       console.error('Error removing person from group:', error);
