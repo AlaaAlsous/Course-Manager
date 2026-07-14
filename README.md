@@ -16,11 +16,15 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 <p align="center">
+	<img src="Assets/Course-manager-login.png" alt="Course Manager Login" width="300"/>
+</p>
+
+<p align="center">
 	<img src="Assets/Course-manager-Home-L.png" alt="Course Manager Home" width="600"/>
 </p>
 
 <p align="center">
-	<img src="Assets/Course-manager-Home-D.png" alt="Course Manager Home§" width="600"/>
+	<img src="Assets/Course-manager-Home-D.png" alt="Course Manager Home" width="600"/>
 </p>
 
 <p align="center">
@@ -35,7 +39,7 @@
 
 Course Manager är en webbapplikation för att hantera kurser, kurssektioner, grupper och deltagare. Systemet låter dig organisera utbildningsinnehåll med stöd för filuppladdning och förhandsgranskning av dokument direkt i webbläsaren.
 
-**Funktioner:** Skapa, redigera och ta bort kurser, kurssektioner, grupper och deltagare. Tilldela deltagare till kurser, kurssektioner och grupper via many-to-many-relationer. Ladda upp filer (bilder, PDF, text) kopplade till valfri entitet. Förhandsgranska textfiler, bilder, ljud och PDF direkt i webbläsaren. Redigera textfiler inline. Ladda ner alla filer för en entitet som ZIP. Sök bland kurser och deltagare. Mörkt och ljust läge med automatisk anpassning. Responsiv design anpassad för både desktop och mobil.
+**Funktioner:** Skapa, redigera och ta bort kurser, kurssektioner, grupper och deltagare. Tilldela deltagare till kurser, kurssektioner och grupper via many-to-many-relationer. Ladda upp filer (bilder, PDF, text) kopplade till valfri entitet. Förhandsgranska textfiler, bilder, ljud och PDF direkt i webbläsaren. Redigera textfiler inline. Ladda ner alla filer för en entitet som ZIP. Sök bland kurser och deltagare. Mörkt och ljust läge med automatisk anpassning. Responsiv design anpassad för både desktop och mobil. **Autentisering med JWT**  registrering och inloggning, användardata isoleras per konto (user scoping), skyddade routes och API-endpoints.
 
 **Struktur:** Varje kurs innehåller kurssektioner. Varje kurssektion innehåller grupper. Deltagare kan kopplas till kurser, kurssektioner och grupper. Filer kan laddas upp på alla nivåer.
 
@@ -63,6 +67,9 @@ Systemet använder följande Azure-tjänster:
 ### Server
 
 - REST API för kurser, kurssektioner, grupper, deltagare och relationer
+- **JWT-autentisering** med `JwtBearer` — registrering och inloggning via `/api/auth`
+- **User scoping** — varje användares data (kurser, deltagare, filer) isoleras per konto
+- BCrypt-hashning av lösenord
 - Filhantering via Azure Blob Storage eller lokal fillagring (i Utvecklingsmiljö)
 - Azure SQL Database via Entity Framework Core
 - ZIP-nedladdning av alla filer för en entitet (inkl. nested)
@@ -76,6 +83,9 @@ Systemet använder följande Azure-tjänster:
 - SCSS för styling
 - Responsiv design med hamburgermeny för mobil
 - Mörkt/ljust läge med `prefers-color-scheme`-detektion
+- **Inloggning och registrering** med JWT-tokenlagring i `localStorage`
+- **Auth guard** skyddar alla routes (utom login)
+- **HTTP-interceptor** bifogar JWT-token till alla API-anrop
 - Inline textredigering
 - Filförhandsgranskning (text, bild, ljud, PDF)
 - Bekräftelsedialoger för destruktiva operationer
@@ -92,6 +102,16 @@ Systemet använder följande Azure-tjänster:
 ---
 
 ## Komplett funktionell översikt
+
+### Autentisering
+
+- Registrera nytt konto med användarnamn, lösenord och visningsnamn
+- Logga in med användarnamn och lösenord
+- JWT-token lagras i `localStorage` och bifogas automatiskt till API-anrop
+- Alla routes skyddas med `auth.guard.ts` (utom `/login`)
+- HTTP-interceptor hanterar token och 401-redirect
+- Logga ut rensar token och omdirigerar till login
+- Användardata (kurser, deltagare, filer) isoleras per konto
 
 ### Kurshantering
 
@@ -135,7 +155,8 @@ Systemet använder följande Azure-tjänster:
 
 ### UI/UX-detaljer
 
-- Top-nav med logotyp, navigationslänkar och tema-toggle
+- Top-nav med logotyp, navigationslänkar, användarnamn + logout-ikon och tema-toggle
+- På mobil: logout-knapp i hamburgermenyn
 - Brödsmulestig (breadcrumb) för navigering
 - Snackbar för framgångs- och felmeddelanden
 - Bekräftelsedialoger (Yes/No) för destruktiva operationer
@@ -146,6 +167,13 @@ Systemet använder följande Azure-tjänster:
 ---
 
 ## API-endpoints
+
+### Autentisering: api/auth
+
+- `POST /api/auth/register` — Registrera ny användare (returnerar JWT-token)
+- `POST /api/auth/login` — Logga in (returnerar JWT-token)
+
+> Alla övriga endpoints kräver JWT-autentisering. Token bifogas via `Authorization: Bearer <token>`.
 
 ### Kurser: api/course
 
@@ -240,6 +268,12 @@ Course-Manager/
 │        ├─ app.config.ts
 │        ├─ theme.service.ts
 │        ├─ groups.service.ts
+│        ├─ auth/
+│        │  ├─ auth.guard.ts
+│        │  └─ auth.interceptor.ts
+│        ├─ login/
+│        │  ├─ login.ts
+│        │  └─ login.html
 │        ├─ home/
 │        ├─ layout/
 │        ├─ all-courses/
@@ -260,6 +294,13 @@ Course-Manager/
 │        ├─ shared/
 │        │  └─ snackbar/
 │        ├─ api-services/
+│        │  ├─ auth-api-service.ts
+│        │  ├─ course-api-service.ts
+│        │  ├─ course-section-api-service.ts
+│        │  ├─ group-api-service.ts
+│        │  ├─ person-api-service.ts
+│        │  ├─ relations-api-service.ts
+│        │  └─ file-api-services.ts
 │        └─ not-found/
 └─ CourseManager.Server/
    ├─ Program.cs
@@ -270,7 +311,13 @@ Course-Manager/
    ├─ Data/
    │  └─ AppDbContext.cs
    ├─ DTOs/
+   │  ├─ AuthDtos.cs
+   │  ├─ CourseDtos.cs
+   │  ├─ CourseSectionDtos.cs
+   │  ├─ GroupDtos.cs
+   │  └─ PersonDtos.cs
    ├─ Endpoints/
+   │  ├─ AuthEndpoints.cs
    │  ├─ CourseEndpoints.cs
    │  ├─ CourseSectionEndpoints.cs
    │  ├─ GroupEndpoints.cs
@@ -279,9 +326,15 @@ Course-Manager/
    │  └─ FileEndpoints.cs
    ├─ Migrations/
    ├─ Models/
+   │  ├─ AppUser.cs
+   │  ├─ Course.cs
+   │  ├─ FileAsset.cs
+   │  └─ Person.cs
    ├─ Repositories/
    ├─ Services/
-   │  └─ BlobService.cs
+   │  ├─ BlobService.cs
+   │  ├─ CurrentUserHelper.cs
+   │  └─ TokenService.cs
    ├─ Properties/
    └─ wwwroot/
 ```
@@ -346,17 +399,30 @@ Servern använder `appsettings.json` för grundkonfiguration och `appsettings.De
 - `AzureStorage:ConnectionString` — Azure Blob Storage-anslutning
 - `AzureStorage:ContainerName` — Blob container-namn
 
+**JWT-konfiguration** via miljövariabler eller `appsettings.json`:
+
+- `Jwt:Key` — Signeringsnyckel (min 32 tecken)
+- `Jwt:Issuer` — Token-utfärdare
+- `Jwt:Audience` — Token-mottagare
+
+> Om `Jwt:Key` inte är satt används en default-nyckel (endast för utveckling).
+
 Lokalt används LocalDB automatiskt om ingen Azure-connection string finns. Filuppladdning sker till lokal `uploads/`-mapp om Azure Blob Storage inte är konfigurerat.
 
 ---
 
 ## Säkerhet
 
+- **JWT-autentisering** krävs för alla API-endpoints (utom `/api/auth/register` och `/api/auth/login`)
+- Lösenord hashas med BCrypt
+- **User scoping** — användare kan endast se och hantera sin egen data
 - CORS är konfigurerat för specifika origins (Azure-domän och localhost)
 - Filuppladdning validerar filtyp (PNG, JPG, PDF, TXT) och filändelse
 - Max filstorlek: 50 MB
 - Skydd mot ogiltiga filnamn och path traversal
 - Entity Framework migrationer körs automatiskt vid startup
+- Auth guard skyddar alla frontend-routes (utom `/login`)
+- HTTP-interceptor bifogar JWT-token till alla anrop och hanterar 401-responses
 
 ---
 
@@ -364,9 +430,11 @@ Lokalt används LocalDB automatiskt om ingen Azure-connection string finns. Filu
 
 Course Manager is a web application for managing courses, course sections, groups, and participants. It allows you to organize educational content with support for file uploads and document previews directly in the browser.
 
+The application features **JWT-based authentication** with user registration and login. Each user's data (courses, participants, files) is isolated per account (user scoping). All API endpoints require authentication except register and login.
+
 Courses contain course sections, which in turn contain groups. Participants can be assigned to courses, course sections, and groups through many-to-many relationships. Files can be uploaded at any level.
 
-The backend is built with ASP.NET Core and Entity Framework Core, using Azure SQL Database for metadata and Azure Blob Storage for file storage. The frontend is built with Angular and TypeScript, featuring a responsive design with dark/light theme support.
+The backend is built with ASP.NET Core and Entity Framework Core, using Azure SQL Database for metadata and Azure Blob Storage for file storage. The frontend is built with Angular and TypeScript, featuring a responsive design with dark/light theme support, an auth guard for protected routes, and an HTTP interceptor for automatic token handling.
 
 ## Utvecklare
 
